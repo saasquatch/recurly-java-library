@@ -64,21 +64,21 @@ public class RecurlyClient extends RecurlyClientBase {
     public RecurlyClient(final String apiKey, final String host, final int port, final String version) {
         super(apiKey, host, port, version);
     }
-    
+
     /* **************************************
-     * Generic CREATE/UPDATE 
+     * Generic CREATE/UPDATE
      * **************************************/
-    
+
     public <T> T create(String path, XmlPayloadMap<?, ?> payload, Class<T> clazz){
     	return doPOST(path, payload, clazz);
     }
-    
+
     public <T> T update(String path, XmlPayloadMap<?, ?> payload, Class<T> clazz){
     	return doPUT(path, payload, clazz);
     }
-    
+
     /* **************************************
-     * 
+     *
      * **************************************/
 
     /**
@@ -101,7 +101,7 @@ public class RecurlyClient extends RecurlyClientBase {
      * @return account object on success, null otherwise
      */
     public Accounts getAccounts() {
-        List<Accounts> paginatedAccounts = doGETs(Accounts.ACCOUNTS_RESOURCE, Accounts.class);
+        List<Accounts> paginatedAccounts = doGETs(Accounts.ACCOUNTS_RESOURCE, Accounts.class, false);
         return depaginateResults(paginatedAccounts);
     }
 
@@ -120,7 +120,7 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
 
     /**
      * Update Account
@@ -187,7 +187,7 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
 
     /**
      * Cancel a subscription
@@ -254,7 +254,7 @@ public class RecurlyClient extends RecurlyClientBase {
     	try {
 	        return depaginateResults(doGETs(Account.ACCOUNT_RESOURCE
 	                     + "/" + URLEncoder.encode(accountCode, "UTF-8")
-	                     + Subscriptions.SUBSCRIPTIONS_RESOURCE, Subscriptions.class));
+	                     + Subscriptions.SUBSCRIPTIONS_RESOURCE, Subscriptions.class, false));
 		} catch (UnsupportedEncodingException e) {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
@@ -276,7 +276,7 @@ public class RecurlyClient extends RecurlyClientBase {
 	                     + Subscriptions.SUBSCRIPTIONS_RESOURCE
 	                     + "?state="
 	                     + URLEncoder.encode(status, "UTF-8"),
-	                     Subscriptions.class));
+	                     Subscriptions.class, false));
 		} catch (UnsupportedEncodingException e) {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
@@ -330,7 +330,7 @@ public class RecurlyClient extends RecurlyClientBase {
     	}catch(UnsupportedEncodingException e){
 			throw new RecurlyAPIException("Invalid Request", e);
     	}
-        
+
     }
 
     /**
@@ -363,12 +363,12 @@ public class RecurlyClient extends RecurlyClientBase {
     public Transactions getAccountTransactions(final String accountCode) {
     	try {
 	        return depaginateResults(doGETs(Accounts.ACCOUNTS_RESOURCE + "/" + URLEncoder.encode(accountCode, "UTF-8") + Transactions.TRANSACTIONS_RESOURCE,
-	                     Transactions.class));
+	                     Transactions.class, false));
 		} catch (UnsupportedEncodingException e) {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     public Transaction getTransaction(final String uuid){
     	try {
     		return doGET(Transactions.TRANSACTIONS_RESOURCE + "/" + URLEncoder.encode(uuid, "UTF-8"), Transaction.class);
@@ -377,11 +377,11 @@ public class RecurlyClient extends RecurlyClientBase {
 		}
     }
 
-    
+
     public void partialRefundTransaction(final String transactionId, int refundInCents){
     	try {
-	    	Map<String, String> param = new HashMap<>(); 
-	    	param.put("amount_in_cents", String.valueOf(refundInCents)); 
+	    	Map<String, String> param = new HashMap<>();
+	    	param.put("amount_in_cents", String.valueOf(refundInCents));
 	    	doDELETE(Transactions.TRANSACTIONS_RESOURCE + "/" + URLEncoder.encode(transactionId, "UTF-8"), param);
 		} catch (UnsupportedEncodingException e) {
 			throw new RecurlyAPIException("Invalid Request", e);
@@ -397,7 +397,7 @@ public class RecurlyClient extends RecurlyClientBase {
     public Transaction createTransaction(final XmlPayloadMap<?, ?> trans) {
    		return doPOST(Transactions.TRANSACTIONS_RESOURCE, trans, Transaction.class);
     }
-    
+
 	///////////////////////////////////////////////////////////////////////////
 	// Redemptions
     /**
@@ -418,7 +418,7 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     /**
      * Redeem a coupon
      * <p/>
@@ -431,7 +431,7 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     /**
      * Deactivate a coupon
      * <p/>
@@ -452,12 +452,12 @@ public class RecurlyClient extends RecurlyClientBase {
     public Redemptions getInvoiceRedemptions(final String invoiceNumber){
     	try {
 	        return depaginateResults(doGETs(Invoice.INVOICE_RESOURCE + "/" + URLEncoder.encode(invoiceNumber, "UTF-8") + Redemptions.REDEMPTIONS_RESOURCE,
-	        		Redemptions.class));
+	        		Redemptions.class, false));
 		} catch (UnsupportedEncodingException e) {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     /**
      * Lookup an account's invoices
      * <p/>
@@ -478,12 +478,12 @@ public class RecurlyClient extends RecurlyClientBase {
 	        }
             return depaginateResults(doGETs(Accounts.ACCOUNTS_RESOURCE + "/" + URLEncoder.encode(accountCode, "UTF-8") + Invoices.INVOICES_RESOURCE,
 	        			 paramString,
-	                     Invoices.class));
+	                     Invoices.class, false));
 		} catch (UnsupportedEncodingException e) {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     public Invoice getInvoice(final String invoiceNumber){
     	try {
     		return doGET(Invoices.INVOICES_RESOURCE + "/" + URLEncoder.encode(invoiceNumber, "UTF-8"), Invoice.class);
@@ -491,8 +491,8 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
-    
+
+
     /**
      * Lookup an account's collected invoices
      * <p/>
@@ -504,7 +504,7 @@ public class RecurlyClient extends RecurlyClientBase {
     public Invoices getAccountCollectedInvoices(final String accountCode) {
     		return getAccountInvoices(accountCode, "collected");
     }
-    
+
     /**
      * Lookup an account's invoices
      * <p/>
@@ -519,7 +519,7 @@ public class RecurlyClient extends RecurlyClientBase {
 
 	///////////////////////////////////////////////////////////////////////////
 	// Account Adjustments
-    
+
     public Adjustment getAdjustment(final String uuid){
     	try {
     		return doGET(Adjustments.ADJUSTMENTS_RESOURCE + "/" + URLEncoder.encode(uuid, "UTF-8"), Adjustment.class);
@@ -527,31 +527,31 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     public Adjustments getAccountAdjustments(final String accountCode){
     	try {
 	    	return depaginateResults(doGETs(Account.ACCOUNT_RESOURCE
 	                + "/" + URLEncoder.encode(accountCode, "UTF-8")
-	                + Adjustments.ADJUSTMENTS_RESOURCE, Adjustments.class));
+	                + Adjustments.ADJUSTMENTS_RESOURCE, Adjustments.class, false));
 		} catch (UnsupportedEncodingException e) {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     public Adjustments getAccountAdjustments(final String accountCode, final String state){
     	try {
 	    	return depaginateResults(doGETs(Account.ACCOUNT_RESOURCE
 	                + "/" + URLEncoder.encode(accountCode, "UTF-8")
-	                + Adjustments.ADJUSTMENTS_RESOURCE, "&state=" + state, Adjustments.class));
+	                + Adjustments.ADJUSTMENTS_RESOURCE, "&state=" + state, Adjustments.class, false));
 		} catch (UnsupportedEncodingException e) {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     public Adjustment createAdjustment(final String accountCode, final XmlPayloadMap<?, ?> adjustmentData){
     	try {
 	    	return doPOST(
-	    			Account.ACCOUNT_RESOURCE + "/" + URLEncoder.encode(accountCode, "UTF-8") + Adjustments.ADJUSTMENTS_RESOURCE, 
+	    			Account.ACCOUNT_RESOURCE + "/" + URLEncoder.encode(accountCode, "UTF-8") + Adjustments.ADJUSTMENTS_RESOURCE,
 	    			adjustmentData,
 	    			Adjustment.class
 	    		);
@@ -559,7 +559,7 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     public void deleteAdjustment(final String adjustmentUUID){
     	try {
     		doDELETE(Adjustments.ADJUSTMENTS_RESOURCE + "/" + URLEncoder.encode(adjustmentUUID, "UTF-8"));
@@ -567,7 +567,7 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////
 
     /**
@@ -603,7 +603,7 @@ public class RecurlyClient extends RecurlyClientBase {
      * @return the plan object as identified by the passed in ID
      */
     public Plans getPlans() {
-   		return depaginateResults(doGETs(Plans.PLANS_RESOURCE, Plans.class));
+   		return depaginateResults(doGETs(Plans.PLANS_RESOURCE, Plans.class, false));
     }
 
     /**
@@ -729,8 +729,8 @@ public class RecurlyClient extends RecurlyClientBase {
 			throw new RecurlyAPIException("Invalid Request", e);
 		}
     }
-    
-    
+
+
     ///////////////////////////////////////////////////////////////////////////
     //
     // Recurly.js API
@@ -772,7 +772,7 @@ public class RecurlyClient extends RecurlyClientBase {
     public Invoice fetchInvoice(final String recurlyToken) {
    		return fetch(recurlyToken, Invoice.class);
     }
-    
+
     private <R extends RecurlyObject, T extends RecurlyObjects<R>> T depaginateResults(List<T> results){
     	Iterator<T> ai = results.iterator();
         T depaginatedType = null;
@@ -787,7 +787,7 @@ public class RecurlyClient extends RecurlyClientBase {
 				depaginatedType.getObjects().addAll(objects);
         	}
         }
-        
+
 		return depaginatedType;
     }
 }
