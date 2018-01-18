@@ -17,10 +17,11 @@ package com.github.torbinsky.billing.recurly.exception;
 
 /**
  * @author torben
- * 
+ *
  * Generic Recurly exception.
  */
 public class RecurlyException extends RuntimeException {
+	private static final long serialVersionUID = 5415139450940352679L;
 
 	public RecurlyException() {
 		super();

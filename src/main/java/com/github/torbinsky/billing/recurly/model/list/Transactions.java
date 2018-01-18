@@ -35,7 +35,7 @@ public class Transactions extends RecurlyObjects<Transaction> {
     public static final String TRANSACTIONS_RESOURCE = "/transactions";
     
     @XmlElement(name = "transaction")
-    private List<Transaction> transactions = new ArrayList<Transaction>();
+    private List<Transaction> transactions = new ArrayList<>();
 
 	@Override
 	public List<Transaction> getObjects() {

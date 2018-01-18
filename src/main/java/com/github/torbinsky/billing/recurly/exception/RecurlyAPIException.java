@@ -17,12 +17,14 @@ package com.github.torbinsky.billing.recurly.exception;
 
 /**
  * @author torben
- * 
+ *
  *         This exception is thrown on a Recurly API failure. It wraps the the
  *         original cause of the exception (i.e. an IOException etc...)
- * 
+ *
  */
 public class RecurlyAPIException extends RecurlyException {
+	private static final long serialVersionUID = -3892249624742324713L;
+
 	private int errorCode = -1;
 
 	public RecurlyAPIException() {

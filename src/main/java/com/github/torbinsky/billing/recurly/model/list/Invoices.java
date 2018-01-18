@@ -32,7 +32,7 @@ public class Invoices extends RecurlyObjects<Invoice> {
     public static final String INVOICES_RESOURCE = "/invoices";
     
     @XmlElement(name = "invoice")
-    private List<Invoice> invoices = new ArrayList<Invoice>();
+    private List<Invoice> invoices = new ArrayList<>();
 
 	@Override
 	public List<Invoice> getObjects() {

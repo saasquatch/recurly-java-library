@@ -32,7 +32,7 @@ public class Plans extends RecurlyObjects<Plan> {
     public static final String PLANS_RESOURCE = "/plans";
     
     @XmlElement(name = "plan")
-    private List<Plan> plans = new ArrayList<Plan>();
+    private List<Plan> plans = new ArrayList<>();
 
 	@Override
 	public List<Plan> getObjects() {

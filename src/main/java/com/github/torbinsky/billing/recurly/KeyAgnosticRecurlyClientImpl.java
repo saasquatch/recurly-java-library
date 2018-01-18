@@ -16,7 +16,6 @@
 package com.github.torbinsky.billing.recurly;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 import com.github.torbinsky.billing.recurly.model.Account;
 import com.github.torbinsky.billing.recurly.model.AddOn;
@@ -40,7 +39,7 @@ import com.github.torbinsky.billing.recurly.serialize.XmlPayloadMap;
 
 /**
  * A concrete implementation of the {@link KeyAgnosticRecurlyClient} interface
- * 
+ *
  * @author twerner
  *
  */
@@ -54,18 +53,18 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 	public KeyAgnosticRecurlyClientImpl() {
 		keyClient = new RecurlyClient(null);
 	}
-	
+
 	public KeyAgnosticRecurlyClientImpl(RecurlyClient client) {
 		keyClient = client;
 	}
-	
+
 	@Override
 	public Redemptions getInvoiceRedemptions(final String invoiceNumber, String apiKey) {
 		return new ThreadScopedAPIClientCall<Redemptions>(apiKey){
 			@Override
 			Redemptions doCall() {
 				return keyClient.getInvoiceRedemptions(invoiceNumber);
-			}			
+			}
 		}.call();
 	}
 
@@ -75,7 +74,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Account doCall() {
 				return keyClient.createAccount(account);
-			}			
+			}
 		}.call();
 	}
 
@@ -85,7 +84,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Accounts doCall() {
 				return keyClient.getAccounts();
-			}			
+			}
 		}.call();
 	}
 
@@ -95,7 +94,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Account doCall() {
 				return keyClient.getAccount(accountCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -105,7 +104,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Account doCall() {
 				return keyClient.updateAccount(accountCode, account);
-			}			
+			}
 		}.call();
 	}
 
@@ -116,7 +115,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			Void doCall() {
 				keyClient.closeAccount(accountCode);
 				return null;
-			}			
+			}
 		}.call();
 	}
 
@@ -126,7 +125,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Subscription doCall() {
 				return keyClient.createSubscription(subscription);
-			}			
+			}
 		}.call();
 	}
 
@@ -136,7 +135,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Subscription doCall() {
 				return keyClient.getSubscription(uuid);
-			}			
+			}
 		}.call();
 	}
 
@@ -146,7 +145,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Subscription doCall() {
 				return keyClient.cancelSubscription(subscription);
-			}			
+			}
 		}.call();
 	}
 
@@ -156,7 +155,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Subscription doCall() {
 				return keyClient.reactivateSubscription(subscription);
-			}			
+			}
 		}.call();
 	}
 
@@ -166,7 +165,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Subscription doCall() {
 				return keyClient.updateSubscription(uuid, subscriptionUpdate);
-			}			
+			}
 		}.call();
 	}
 
@@ -176,7 +175,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Subscriptions doCall() {
 				return keyClient.getAccountSubscriptions(accountCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -186,7 +185,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Subscriptions doCall() {
 				return keyClient.getAccountSubscriptions(accountCode, status);
-			}			
+			}
 		}.call();
 	}
 
@@ -196,7 +195,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			BillingInfo doCall() {
 				return keyClient.createOrUpdateBillingInfo(billingInfo, accountCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -206,7 +205,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			BillingInfo doCall() {
 				return keyClient.getBillingInfo(accountCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -217,9 +216,9 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			Void doCall() {
 				keyClient.clearBillingInfo(accountCode);
 				return null;
-			}			
+			}
 		}.call();
-		
+
 	}
 
 	@Override
@@ -228,7 +227,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Transactions doCall() {
 				return keyClient.getAccountTransactions(accountCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -238,19 +237,19 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Transaction doCall() {
 				return keyClient.createTransaction(trans);
-			}			
+			}
 		}.call();
 	}
-	
+
 	@Override
 	public void partialRefundTransaction(final String transactionId, final int refundInCents, String apiKey) {
 		new ThreadScopedAPIClientCall<Void>(apiKey){
 			@Override
 			Void doCall() {
 				keyClient.partialRefundTransaction(transactionId, refundInCents);
-				return null; 
+				return null;
 			}
-		}.call(); 
+		}.call();
 	}
 
 	@Override
@@ -259,17 +258,17 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Invoices doCall() {
 				return keyClient.getAccountInvoices(accountCode);
-			}			
+			}
 		}.call();
 	}
-	
+
 	@Override
 	public Invoice getInvoice(final String invoiceNumber, String apiKey) {
 		return new ThreadScopedAPIClientCall<Invoice>(apiKey){
 			@Override
 			Invoice doCall() {
 				return keyClient.getInvoice(invoiceNumber);
-			}			
+			}
 		}.call();	}
 
 	@Override
@@ -278,7 +277,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Plan doCall() {
 				return keyClient.createPlan(plan);
-			}			
+			}
 		}.call();
 	}
 
@@ -288,7 +287,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Plan doCall() {
 				return keyClient.getPlan(planCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -298,7 +297,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Plans doCall() {
 				return keyClient.getPlans();
-			}			
+			}
 		}.call();
 	}
 
@@ -309,7 +308,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			Void doCall() {
 				keyClient.deletePlan(planCode);
 				return null;
-			}			
+			}
 		}.call();
 	}
 
@@ -319,7 +318,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			AddOn doCall() {
 				return keyClient.createPlanAddOn(planCode, addOn);
-			}			
+			}
 		}.call();
 	}
 
@@ -329,7 +328,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			AddOn doCall() {
 				return keyClient.getAddOn(planCode, addOnCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -339,7 +338,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			AddOn doCall() {
 				return keyClient.getAddOns(planCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -350,7 +349,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			Void doCall() {
 				keyClient.deleteAddOn(planCode, addOnCode);
 				return null;
-			}			
+			}
 		}.call();
 	}
 
@@ -360,10 +359,10 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Coupon doCall() {
 				return keyClient.createCoupon(coupon);
-			}			
+			}
 		}.call();
 	}
-	
+
 
 	@Override
 	public void deactivateCoupon(final String couponCode, final String apiKey) {
@@ -372,7 +371,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			Void doCall() {
 				keyClient.deactivateCoupon(couponCode);
 				return null;
-			}			
+			}
 		}.call();
 	}
 
@@ -382,7 +381,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Coupon doCall() {
 				return keyClient.getCoupon(couponCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -392,7 +391,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Subscription doCall() {
 				return keyClient.fetchSubscription(recurlyToken);
-			}			
+			}
 		}.call();
 	}
 
@@ -402,7 +401,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			BillingInfo doCall() {
 				return keyClient.fetchBillingInfo(recurlyToken);
-			}			
+			}
 		}.call();
 	}
 
@@ -412,7 +411,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Invoice doCall() {
 				return keyClient.fetchInvoice(recurlyToken);
-			}			
+			}
 		}.call();
 	}
 
@@ -422,7 +421,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Redemption doCall() {
 				return keyClient.getAccountRedemption(accountCode);
-			}			
+			}
 		}.call();
 	}
 
@@ -432,7 +431,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Invoices doCall() {
 				return keyClient.getAccountInvoices(accountCode, stateQuery);
-			}			
+			}
 		}.call();
 	}
 
@@ -442,50 +441,50 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Invoices doCall() {
 				return keyClient.getAccountCollectedInvoices(accountCode);
-			}			
+			}
 		}.call();
-	}	
-	
+	}
+
 	@Override
 	public CouponRedeem redeemCoupon(final String couponCode, final XmlPayloadMap<?, ?> couponRedeem, String apiKey) {
 		return new ThreadScopedAPIClientCall<CouponRedeem>(apiKey){
 			@Override
 			CouponRedeem doCall() {
 				return keyClient.redeemCoupon(couponCode, couponRedeem);
-			}			
+			}
 		}.call();
 	}
-	
+
 	@Override
 	public Adjustments getAccountAdjustments(final String accountCode, final String apiKey) {
 		return new ThreadScopedAPIClientCall<Adjustments>(apiKey){
 			@Override
 			Adjustments doCall() {
 				return keyClient.getAccountAdjustments(accountCode);
-			}			
+			}
 		}.call();
 	}
-	
+
 	@Override
 	public Adjustments getAccountAdjustments(final String accountCode, final String state, final String apiKey) {
 		return new ThreadScopedAPIClientCall<Adjustments>(apiKey){
 			@Override
 			Adjustments doCall() {
 				return keyClient.getAccountAdjustments(accountCode, state);
-			}			
+			}
 		}.call();
 	}
-	
+
 	@Override
 	public Adjustment createAdjustment(final String accountCode, final XmlPayloadMap<?, ?> adjustmentData, final String apiKey) {
 		return new ThreadScopedAPIClientCall<Adjustment>(apiKey){
 			@Override
 			Adjustment doCall() {
 				return keyClient.createAdjustment(accountCode, adjustmentData);
-			}			
+			}
 		}.call();
 	}
-	
+
 	@Override
 	public void deleteAdjustment(final String adjustmentUUID, final String apiKey) {
 		new ThreadScopedAPIClientCall<Void>(apiKey){
@@ -493,7 +492,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			Void doCall() {
 				keyClient.deleteAdjustment(adjustmentUUID);
 				return null;
-			}			
+			}
 		}.call();
 	}
 
@@ -503,7 +502,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			T doCall() {
 				return keyClient.create(path, payload, clazz);
-			}			
+			}
 		}.call();
 	}
 
@@ -513,15 +512,15 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			T doCall() {
 				return keyClient.update(path, payload, clazz);
-			}			
+			}
 		}.call();
 	}
-	
+
 	@Override
 	public synchronized void open() {
 		keyClient.open();
 	}
-	
+
 	@Override
 	public synchronized void close() throws IOException {
 		keyClient.close();
@@ -530,7 +529,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 	/**
 	 * Wraps API calls which should be thread scoped in order to avoid API key
 	 * race conditions between threads.
-	 * 
+	 *
 	 * @author Torben
 	 *
 	 * @param <T> the type of result returned by this API call
@@ -538,9 +537,9 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 	protected abstract class ThreadScopedAPIClientCall<T> {
 		private String apiKey;
 		ThreadScopedAPIClientCall(String apiKey){
-			this.apiKey = apiKey;			
+			this.apiKey = apiKey;
 		}
-		
+
 		/**
 		 * This is the method you should call which will wrap the call in api key set/unset operations
 		 */
@@ -548,10 +547,10 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			keyClient.setThreadLocalApiKey(apiKey);
 			T result = doCall();
 			keyClient.unsetThreadLocalApiKey();
-			
+
 			return result;
 		}
-		
+
 		/**
 		 * This is where you implement the specific api call(s) that should run within the scope of the key
 		 */
@@ -564,7 +563,7 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Adjustment doCall() {
 				return keyClient.getAdjustment(uuid);
-			}			
+			}
 		}.call();	}
 
 	@Override
@@ -573,8 +572,8 @@ public class KeyAgnosticRecurlyClientImpl implements KeyAgnosticRecurlyClient {
 			@Override
 			Transaction doCall() {
 				return keyClient.getTransaction(uuid);
-			}			
-		}.call();		
+			}
+		}.call();
 	}
 
 

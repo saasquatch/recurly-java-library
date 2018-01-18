@@ -259,7 +259,7 @@ public class TestUtils {
         sub.setCurrentPeriodEndsAt(DateTime.now());
         sub.setTrialStartedAt(DateTime.now());
         sub.setTrialEndsAt(DateTime.now());
-        final List<SubscriptionAddOn> addOnList = new ArrayList<SubscriptionAddOn>();
+        final List<SubscriptionAddOn> addOnList = new ArrayList<>();
         for (int i = 0; i < randomInteger(10); i++) {
         	addOnList.add(createRandomSubscriptionAddOn());
         }
