@@ -472,7 +472,8 @@
     </issueManagement>
     <distributionManagement>
         <repository>
-            <id>bintray-repo-maven</id>
+            <id>bintray-saasquatch-coreapp-libs</id>
+            <name>saasquatch-coreapp-libs</name>
             <url>https://api.bintray.com/maven/saasquatch/coreapp-libs/recurly-java-library/;publish=1</url>
         </repository>
     </distributionManagement>
