@@ -32,13 +32,13 @@ public class Accounts extends RecurlyObjects<Account> {
 	public static final String ACCOUNTS_RESOURCE = "/accounts";
 
 	@XmlElement(name = "account")
-	private List<Account> accounts = new ArrayList<Account>();
+	private List<Account> accounts = new ArrayList<>();
 
 	@Override
 	public List<Account> getObjects() {
 		return accounts;
 	}
-	
+
 	public void setAccounts(List<Account> accountList) {
 		this.accounts = accountList;
 	}

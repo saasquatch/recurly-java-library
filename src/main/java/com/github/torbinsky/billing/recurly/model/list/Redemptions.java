@@ -31,7 +31,7 @@ public class Redemptions extends RecurlyObjects<Redemption> {
     public static final String REDEMPTIONS_RESOURCE = "/redemptions";
     
     @XmlElement(name = "redemption")
-    private List<Redemption> redemptions = new ArrayList<Redemption>();
+    private List<Redemption> redemptions = new ArrayList<>();
 
 	@Override
 	public List<Redemption> getObjects() {

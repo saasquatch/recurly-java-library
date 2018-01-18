@@ -22,6 +22,7 @@ package com.github.torbinsky.billing.recurly.exception;
  *
  */
 public class RecurlySerializationException extends RecurlyAPIException {
+	private static final long serialVersionUID = 6771522744074757869L;
 
 	public RecurlySerializationException() {
 		super();

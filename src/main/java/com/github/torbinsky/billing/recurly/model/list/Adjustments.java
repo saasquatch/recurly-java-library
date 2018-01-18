@@ -30,15 +30,15 @@ public class Adjustments extends RecurlyObjects<Adjustment> {
 
     @XmlTransient
     public static final String ADJUSTMENTS_RESOURCE = "/adjustments";
-    
+
     @XmlElement(name = "adjustment")
-    private List<Adjustment> adjustments = new ArrayList<Adjustment>();
+    private List<Adjustment> adjustments = new ArrayList<>();
 
 	@Override
 	public List<Adjustment> getObjects() {
 		return adjustments;
 	}
-	
+
 	public void setAccounts(List<Adjustment> adjustmentList) {
         this.adjustments = adjustmentList;
     }

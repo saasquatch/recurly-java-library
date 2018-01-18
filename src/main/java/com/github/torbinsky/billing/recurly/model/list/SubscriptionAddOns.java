@@ -28,7 +28,7 @@ import com.github.torbinsky.billing.recurly.model.SubscriptionAddOn;
 public class SubscriptionAddOns extends RecurlyObjects<SubscriptionAddOn> {
 
     @XmlElement(name = "subscription_add_on")
-    private List<SubscriptionAddOn> addOns = new ArrayList<SubscriptionAddOn>();
+    private List<SubscriptionAddOn> addOns = new ArrayList<>();
 
 	@Override
 	public List<SubscriptionAddOn> getObjects() {

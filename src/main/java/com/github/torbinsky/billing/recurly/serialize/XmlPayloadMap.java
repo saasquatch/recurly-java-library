@@ -19,13 +19,15 @@ import java.util.HashMap;
 
 /**
  * Wraps XML payload data using a {@link HashMap}.
- * 
+ *
  * @author Torben
  *
  * @param <K>
  * @param <V>
  */
 public class XmlPayloadMap<K, V> extends HashMap<K, V> {
+	private static final long serialVersionUID = 2445624884941114131L;
+
 	String rootElementName;
 
 	/**

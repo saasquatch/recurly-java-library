@@ -32,7 +32,7 @@ public class Subscriptions extends RecurlyObjects<Subscription> {
     public static final String SUBSCRIPTIONS_RESOURCE = "/subscriptions";
     
     @XmlElement(name = "subscription")
-    private List<Subscription> subscriptions = new ArrayList<Subscription>();
+    private List<Subscription> subscriptions = new ArrayList<>();
 
 	@Override
 	public List<Subscription> getObjects() {

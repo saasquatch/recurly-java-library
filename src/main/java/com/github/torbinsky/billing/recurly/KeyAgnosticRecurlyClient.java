@@ -16,7 +16,6 @@
 package com.github.torbinsky.billing.recurly;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 import com.github.torbinsky.billing.recurly.model.Account;
 import com.github.torbinsky.billing.recurly.model.AddOn;
@@ -40,22 +39,22 @@ import com.github.torbinsky.billing.recurly.serialize.XmlPayloadMap;
 
 /**
  * A Recurly client which allows the API key to be specified for each API call.
- * 
+ *
  * @author twerner
  *
  */
 public interface KeyAgnosticRecurlyClient {
-	
+
 	/* **************************************
-     * Generic CREATE/UPDATE 
+     * Generic CREATE/UPDATE
      * **************************************/
-	
+
 	public <T> T create(String path, XmlPayloadMap<?, ?> payload, Class<T> clazz, String apiKey);
-    
+
     public <T> T update(String path, XmlPayloadMap<?, ?> payload, Class<T> clazz, String apiKey);
-    
+
     /* **************************************
-     * 
+     *
      * **************************************/
 
 	/**
@@ -65,7 +64,7 @@ public interface KeyAgnosticRecurlyClient {
 
 	/**
 	 * Close the underlying http client
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void close() throws IOException;
 
@@ -73,7 +72,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Create Account
 	 * <p/>
 	 * Creates a new account. You may optionally include billing information.
-	 * 
+	 *
 	 * @param account
 	 *            account object
 	 * @return the newly created account object on success, null otherwise
@@ -84,7 +83,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Get Accounts
 	 * <p/>
 	 * Returns information about all accounts.
-	 * 
+	 *
 	 * @return account object on success, null otherwise
 	 */
 	public Accounts getAccounts(String apiKey);
@@ -93,7 +92,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Get Account
 	 * <p/>
 	 * Returns information about a single account.
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 * @return account object on success, null otherwise
@@ -104,7 +103,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Update Account
 	 * <p/>
 	 * Updates an existing account.
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 * @param account
@@ -119,7 +118,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Marks an account as closed and cancels any active subscriptions. Any
 	 * saved billing information will also be permanently removed from the
 	 * account.
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 */
@@ -131,7 +130,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Create a subscription
 	 * <p/>
 	 * Creates a subscription for an account.
-	 * 
+	 *
 	 * @param subscription
 	 *            Subscription object
 	 * @return the newly created Subscription object on success, null otherwise
@@ -142,20 +141,20 @@ public interface KeyAgnosticRecurlyClient {
 	 * Get a particular {@link Subscription} by it's UUID
 	 * <p/>
 	 * Returns information about a single account.
-	 * 
+	 *
 	 * @param uuid
 	 *            UUID of the subscription to lookup
 	 * @return Subscriptions for the specified user
 	 */
 	public Subscription getSubscription(final String uuid, final String apiKey);
 
-	
+
 	/**
 	 * Cancel a subscription
 	 * <p/>
 	 * Cancel a subscription so it remains active and then expires at the end of
 	 * the current bill cycle.
-	 * 
+	 *
 	 * @param subscription
 	 *            Subscription object
 	 * @return -?-
@@ -167,7 +166,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * <p/>
 	 * Reactivate a canceled subscription so it renews at the end of the current
 	 * bill cycle.
-	 * 
+	 *
 	 * @param subscription
 	 *            Subscription object
 	 * @return -?-
@@ -178,7 +177,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Update a particular {@link Subscription} by it's UUID
 	 * <p/>
 	 * Returns information about a single account.
-	 * 
+	 *
 	 * @param uuid
 	 *            UUID of the subscription to update
 	 * @return Subscription the updated subscription
@@ -189,7 +188,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Get the subscriptions for an {@link Account}.
 	 * <p/>
 	 * Returns information about a single {@link Account}.
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 * @return Subscriptions for the specified user
@@ -200,7 +199,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Get the subscriptions for an account.
 	 * <p/>
 	 * Returns information about a single account.
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 * @param status
@@ -225,7 +224,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Please note: this API end-point may be used to import billing information
 	 * without security codes (CVV). Recurly recommends requiring CVV from your
 	 * customers when collecting new or updated billing information.
-	 * 
+	 *
 	 * @param billingInfo
 	 *            billing info object to create or update
 	 * @return the newly created or update billing info object on success, null
@@ -237,7 +236,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Lookup an account's billing info
 	 * <p/>
 	 * Returns only the account's current billing information.
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 * @return the current billing info object associated with this account on
@@ -251,7 +250,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * You may remove any stored billing information for an account. If the
 	 * account has a subscription, the renewal will go into past due unless you
 	 * update the billing info before the renewal occurs
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 */
@@ -264,14 +263,14 @@ public interface KeyAgnosticRecurlyClient {
 	 * Lookup an account's transactions history
 	 * <p/>
 	 * Returns the account's transaction history
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 * @return the transaction history associated with this account on success,
 	 *         null otherwise
 	 */
 	public Transactions getAccountTransactions(final String accountCode, final String apiKey);
-	
+
 	/**
 	 * Get a transaction by its UUID
 	 * @param uuid
@@ -281,31 +280,31 @@ public interface KeyAgnosticRecurlyClient {
 
 	/**
 	 * Creates a {@link Transaction} throgh the Recurly API.
-	 * 
+	 *
 	 * @param trans
 	 *            The {@link Transaction} to create
 	 * @return The created {@link Transaction} object
 	 */
 	public Transaction createTransaction(final XmlPayloadMap<?, ?> trans, final String apiKey);
-	
+
 	/**
-	 * Attempts a refund on a {@link Transaction} through the Recurly API. 
+	 * Attempts a refund on a {@link Transaction} through the Recurly API.
 	 * See: http://docs.recurly.com/api/transactions
 	 * @param transactionId
 	 * @param refundInCents
 	 * @param apiKey
 	 */
 	public void partialRefundTransaction(final String transactionId, int refundInCents, final String apiKey);
-	
+
 	/**
 	 * @param accountCode Recurly account code
 	 * @param apiKey Recurly api key
-	 * @return an account's "active" {@link Redemption} or null 
+	 * @return an account's "active" {@link Redemption} or null
 	 */
 	public Redemption getAccountRedemption(final String accountCode, final String apiKey);
-	
+
 	public CouponRedeem redeemCoupon(final String couponCode, final XmlPayloadMap<?, ?> couponRedeem, final String apiKey);
-	
+
 	/**
      * Deactivate a coupon
      * <p/>
@@ -320,22 +319,22 @@ public interface KeyAgnosticRecurlyClient {
 	 * Lookup an account's invoices
 	 * <p/>
 	 * Returns the account's invoices
-	 * 
+	 *
 	 * @param accountCode
 	 *            recurly account id
 	 * @return the invoices associated with this account on success, null
 	 *         otherwise
 	 */
 	public Invoices getAccountInvoices(final String accountCode, final String apiKey);
-	
+
 
 	/**
-	 * Get an invoice by its invoice number. 
+	 * Get an invoice by its invoice number.
 	 * @param invoiceNumber
 	 * @return
 	 */
     public Invoice getInvoice(final String invoiceNumber, String apiKey);
-    
+
     public Redemptions getInvoiceRedemptions(final String invoiceNumber, String apiKey);
 
 
@@ -349,7 +348,7 @@ public interface KeyAgnosticRecurlyClient {
      * @return the invoices associated with this account on success, null otherwise
      */
     public Invoices getAccountInvoices(final String accountCode, String stateQuery, String apiKey);
-    
+
     /**
      * Lookup an account's collected invoices
      * <p/>
@@ -365,7 +364,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Create a Plan's info
 	 * <p/>
-	 * 
+	 *
 	 * @param plan
 	 *            The plan to create on recurly
 	 * @return the plan object as identified by the passed in ID
@@ -375,7 +374,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Get a Plan's details
 	 * <p/>
-	 * 
+	 *
 	 * @param planCode
 	 *            recurly id of plan
 	 * @return the plan object as identified by the passed in ID
@@ -385,7 +384,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Return all the plans
 	 * <p/>
-	 * 
+	 *
 	 * @return the plan object as identified by the passed in ID
 	 */
 	public Plans getPlans(final String apiKey);
@@ -393,7 +392,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Deletes a {@link Plan}
 	 * <p/>
-	 * 
+	 *
 	 * @param planCode
 	 *            The {@link Plan} object to delete.
 	 */
@@ -404,7 +403,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Create an AddOn to a Plan
 	 * <p/>
-	 * 
+	 *
 	 * @param planCode
 	 *            The planCode of the {@link Plan } to create within recurly
 	 * @param addOn
@@ -416,7 +415,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Get an AddOn's details
 	 * <p/>
-	 * 
+	 *
 	 * @param addOnCode
 	 *            recurly id of {@link AddOn}
 	 * @param planCode
@@ -429,7 +428,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Return all the {@link AddOn} for a {@link Plan}
 	 * <p/>
-	 * 
+	 *
 	 * @return the {@link AddOn} objects as identified by the passed plan ID
 	 */
 	public AddOn getAddOns(final String planCode, final String apiKey);
@@ -437,7 +436,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Deletes a {@link AddOn} for a Plan
 	 * <p/>
-	 * 
+	 *
 	 * @param planCode
 	 *            The {@link Plan} object.
 	 * @param addOnCode
@@ -450,7 +449,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Create a {@link Coupon}
 	 * <p/>
-	 * 
+	 *
 	 * @param coupon
 	 *            The coupon to create on recurly
 	 * @return the {@link Coupon} object
@@ -460,7 +459,7 @@ public interface KeyAgnosticRecurlyClient {
 	/**
 	 * Get a Coupon
 	 * <p/>
-	 * 
+	 *
 	 * @param couponCode
 	 *            The code for the {@link Coupon}
 	 * @return The {@link Coupon} object as identified by the passed in code
@@ -477,7 +476,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Fetch Subscription
 	 * <p/>
 	 * Returns subscription from a recurly.js token.
-	 * 
+	 *
 	 * @param recurlyToken
 	 *            token given by recurly.js
 	 * @return subscription object on success, null otherwise
@@ -488,7 +487,7 @@ public interface KeyAgnosticRecurlyClient {
 	 * Fetch BillingInfo
 	 * <p/>
 	 * Returns billing info from a recurly.js token.
-	 * 
+	 *
 	 * @param recurlyToken
 	 *            token given by recurly.js
 	 * @return billing info object on success, null otherwise
@@ -499,49 +498,49 @@ public interface KeyAgnosticRecurlyClient {
 	 * Fetch Invoice
 	 * <p/>
 	 * Returns invoice from a recurly.js token.
-	 * 
+	 *
 	 * @param recurlyToken
 	 *            token given by recurly.js
 	 * @return invoice object on success, null otherwise
 	 */
 	public Invoice fetchInvoice(final String recurlyToken, final String apiKey);
-	
+
 	/**
 	 * Gets a list of adjustments for an account.
-	 * 
+	 *
 	 * @param accountCode the account identifier
 	 * @return a list of adjustments corresponding to a particular account
 	 */
 	public Adjustments getAccountAdjustments(final String accountCode, final String apiKey);
-	
+
 	/**
 	 * Gets a list of adjustments for an account.
-	 * 
+	 *
 	 * @param accountCode the account identifier
 	 * @param state limit the adjustments returned by their state (The state of the adjustments to return: "pending" or "invoiced").
 	 * @return a list of adjustments corresponding to a particular account
 	 */
-	public Adjustments getAccountAdjustments(final String accountCode, final String state, final String apiKey);  
-	
+	public Adjustments getAccountAdjustments(final String accountCode, final String state, final String apiKey);
+
 	/**
 	 * Get a single adjustment based on its uuid
 	 * @param uuid
 	 * @param apiKey
-	 * @return 
+	 * @return
 	 */
 	public Adjustment getAdjustment(final String uuid, final String apiKey);
-	
+
     /**
      * Creates and adjustment on an account.
-     * 
+     *
      * @param accountCode the identifier of the account which the adjustment will be applied against
      * @param adjustmentData the adjustment which should be applied to an account
      * @return the adjustment that was created, if any
      */
-    public Adjustment createAdjustment(final String accountCode, final XmlPayloadMap<?, ?> adjustmentData, final String apiKey);    
+    public Adjustment createAdjustment(final String accountCode, final XmlPayloadMap<?, ?> adjustmentData, final String apiKey);
     /**
      * Deletes an adjustment, if possible
-     * 
+     *
      * @param adjustmentUUID the identifier of the adjustment
      */
     public void deleteAdjustment(final String adjustmentUUID, final String apiKey);
