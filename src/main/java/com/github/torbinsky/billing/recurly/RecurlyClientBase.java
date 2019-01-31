@@ -378,8 +378,11 @@ public abstract class RecurlyClientBase {
 	protected RecurlyAPICallResults<String> doSinglePageRecurlySafeCall(final BoundRequestBuilder builder, final RecurlyAPICallResults<String> pageResults, final String requestKey){
 		try {
 			final AtomicReference<Throwable> tRef = new AtomicReference<>();
-			RecurlyAPICallResults<String> result = builder.addHeader("Authorization", "Basic " + requestKey).addHeader("Accept", "application/xml")
-					.addHeader("Content-Type", "application/xml; charset=utf-8").execute(new AsyncCompletionHandler<RecurlyAPICallResults<String>>() {
+			RecurlyAPICallResults<String> result = builder.addHeader("Authorization", "Basic " + requestKey)
+					.addHeader("Accept", "application/xml")
+					.addHeader("Content-Type", "application/xml; charset=utf-8")
+					.addHeader("X-Api-Version", "2.7")
+					.execute(new AsyncCompletionHandler<RecurlyAPICallResults<String>>() {
 
 						@Override
 						public void onThrowable(Throwable t) {
