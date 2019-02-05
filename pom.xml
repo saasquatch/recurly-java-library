@@ -61,9 +61,9 @@
 	</developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/torbinsky/recurly-java-library.git</connection>
-        <developerConnection>scm:git:git@github.com:torbinsky/recurly-java-library.git</developerConnection>
-        <url>http://github.com/torbinsky/recurly-java-library/tree/master</url>
+        <connection>scm:git:git://github.com/saasquatch/recurly-java-library.git</connection>
+        <developerConnection>scm:git:git@github.com:saasquatch/recurly-java-library.git</developerConnection>
+        <url>http://github.com/saasquatch/recurly-java-library/tree/master</url>
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -473,7 +473,7 @@
     </profiles>
     <issueManagement>
         <system>Github</system>
-        <url>http://github.com/torbinsky/recurly-java-library</url>
+        <url>http://github.com/saasquatch/recurly-java-library</url>
     </issueManagement>
     <distributionManagement>
         <repository>
