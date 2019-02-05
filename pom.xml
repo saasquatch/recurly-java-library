@@ -475,4 +475,11 @@
         <system>Github</system>
         <url>http://github.com/torbinsky/recurly-java-library</url>
     </issueManagement>
+    <distributionManagement>
+        <repository>
+            <id>bintray-saasquatch-coreapp-libs</id>
+            <name>saasquatch-coreapp-libs</name>
+            <url>https://api.bintray.com/maven/saasquatch/coreapp-libs/recurly-java-library/;publish=1</url>
+        </repository>
+    </distributionManagement>
 </project>
