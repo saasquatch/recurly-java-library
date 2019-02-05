@@ -57,9 +57,9 @@ import com.ning.http.client.Response;
 
 /**
  * Basic/common client features such as managing the AsyncHttpClient etc...
- * 
+ *
  * @author twerner
- * 
+ *
  */
 public abstract class RecurlyClientBase {
 
@@ -169,17 +169,17 @@ public abstract class RecurlyClientBase {
 	protected <T> List<T> doGETs(final String resource, final Class<T> clazz) {
 		return doGETs(resource, null, clazz);
 	}
-	
+
 	protected <T> List<T> doGETsByUrl(final String url, final Class<T> clazz){
 		if(debug()){
-			log.info("Msg to Recurly API [GET] :: URL : {}", url); 
+			log.info("Msg to Recurly API [GET] :: URL : {}", url);
 		}
-		return callRecurlySafe(client.prepareGet(url.toString()), clazz, true); 
+		return callRecurlySafe(client.prepareGet(url.toString()), clazz, true);
 	}
 
 	protected <T> List<T> doGETs(final String resource, String paramString, final Class<T> clazz) {
 		String url = buildRecurlyUrl(resource, paramString);
-		return doGETsByUrl(url, clazz); 
+		return doGETsByUrl(url, clazz);
 	}
 
 	protected List<String> doGET(final String resource, String paramString) {
@@ -275,9 +275,9 @@ public abstract class RecurlyClientBase {
 	protected <T> T doGET(final String resource, final Class<T> clazz) {
 		return doGET(resource, null, clazz);
 	}
-	
+
 	protected <T> T doGETByUrl(final String url, final Class<T> clazz){
-		return returnSingleResult(doGETsByUrl(url, clazz)); 
+		return returnSingleResult(doGETsByUrl(url, clazz));
 	}
 
 	protected <T> T doGET(final String resource, String paramString, final Class<T> clazz) {
@@ -308,13 +308,13 @@ public abstract class RecurlyClientBase {
 	protected void doDELETE(final String resource) {
 		callRecurlySafe(client.prepareDelete(baseUrl + resource), null, false);
 	}
-	
+
 	protected void doDELETE(final String resource, Map<String,String> queryParameters){
-		BoundRequestBuilder prepareDelete = client.prepareDelete(baseUrl + resource); 
+		BoundRequestBuilder prepareDelete = client.prepareDelete(baseUrl + resource);
 		for(String key : queryParameters.keySet()){
-			prepareDelete = prepareDelete.addQueryParameter(key, queryParameters.get(key)); 
+			prepareDelete = prepareDelete.addQueryParameter(key, queryParameters.get(key));
 		}
-		callRecurlySafe(prepareDelete, null, false); 
+		callRecurlySafe(prepareDelete, null, false);
 	}
 
 	protected <T> T returnSingleResult(List<T> results) {
@@ -328,7 +328,7 @@ public abstract class RecurlyClientBase {
 
 		return null;
 	}
-	
+
 	protected <T> List<T> callRecurlySafe(final AsyncHttpClient.BoundRequestBuilder builder, @Nullable final Class<T> clazz, final boolean parseResult) {
 		List<String> results = callRecurlySafe(builder);
 		if(parseResult){
@@ -339,7 +339,7 @@ public abstract class RecurlyClientBase {
 				throw new RecurlySerializationException("Error while calling Recurly", e);
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -349,23 +349,26 @@ public abstract class RecurlyClientBase {
 		while(results.hasNextPage()){
 			doSinglePageRecurlySafeCall(client.prepareGet(results.getNextPageUrl()), results, requestKey);
 		}
-		
+
 		return results.getResults();
 	}
-	
+
 	protected RecurlyAPICallResults<String> doSinglePageRecurlySafeCall(final AsyncHttpClient.BoundRequestBuilder builder, final RecurlyAPICallResults<String> pageResults, final String requestKey){
 		try {
 			final AtomicReference<Throwable> tRef = new AtomicReference<>();
-			RecurlyAPICallResults<String> result = builder.addHeader("Authorization", "Basic " + requestKey).addHeader("Accept", "application/xml")
-					.addHeader("Content-Type", "application/xml; charset=utf-8").execute(new AsyncCompletionHandler<RecurlyAPICallResults<String>>() {
-						
+			RecurlyAPICallResults<String> result = builder.addHeader("Authorization", "Basic " + requestKey)
+					.addHeader("Accept", "application/xml")
+					.addHeader("Content-Type", "application/xml; charset=utf-8")
+					.addHeader("X-Api-Version", "2.7")
+					.execute(new AsyncCompletionHandler<RecurlyAPICallResults<String>>() {
+
 						@Override
 						public void onThrowable(Throwable t) {
 							tRef.set(t); // We do this because it seems that Ning sporadically smothers the exceptions from onCompleted
 						}
 
 						@Override
-						public RecurlyAPICallResults<String> onCompleted(final Response response) throws Exception {						
+						public RecurlyAPICallResults<String> onCompleted(final Response response) throws Exception {
 							if (response.getStatusCode() >= 300) {
 								log.debug("Recurly error whilst calling: status[{}] body{}", response.getStatusCode(), response.getUri());
 								log.debug("Recurly error: {}", response.getResponseBody());
@@ -380,7 +383,7 @@ public abstract class RecurlyClientBase {
 								}
 								pageResults.getResults().add(payload);
 								pageResults.setNextPageUrl(getPageUrlFromResponseHeader(response));
-								
+
 								return pageResults;
 							} finally {
 								closeStream(in);
@@ -404,7 +407,7 @@ public abstract class RecurlyClientBase {
 				}
 			}
 			// ---> End hacky workaround <---
-			
+
 			return result;
 		} catch (IOException e) {
 			log.warn("Error while calling Recurly", e);
@@ -422,7 +425,7 @@ public abstract class RecurlyClientBase {
 			throw new RecurlyException("Interrupted while calling Recurly", e);
 		}
 	}
-	
+
 	public static RecurlyAPIException unwrapRecurlyAPIException(Throwable t){
 		do {
 			if (t instanceof RecurlyAPIException) {
@@ -430,7 +433,7 @@ public abstract class RecurlyClientBase {
 			}
 			t = t.getCause();
 		}while(t != null);
-		
+
 		return null;
 	}
 
@@ -442,7 +445,7 @@ public abstract class RecurlyClientBase {
 		if (header != null) {
 			/*
 			 * EXAMPLE:
-			 * 
+			 *
 			 * Status: 200 OK X-Records: 204 Link:
 			 * <https://api.recurly.com/v2/transactions>; rel="start",
 			 * <https://api.recurly.com/v2/transactions?cursor=-1241412>;
