@@ -24,10 +24,10 @@
     <groupId>com.github.torbinsky.billing</groupId>
     <artifactId>recurly-java-library</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.40-SNAPSHOT</version>
+    <version>0.0.1-testapp-1</version>
     <name>Recurly Java library</name>
     <description>Java library for Recurly</description>
-    <url>http://github.com/torbinsky/recurly-java-library</url>
+    <url>http://github.com/saasquatch/recurly-java-library</url>
     <inceptionYear>2013</inceptionYear>
     <licenses>
         <license>
