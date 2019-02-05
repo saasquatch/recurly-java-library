@@ -376,7 +376,7 @@ public abstract class RecurlyClientBase {
 		builder.headers.put("Content-Type", "application/xml; charset=utf-8");
 		builder.headers.put("X-Api-Version", "2.7");
 		try {
-			final HttpURLConnection conn = builder.toConn();
+			final HttpURLConnection conn = builder.exec();
 			final String payload;
 			try (InputStream in = conn.getInputStream()) {
 				payload = convertStreamToString(in);
@@ -533,9 +533,11 @@ public abstract class RecurlyClientBase {
 			return this;
 		}
 
-		public HttpURLConnection toConn() throws IOException {
+		public HttpURLConnection exec() throws IOException {
 			final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 			conn.setRequestMethod(method);
+			conn.setConnectTimeout(5000);
+			conn.setReadTimeout(15000);
 			headers.forEach(conn::setRequestProperty);
 			if (payload != null) {
 				conn.setDoOutput(true);
