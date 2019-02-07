@@ -17,6 +17,7 @@ package com.github.torbinsky.billing.recurly;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -377,11 +378,13 @@ public abstract class RecurlyClientBase {
 		builder.headers.put("X-Api-Version", "2.7");
 		try {
 			final HttpURLConnection conn = builder.exec();
-			final String payload;
-			try (InputStream in = conn.getInputStream()) {
-				payload = convertStreamToString(in);
-			}
 			final int statusCode = conn.getResponseCode();
+			String payload;
+			try (InputStream in = statusCode > 399 ? conn.getErrorStream() : conn.getInputStream()) {
+				payload = in == null ? "" : convertStreamToString(in);
+			} catch (FileNotFoundException e) {
+				payload = "";
+			}
 			if (statusCode >= 300) {
 				log.debug("Recurly error whilst calling: status[{}] body{}", statusCode, conn.getURL());
 				log.debug("Recurly error: {}", payload);
