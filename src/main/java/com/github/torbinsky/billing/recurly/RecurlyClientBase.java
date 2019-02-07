@@ -209,7 +209,7 @@ public abstract class RecurlyClientBase {
 				log.info("Payload for [POST]:: {}", xmlPayload);
 			}
 		} catch (IOException e) {
-			log.warn("Unable to serialize {} object as XML: {}", clazz.getName(), payload.toString());
+			log.warn("Unable to serialize {} object as XML: {}", clazz.getName(), payload.toString(), e);
 			throw new RecurlySerializationException("Unable to serialize {} object as XML: {}", e);
 		}
 
@@ -227,7 +227,7 @@ public abstract class RecurlyClientBase {
 				log.info("Payload for [PUT]:: {}", xmlPayload);
 			}
 		} catch (IOException e) {
-			log.warn("Unable to serialize {} object as XML: {}", clazz.getName(), payload.toString());
+			log.warn("Unable to serialize {} object as XML: {}", clazz.getName(), payload.toString(), e);
 			throw new RecurlySerializationException("Unable to serialize {} object as XML: {}", e);
 		}
 
@@ -245,7 +245,7 @@ public abstract class RecurlyClientBase {
 				log.info("Payload for [POST]:: {}", xmlPayload);
 			}
 		} catch (IOException e) {
-			log.warn("Unable to serialize {} object as XML: {}", clazz.getName(), payload.toString());
+			log.warn("Unable to serialize {} object as XML: {}", clazz.getName(), payload.toString(), e);
 			throw new RecurlySerializationException("Unable to serialize {} object as XML: {}", e);
 		}
 
@@ -263,7 +263,7 @@ public abstract class RecurlyClientBase {
 				log.info("Payload for [PUT]:: {}", xmlPayload);
 			}
 		} catch (IOException e) {
-			log.warn("Unable to serialize {} object as XML: {}", clazz.getName(), payload.toString());
+			log.warn("Unable to serialize {} object as XML: {}", clazz.getName(), payload.toString(), e);
 			throw new RecurlySerializationException("Unable to serialize {} object as XML: {}", e);
 		}
 
@@ -445,7 +445,7 @@ public abstract class RecurlyClientBase {
 						try {
 							return new URL(p[0].trim().replaceAll("<|>", "")).toString();
 						} catch (IOException e) {
-							log.warn("Unable to understand pagination url[" + p[0] + "]");
+							log.warn("Unable to understand pagination url[" + p[0] + "]", e);
 						}
 					}
 				}
@@ -481,7 +481,7 @@ public abstract class RecurlyClientBase {
 			try {
 				in.close();
 			} catch (IOException e) {
-				log.warn("Failed to close http-client - provided InputStream: {}", e.getLocalizedMessage());
+				log.warn("Failed to close http-client - provided InputStream: {}", e.getLocalizedMessage(), e);
 			}
 		}
 	}
