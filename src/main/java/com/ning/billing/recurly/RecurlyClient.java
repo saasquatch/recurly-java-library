@@ -17,6 +17,7 @@
 
 package com.ning.billing.recurly;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -137,6 +138,8 @@ public class RecurlyClient {
     public static final String FETCH_RESOURCE = "/recurly_js/result";
 
     private static final List<String> validHosts = Arrays.asList("recurly.com");
+
+    private static final ThreadLocal<String> keyOverride = new ThreadLocal<String>();
 
     /**
      * Checks a system property to see if debugging output is
@@ -2373,10 +2376,14 @@ public class RecurlyClient {
     }
 
     private void clientRequestBuilderCommon(HttpUriRequest requestBuilder) {
-        requestBuilder.addHeader("Authorization", "Basic " + key);
+        requestBuilder.addHeader("Authorization", "Basic " + getKey());
         requestBuilder.addHeader("X-Api-Version", RECURLY_API_VERSION);
         requestBuilder.addHeader(HttpHeaders.USER_AGENT, userAgent);
         requestBuilder.addHeader("Accept-Language", acceptLanguage);
+    }
+
+    private String getKey() {
+    	return MoreObjects.firstNonNull(keyOverride.get(), key);
     }
 
     private String convertStreamToString(final java.io.InputStream is) {
@@ -2461,4 +2468,32 @@ public class RecurlyClient {
         final Matcher matcher = TAG_FROM_GIT_DESCRIBE_PATTERN.matcher(gitDescribe);
         return matcher.find() ? matcher.group(1) : null;
     }
+
+    /**
+     * Set the keyOverride ThreadLocal with a key, and resets it on close.
+     */
+    static class KeyOverrideCloseable implements Closeable {
+
+    	private String originalOverride;
+
+		KeyOverrideCloseable(String key) {
+    		this.originalOverride = keyOverride.get();
+    		keyOverride.set(key);
+		}
+
+		@Override
+		public void close() {
+			keyOverride.set(originalOverride);
+		}
+
+    }
+
+    /**
+     * Override the {@link #keyOverride} ThreadLocal with the given key, and returns a
+     * {@link Closeable} that will revert the original key override on close.
+     */
+    KeyOverrideCloseable overrideKey(String key) {
+    	return new KeyOverrideCloseable(key);
+    }
+
 }
