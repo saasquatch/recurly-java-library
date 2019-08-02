@@ -375,7 +375,7 @@ public abstract class RecurlyClientBase {
 		builder.headers.put("Authorization", "Basic " + requestKey);
 		builder.headers.put("Accept", "application/xml");
 		builder.headers.put("Content-Type", "application/xml; charset=utf-8");
-		builder.headers.put("X-Api-Version", "2.7");
+		builder.headers.put("X-Api-Version", "2.21");
 		try {
 			final HttpURLConnection conn = builder.exec();
 			final int statusCode = conn.getResponseCode();
