@@ -212,10 +212,10 @@ public class RecurlyClient {
     public synchronized void close() {
         if (client != null) {
             try {
-				client.close();
-			} catch (IOException e) {
-				throw new UndeclaredThrowableException(e);
-			}
+                client.close();
+            } catch (IOException e) {
+                throw new UndeclaredThrowableException(e);
+            }
         }
     }
 
@@ -2155,7 +2155,7 @@ public class RecurlyClient {
         final CloseableHttpResponse response;
         final InputStream pdfInputStream;
         try {
-        	final HttpGet builder = new HttpGet(url);
+            final HttpGet builder = new HttpGet(url);
             clientRequestBuilderCommon(builder);
             builder.addHeader("Accept", "application/pdf");
             builder.addHeader("Content-Type", "application/pdf");
@@ -2232,10 +2232,10 @@ public class RecurlyClient {
         validateHost(url);
 
         try {
-			return callRecurlyNoContent(new HttpHead(url));
-		} catch (IOException e) {
-			throw new UndeclaredThrowableException(e);
-		}
+            return callRecurlyNoContent(new HttpHead(url));
+        } catch (IOException e) {
+            throw new UndeclaredThrowableException(e);
+        }
     }
 
     private void doDELETE(final String resource) {
@@ -2245,20 +2245,20 @@ public class RecurlyClient {
     }
 
     private HeaderGroup callRecurlyNoContent(final HttpUriRequest builder) throws IOException {
-    	clientRequestBuilderCommon(builder);
+        clientRequestBuilderCommon(builder);
         builder.addHeader("Accept", "application/xml");
         builder.addHeader("Content-Type", "application/xml; charset=utf-8");
         CloseableHttpResponse response = null;
         try {
-        	response = client.execute(builder);
-        	final HeaderGroup headerGroup = new HeaderGroup();
-        	final HeaderIterator headerIterator = response.headerIterator();
-        	while (headerIterator.hasNext()) {
-        		headerGroup.addHeader(headerIterator.nextHeader());
-        	}
+            response = client.execute(builder);
+            final HeaderGroup headerGroup = new HeaderGroup();
+            final HeaderIterator headerIterator = response.headerIterator();
+            while (headerIterator.hasNext()) {
+                headerGroup.addHeader(headerIterator.nextHeader());
+            }
             return headerGroup;
         } finally {
-        	if (response != null) response.close();
+            if (response != null) response.close();
         }
     }
 
@@ -2292,7 +2292,7 @@ public class RecurlyClient {
 
     private <T> T callRecurlyXmlContent(final HttpUriRequest builder, @Nullable final Class<T> clazz)
             throws IOException, ExecutionException, InterruptedException {
-    	clientRequestBuilderCommon(builder);
+        clientRequestBuilderCommon(builder);
         builder.addHeader("Accept", "application/xml");
         builder.addHeader("Content-Type", "application/xml; charset=utf-8");
         final CloseableHttpResponse response = client.execute(builder);
@@ -2383,7 +2383,7 @@ public class RecurlyClient {
     }
 
     private String getKey() {
-    	return MoreObjects.firstNonNull(keyOverride.get(), key);
+        return MoreObjects.firstNonNull(keyOverride.get(), key);
     }
 
     private String convertStreamToString(final java.io.InputStream is) {
@@ -2474,17 +2474,17 @@ public class RecurlyClient {
      */
     static class KeyOverrideCloseable implements Closeable {
 
-    	private String originalOverride;
+        private String originalOverride;
 
-		KeyOverrideCloseable(String key) {
-    		this.originalOverride = keyOverride.get();
-    		keyOverride.set(key);
-		}
+        KeyOverrideCloseable(String key) {
+            this.originalOverride = keyOverride.get();
+            keyOverride.set(key);
+        }
 
-		@Override
-		public void close() {
-			keyOverride.set(originalOverride);
-		}
+        @Override
+        public void close() {
+            keyOverride.set(originalOverride);
+        }
 
     }
 
@@ -2493,7 +2493,7 @@ public class RecurlyClient {
      * {@link Closeable} that will revert the original key override on close.
      */
     KeyOverrideCloseable overrideKey(String key) {
-    	return new KeyOverrideCloseable(key);
+        return new KeyOverrideCloseable(key);
     }
 
 }
