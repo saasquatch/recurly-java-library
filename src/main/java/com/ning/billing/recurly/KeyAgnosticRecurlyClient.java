@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import org.joda.time.DateTime;
 
+import com.ning.billing.recurly.RecurlyClient.RecurlyKeyOverrideCloseable;
 import com.ning.billing.recurly.model.Account;
 import com.ning.billing.recurly.model.AccountAcquisition;
 import com.ning.billing.recurly.model.AccountBalance;
@@ -54,382 +55,388 @@ import com.ning.billing.recurly.model.Transactions;
 import com.ning.billing.recurly.model.Usage;
 import com.ning.billing.recurly.model.Usages;
 
-public class KeyAgnosticRecurlyClient extends RecurlyClient {
+public class KeyAgnosticRecurlyClient {
 
     // Just a placeholder that will not be used
     private static final String FAKE_API_KEY = KeyAgnosticRecurlyClient.class.getName();
 
+    private final RecurlyClient client;
+
     public KeyAgnosticRecurlyClient() {
-        super(FAKE_API_KEY);
+        this.client = new RecurlyClient(FAKE_API_KEY);
     }
 
     public KeyAgnosticRecurlyClient(final String subDomain) {
-        super(FAKE_API_KEY, subDomain);
+        this.client = new RecurlyClient(FAKE_API_KEY, subDomain);
     }
 
     public KeyAgnosticRecurlyClient(final String host, final int port, final String version) {
-        super(FAKE_API_KEY, host, port, version);
+        this.client = new RecurlyClient(FAKE_API_KEY, host, port, version);
     }
 
     public KeyAgnosticRecurlyClient(final String scheme, final String host, final int port, final String version) {
-        super(FAKE_API_KEY, scheme, host, port, version);
+        this.client = new RecurlyClient(FAKE_API_KEY, scheme, host, port, version);
     }
 
+    public RecurlyClient getRecurlyClient() {
+		return client;
+	}
+
     public Account createAccount(final Account account, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return createAccount(account);
+            return client.createAccount(account);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Accounts getAccounts(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return getAccounts();
+            return client.getAccounts();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Accounts getAccounts(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return getAccounts(params);
+            return client.getAccounts(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Integer getAccountsCount(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountsCount(params);
+        	return client.getAccountsCount(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Coupons getCoupons(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCoupons();
+        	return client.getCoupons();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Coupons getCoupons(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCoupons(params);
+        	return client.getCoupons(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Integer getCouponsCount(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponsCount(params);
+        	return client.getCouponsCount(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Account getAccount(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccount(accountCode);
+        	return client.getAccount(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Account updateAccount(final String accountCode, final Account account, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updateAccount(accountCode, account);
+        	return client.updateAccount(accountCode, account);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public AccountBalance getAccountBalance(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountBalance(accountCode);
+        	return client.getAccountBalance(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void closeAccount(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	closeAccount(accountCode);
+        	client.closeAccount(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Account reopenAccount(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return reopenAccount(accountCode);
+        	return client.reopenAccount(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Accounts getChildAccounts(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getChildAccounts(accountCode);
+        	return client.getChildAccounts(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Adjustments getAccountAdjustments(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return getAccountAdjustments(accountCode);
+            return client.getAccountAdjustments(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountAdjustments(accountCode, type);
+        	return client.getAccountAdjustments(accountCode, type);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, final Adjustments.AdjustmentState state, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountAdjustments(accountCode, type, state);
+        	return client.getAccountAdjustments(accountCode, type, state);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, final Adjustments.AdjustmentState state, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountAdjustments(accountCode, type, state, params);
+        	return client.getAccountAdjustments(accountCode, type, state, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Adjustment getAdjustment(final String adjustmentUuid, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAdjustment(adjustmentUuid);
+        	return client.getAdjustment(adjustmentUuid);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Adjustment createAccountAdjustment(final String accountCode, final Adjustment adjustment, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createAccountAdjustment(accountCode, adjustment);
+        	return client.createAccountAdjustment(accountCode, adjustment);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void deleteAccountAdjustment(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deleteAccountAdjustment(accountCode);
+        	client.deleteAccountAdjustment(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void deleteAdjustment(final String adjustmentUuid, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deleteAdjustment(adjustmentUuid);
+        	client.deleteAdjustment(adjustmentUuid);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription createSubscription(final Subscription subscription, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createSubscription(subscription);
+        	return client.createSubscription(subscription);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription previewSubscription(final Subscription subscription, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return previewSubscription(subscription);
+        	return client.previewSubscription(subscription);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription getSubscription(final String uuid, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getSubscription(uuid);
+        	return client.getSubscription(uuid);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Subscription cancelSubscription(final Subscription subscription, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return cancelSubscription(subscription);
+        	return client.cancelSubscription(subscription);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription pauseSubscription(final String subscriptionUuid, final int remainingPauseCycles, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return pauseSubscription(subscriptionUuid, remainingPauseCycles);
+        	return client.pauseSubscription(subscriptionUuid, remainingPauseCycles);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription resumeSubscription(final String subscriptionUuid, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return resumeSubscription(subscriptionUuid);
+            return client.resumeSubscription(subscriptionUuid);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription postponeSubscription(final Subscription subscription, final DateTime renewaldate, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return postponeSubscription(subscription, renewaldate);
+            return client.postponeSubscription(subscription, renewaldate);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void terminateSubscription(final Subscription subscription, final RefundOption refund, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	terminateSubscription(subscription, refund);
+        	client.terminateSubscription(subscription, refund);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription reactivateSubscription(final Subscription subscription, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return reactivateSubscription(subscription);
+        	return client.reactivateSubscription(subscription);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Subscription updateSubscription(final String uuid, final SubscriptionUpdate subscriptionUpdate, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updateSubscription(uuid, subscriptionUpdate);
+        	return client.updateSubscription(uuid, subscriptionUpdate);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription updateSubscriptionPreview(final String uuid, final SubscriptionUpdate subscriptionUpdate, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updateSubscriptionPreview(uuid, subscriptionUpdate);
+        	return client.updateSubscriptionPreview(uuid, subscriptionUpdate);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscription updateSubscriptionNotes(final String uuid, final SubscriptionNotes subscriptionNotes, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updateSubscriptionNotes(uuid, subscriptionNotes);
+        	return client.updateSubscriptionNotes(uuid, subscriptionNotes);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Subscriptions getAccountSubscriptionsWithApiKey(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return getAccountSubscriptions(accountCode);
+            return client.getAccountSubscriptions(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscriptions getSubscriptions(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getSubscriptions();
+        	return client.getSubscriptions();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscriptions getSubscriptions(final SubscriptionState state, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getSubscriptions(state, params);
+        	return client.getSubscriptions(state, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Integer getSubscriptionsCount(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getSubscriptionsCount(params);
+        	return client.getSubscriptionsCount(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Subscriptions getAccountSubscriptions(final String accountCode, final SubscriptionState state, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountSubscriptions(accountCode, state, params);
+        	return client.getAccountSubscriptions(accountCode, state, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Usage postSubscriptionUsage(final String subscriptionCode, final String addOnCode, final Usage usage, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return postSubscriptionUsage(subscriptionCode, addOnCode, usage);
+        	return client.postSubscriptionUsage(subscriptionCode, addOnCode, usage);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Usages getSubscriptionUsages(final String subscriptionCode, final String addOnCode, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getSubscriptionUsages(subscriptionCode, addOnCode, params);
+        	return client.getSubscriptionUsages(subscriptionCode, addOnCode, params);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -437,18 +444,18 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
     @Deprecated
 	public Subscriptions getAccountSubscriptionsWithApiKey(String accountCode, String status, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountSubscriptions(accountCode, status);
+        	return client.getAccountSubscriptions(accountCode, status);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public BillingInfo createOrUpdateBillingInfo(final String accountCode, final BillingInfo billingInfo, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createOrUpdateBillingInfo(accountCode, billingInfo);
+        	return client.createOrUpdateBillingInfo(accountCode, billingInfo);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -456,108 +463,108 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
 	@Deprecated
 	public BillingInfo createOrUpdateBillingInfo(final BillingInfo billingInfo, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createOrUpdateBillingInfo(billingInfo);
+        	return client.createOrUpdateBillingInfo(billingInfo);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public BillingInfo getBillingInfo(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getBillingInfo(accountCode);
+        	return client.getBillingInfo(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public void clearBillingInfo(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	clearBillingInfo(accountCode);
+        	client.clearBillingInfo(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
 	}
 
     public AccountNotes getAccountNotes(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountNotes(accountCode);
+        	return client.getAccountNotes(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Transactions getAccountTransactions(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return getAccountTransactions(accountCode);
+            return client.getAccountTransactions(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Transactions getAccountTransactions(final String accountCode, final TransactionState state, final TransactionType type, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountTransactions(accountCode, state, type, params);
+        	return client.getAccountTransactions(accountCode, state, type, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Transactions getTransactions(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return getTransactions();
+            return client.getTransactions();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Transactions getTransactions(final TransactionState state, final TransactionType type, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getTransactions(state, type, params);
+        	return client.getTransactions(state, type, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Integer getTransactionsCount(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-            return getTransactionsCount(params);
+            return client.getTransactionsCount(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Transaction getTransaction(final String transactionId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getTransaction(transactionId);
+        	return client.getTransaction(transactionId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Transaction createTransaction(final Transaction trans, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createTransaction(trans);
+        	return client.createTransaction(trans);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void refundTransaction(final String transactionId, @Nullable final BigDecimal amount, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	refundTransaction(transactionId, amount);
+        	client.refundTransaction(transactionId, amount);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -565,27 +572,27 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
     @Deprecated
     public Invoice getInvoice(final Integer invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getInvoice(invoiceId);
+        	return client.getInvoice(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Invoice getInvoice(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getInvoice(invoiceId);
+        	return client.getInvoice(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Invoice updateInvoice(final String invoiceId, final Invoice invoice, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updateInvoice(invoiceId, invoice);
+        	return client.updateInvoice(invoiceId, invoice);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -593,188 +600,164 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
 	@Deprecated
     public InputStream getInvoicePdf(final Integer invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getInvoicePdf(invoiceId);
+        	return client.getInvoicePdf(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public InputStream getInvoicePdf(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getInvoicePdf(invoiceId);
+        	return client.getInvoicePdf(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Invoices getInvoices(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getInvoices();
+        	return client.getInvoices();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Invoices getInvoices(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getInvoices(params);
+        	return client.getInvoices(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public int getInvoicesCount(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getInvoicesCount(params);
+        	return client.getInvoicesCount(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Transactions getInvoiceTransactions(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getInvoiceTransactions(invoiceId);
+        	return client.getInvoiceTransactions(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Invoices getAccountInvoices(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountInvoices(accountCode);
+        	return client.getAccountInvoices(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Invoices getOriginalInvoices(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getOriginalInvoices(invoiceId);
+        	return client.getOriginalInvoices(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
-    /**
-     * Refund an invoice given an open amount
-     * <p/>
-     * Returns the refunded invoice
-     *
-     * @deprecated Please use refundInvoice(String, InvoiceRefund)
-     *
-     * @param invoiceId The id of the invoice to refund
-     * @param amountInCents The open amount to refund
-     * @param method If credit line items exist on the invoice, this parameter specifies which refund method to use first
-     * @return the refunded invoice
-     */
-    @Override
-    @Deprecated
-    public Invoice refundInvoice(final String invoiceId, final Integer amountInCents, final RefundMethod method) {
-        final InvoiceRefund invoiceRefund = new InvoiceRefund();
-        invoiceRefund.setRefundMethod(method);
-        invoiceRefund.setAmountInCents(amountInCents);
-
-        return refundInvoice(invoiceId, invoiceRefund);
+	@Deprecated
+    public Invoice refundInvoice(final String invoiceId, final Integer amountInCents, final RefundMethod method, String apiKey) {
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
+        try {
+        	return client.refundInvoice(invoiceId, amountInCents, method);
+        } finally {
+        	keyOverrideCloseable.close();
+        }
     }
 
-    /**
-     * Refund an invoice given some line items
-     * <p/>
-     * Returns the refunded invoice
-     *
-     * @deprecated Please use refundInvoice(String, InvoiceRefund)
-     *
-     * @param invoiceId The id of the invoice to refund
-     * @param lineItems The list of adjustment refund objects
-     * @param method If credit line items exist on the invoice, this parameter specifies which refund method to use first
-     * @return the refunded invoice
-     */
-    @Override
-    @Deprecated
-    public Invoice refundInvoice(final String invoiceId, List<AdjustmentRefund> lineItems, final RefundMethod method) {
-        final InvoiceRefund invoiceRefund = new InvoiceRefund();
-        invoiceRefund.setRefundMethod(method);
-        invoiceRefund.setLineItems(lineItems);
-
-        return refundInvoice(invoiceId, invoiceRefund);
+	@Deprecated
+    public Invoice refundInvoice(final String invoiceId, List<AdjustmentRefund> lineItems, final RefundMethod method, String apiKey) {
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
+        try {
+        	return client.refundInvoice(invoiceId, lineItems, method);
+        } finally {
+        	keyOverrideCloseable.close();
+        }
     }
 
     public Invoice refundInvoice(final String invoiceId, final InvoiceRefund refundOptions, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return refundInvoice(invoiceId, refundOptions);
+        	return client.refundInvoice(invoiceId, refundOptions);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public ShippingAddresses getAccountShippingAddresses(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountShippingAddresses(accountCode);
+        	return client.getAccountShippingAddresses(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public ShippingAddress getShippingAddress(final String accountCode, final long shippingAddressId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getShippingAddress(accountCode, shippingAddressId);
+        	return client.getShippingAddress(accountCode, shippingAddressId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public ShippingAddress createShippingAddress(final String accountCode, final ShippingAddress shippingAddress, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createShippingAddress(accountCode, shippingAddress);
+        	return client.createShippingAddress(accountCode, shippingAddress);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public ShippingAddress updateShippingAddress(final String accountCode, final long shippingAddressId, ShippingAddress shippingAddress, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updateShippingAddress(accountCode, shippingAddressId, shippingAddress);
+        	return client.updateShippingAddress(accountCode, shippingAddressId, shippingAddress);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void deleteShippingAddress(final String accountCode, final long shippingAddressId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deleteShippingAddress(accountCode, shippingAddressId);
+        	client.deleteShippingAddress(accountCode, shippingAddressId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Invoices getAccountInvoices(final String accountCode, final InvoiceState state, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountInvoices(accountCode, state, params);
+        	return client.getAccountInvoices(accountCode, state, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public InvoiceCollection postAccountInvoice(final String accountCode, final Invoice invoice, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return postAccountInvoice(accountCode, invoice);
+        	return client.postAccountInvoice(accountCode, invoice);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -782,18 +765,18 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
     @Deprecated
     public Invoice markInvoiceSuccessful(final Integer invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return markInvoiceSuccessful(invoiceId);
+        	return client.markInvoiceSuccessful(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Invoice markInvoiceSuccessful(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return markInvoiceSuccessful(invoiceId);
+        	return client.markInvoiceSuccessful(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -801,36 +784,36 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
     @Deprecated
     public InvoiceCollection markInvoiceFailed(final Integer invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return markInvoiceFailed(invoiceId);
+        	return client.markInvoiceFailed(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public InvoiceCollection markInvoiceFailed(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return markInvoiceFailed(invoiceId);
+        	return client.markInvoiceFailed(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Invoice forceCollectInvoice(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return forceCollectInvoice(invoiceId);
+        	return client.forceCollectInvoice(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Invoice voidInvoice(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return voidInvoice(invoiceId);
+        	return client.voidInvoice(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -838,198 +821,198 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
     @Deprecated
     public Transaction enterOfflinePayment(final Integer invoiceId, final Transaction payment, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return enterOfflinePayment(invoiceId, payment);
+        	return client.enterOfflinePayment(invoiceId, payment);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Transaction enterOfflinePayment(final String invoiceId, final Transaction payment, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return enterOfflinePayment(invoiceId, payment);
+        	return client.enterOfflinePayment(invoiceId, payment);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Plan createPlan(final Plan plan, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createPlan(plan);
+        	return client.createPlan(plan);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Plan updatePlan(final Plan plan, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updatePlan(plan);
+        	return client.updatePlan(plan);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Plan getPlan(final String planCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getPlan(planCode);
+        	return client.getPlan(planCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Plans getPlans(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getPlans();
+        	return client.getPlans();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Plans getPlans(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getPlans(params);
+        	return client.getPlans(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Integer getPlansCount(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getPlansCount(params);
+        	return client.getPlansCount(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void deletePlan(final String planCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deletePlan(planCode);
+        	client.deletePlan(planCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public AddOn createPlanAddOn(final String planCode, final AddOn addOn, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createPlanAddOn(planCode, addOn);
+        	return client.createPlanAddOn(planCode, addOn);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public AddOn getAddOn(final String planCode, final String addOnCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAddOn(planCode, addOnCode);
+        	return client.getAddOn(planCode, addOnCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public AddOns getAddOns(final String planCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAddOns(planCode);
+        	return client.getAddOns(planCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public AddOns getAddOns(final String planCode, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAddOns(planCode, params);
+        	return client.getAddOns(planCode, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void deleteAddOn(final String planCode, final String addOnCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deleteAddOn(planCode, addOnCode);
+        	client.deleteAddOn(planCode, addOnCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public AddOn updateAddOn(final String planCode, final String addOnCode, final AddOn addOn, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updateAddOn(planCode, addOnCode, addOn);
+        	return client.updateAddOn(planCode, addOnCode, addOn);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Coupon createCoupon(final Coupon coupon, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createCoupon(coupon);
+        	return client.createCoupon(coupon);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Coupon getCoupon(final String couponCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCoupon(couponCode);
+        	return client.getCoupon(couponCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void deleteCoupon(final String couponCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deleteCoupon(couponCode);
+        	client.deleteCoupon(couponCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Redemption redeemCoupon(final String couponCode, final Redemption redemption, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return redeemCoupon(couponCode, redemption);
+        	return client.redeemCoupon(couponCode, redemption);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Redemption getCouponRedemptionByAccount(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionByAccount(accountCode);
+        	return client.getCouponRedemptionByAccount(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Redemptions getCouponRedemptionsByAccount(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionsByAccount(accountCode);
+        	return client.getCouponRedemptionsByAccount(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Redemptions getCouponRedemptionsByAccount(final String accountCode, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionsByAccount(accountCode, params);
+        	return client.getCouponRedemptionsByAccount(accountCode, params);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -1037,18 +1020,18 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
     @Deprecated
     public Redemption getCouponRedemptionByInvoice(final Integer invoiceNumber, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionByInvoice(invoiceNumber);
+        	return client.getCouponRedemptionByInvoice(invoiceNumber);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Redemption getCouponRedemptionByInvoice(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionByInvoice(invoiceId);
+        	return client.getCouponRedemptionByInvoice(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -1056,18 +1039,18 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
     @Deprecated
     public Redemptions getCouponRedemptionsByInvoice(final Integer invoiceNumber, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionsByInvoice(invoiceNumber);
+        	return client.getCouponRedemptionsByInvoice(invoiceNumber);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Redemptions getCouponRedemptionsByInvoice(final String invoiceId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionsByInvoice(invoiceId);
+        	return client.getCouponRedemptionsByInvoice(invoiceId);
         } finally {
         	keyOverrideCloseable.close();
         }
@@ -1075,297 +1058,297 @@ public class KeyAgnosticRecurlyClient extends RecurlyClient {
 
     @Deprecated
     public Redemptions getCouponRedemptionsByInvoice(final Integer invoiceNumber, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionsByInvoice(invoiceNumber, params);
+        	return client.getCouponRedemptionsByInvoice(invoiceNumber, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Redemptions getCouponRedemptionsByInvoice(final String invoiceId, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionsByInvoice(invoiceId, params);
+        	return client.getCouponRedemptionsByInvoice(invoiceId, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Redemptions getCouponRedemptionsBySubscription(final String subscriptionUuid, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCouponRedemptionsBySubscription(subscriptionUuid, params);
+        	return client.getCouponRedemptionsBySubscription(subscriptionUuid, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public void deleteCouponRedemptionWithApiKey(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deleteCouponRedemption(accountCode);
+        	client.deleteCouponRedemption(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void deleteCouponRedemption(final String accountCode, final String redemptionUuid, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deleteCouponRedemption(accountCode, redemptionUuid);
+        	client.deleteCouponRedemption(accountCode, redemptionUuid);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void generateUniqueCodes(final String couponCode, final Coupon coupon, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	generateUniqueCodes(couponCode, coupon);
+        	client.generateUniqueCodes(couponCode, coupon);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Coupons getUniqueCouponCodes(final String couponCode, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getUniqueCouponCodes(couponCode, params);
+        	return client.getUniqueCouponCodes(couponCode, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public Subscription fetchSubscription(final String recurlyToken, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return fetchSubscription(recurlyToken);
+        	return client.fetchSubscription(recurlyToken);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public BillingInfo fetchBillingInfo(final String recurlyToken, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return fetchBillingInfo(recurlyToken);
+        	return client.fetchBillingInfo(recurlyToken);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Invoice fetchInvoice(final String recurlyToken, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return fetchInvoice(recurlyToken);
+        	return client.fetchInvoice(recurlyToken);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public GiftCards getGiftCards(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getGiftCards(params);
+        	return client.getGiftCards(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public GiftCards getGiftCards(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getGiftCards();
+        	return client.getGiftCards();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public Integer getGiftCardsCount(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getGiftCardsCount(params);
+        	return client.getGiftCardsCount(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public GiftCard getGiftCard(final Long giftCardId, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getGiftCard(giftCardId);
+        	return client.getGiftCard(giftCardId);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public GiftCard redeemGiftCard(final String redemptionCode, final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return redeemGiftCard(redemptionCode, accountCode);
+        	return client.redeemGiftCard(redemptionCode, accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public GiftCard purchaseGiftCard(final GiftCard giftCard, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return purchaseGiftCard(giftCard);
+        	return client.purchaseGiftCard(giftCard);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public GiftCard previewGiftCard(final GiftCard giftCard, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return previewGiftCard(giftCard);
+        	return client.previewGiftCard(giftCard);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public MeasuredUnits getMeasuredUnits(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getMeasuredUnits();
+        	return client.getMeasuredUnits();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public MeasuredUnit createMeasuredUnit(final MeasuredUnit measuredUnit, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createMeasuredUnit(measuredUnit);
+        	return client.createMeasuredUnit(measuredUnit);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public InvoiceCollection purchase(final Purchase purchase, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return purchase(purchase);
+        	return client.purchase(purchase);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public InvoiceCollection previewPurchase(final Purchase purchase, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return previewPurchase(purchase);
+        	return client.previewPurchase(purchase);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public InvoiceCollection authorizePurchase(final Purchase purchase, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return authorizePurchase(purchase);
+        	return client.authorizePurchase(purchase);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public InvoiceCollection pendingPurchase(final Purchase purchase, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return pendingPurchase(purchase);
+        	return client.pendingPurchase(purchase);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public AccountAcquisition createAccountAcquisition(final String accountCode, final AccountAcquisition acquisition, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return createAccountAcquisition(accountCode, acquisition);
+        	return client.createAccountAcquisition(accountCode, acquisition);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public AccountAcquisition getAccountAcquisition(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getAccountAcquisition(accountCode);
+        	return client.getAccountAcquisition(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
 	public AccountAcquisition updateAccountAcquisition(final String accountCode, final AccountAcquisition acquisition, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return updateAccountAcquisition(accountCode, acquisition);
+        	return client.updateAccountAcquisition(accountCode, acquisition);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public void deleteAccountAcquisition(final String accountCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	deleteAccountAcquisition(accountCode);
+        	client.deleteAccountAcquisition(accountCode);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public CreditPayments getCreditPayments(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCreditPayments();
+        	return client.getCreditPayments();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public CreditPayments getCreditPayments(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCreditPayments(params);
+        	return client.getCreditPayments(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public CreditPayments getCreditPayments(final String accountCode, final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getCreditPayments(accountCode, params);
+        	return client.getCreditPayments(accountCode, params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public ShippingMethods getShippingMethods(String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getShippingMethods();
+        	return client.getShippingMethods();
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public ShippingMethods getShippingMethods(final QueryParams params, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getShippingMethods(params);
+        	return client.getShippingMethods(params);
         } finally {
         	keyOverrideCloseable.close();
         }
     }
 
     public ShippingMethod getShippingMethod(final String shippingMethodCode, String apiKey) {
-        final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = client.overrideKey(apiKey);
         try {
-        	return getShippingMethod(shippingMethodCode);
+        	return client.getShippingMethod(shippingMethodCode);
         } finally {
         	keyOverrideCloseable.close();
         }
