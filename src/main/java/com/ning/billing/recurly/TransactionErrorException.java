@@ -20,7 +20,7 @@ package com.ning.billing.recurly;
 import com.ning.billing.recurly.model.Errors;
 
 // TODO RuntimeException for now as it's unclear which API calls can return such errors
-public class TransactionErrorException extends RuntimeException {
+public class TransactionErrorException extends RecurlyException {
 
     private final Errors errors;
 
