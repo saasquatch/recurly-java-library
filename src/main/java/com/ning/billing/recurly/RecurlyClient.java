@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
@@ -2476,7 +2477,8 @@ public class RecurlyClient {
 
         private String originalOverride;
 
-        RecurlyKeyOverrideCloseable(String key) {
+        private RecurlyKeyOverrideCloseable(String key) {
+            Preconditions.checkNotNull(key);
             this.originalOverride = keyOverride.get();
             keyOverride.set(key);
         }
