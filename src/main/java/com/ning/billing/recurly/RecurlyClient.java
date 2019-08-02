@@ -2472,11 +2472,11 @@ public class RecurlyClient {
     /**
      * Set the keyOverride ThreadLocal with a key, and resets it on close.
      */
-    static class KeyOverrideCloseable implements Closeable {
+    public static class RecurlyKeyOverrideCloseable implements Closeable {
 
         private String originalOverride;
 
-        KeyOverrideCloseable(String key) {
+        RecurlyKeyOverrideCloseable(String key) {
             this.originalOverride = keyOverride.get();
             keyOverride.set(key);
         }
@@ -2492,8 +2492,8 @@ public class RecurlyClient {
      * Override the {@link #keyOverride} ThreadLocal with the given key, and returns a
      * {@link Closeable} that will revert the original key override on close.
      */
-    KeyOverrideCloseable overrideKey(String key) {
-        return new KeyOverrideCloseable(key);
+    public RecurlyKeyOverrideCloseable overrideKey(String key) {
+        return new RecurlyKeyOverrideCloseable(key);
     }
 
 }
