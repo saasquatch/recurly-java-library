@@ -43,13 +43,14 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -2245,7 +2246,7 @@ public class RecurlyClient {
         callRecurlySafeXmlContent(new HttpDelete(baseUrl + resource), null);
     }
 
-    private HeaderGroup callRecurlyNoContent(final HttpUriRequest builder) throws IOException {
+    private HeaderGroup callRecurlyNoContent(final HttpRequestBase builder) throws IOException {
         clientRequestBuilderCommon(builder);
         builder.addHeader("Accept", "application/xml");
         builder.addHeader("Content-Type", "application/xml; charset=utf-8");
@@ -2263,7 +2264,7 @@ public class RecurlyClient {
         }
     }
 
-    private <T> T callRecurlySafeXmlContent(final HttpUriRequest builder, @Nullable final Class<T> clazz) {
+    private <T> T callRecurlySafeXmlContent(final HttpRequestBase builder, @Nullable final Class<T> clazz) {
         try {
             return callRecurlyXmlContent(builder, clazz);
         } catch (IOException e) {
@@ -2291,7 +2292,7 @@ public class RecurlyClient {
         }
     }
 
-    private <T> T callRecurlyXmlContent(final HttpUriRequest builder, @Nullable final Class<T> clazz)
+    private <T> T callRecurlyXmlContent(final HttpRequestBase builder, @Nullable final Class<T> clazz)
             throws IOException, ExecutionException, InterruptedException {
         clientRequestBuilderCommon(builder);
         builder.addHeader("Accept", "application/xml");
@@ -2376,11 +2377,14 @@ public class RecurlyClient {
         }
     }
 
-    private void clientRequestBuilderCommon(HttpUriRequest requestBuilder) {
+    private void clientRequestBuilderCommon(HttpRequestBase requestBuilder) {
         requestBuilder.addHeader("Authorization", "Basic " + getKey());
         requestBuilder.addHeader("X-Api-Version", RECURLY_API_VERSION);
         requestBuilder.addHeader(HttpHeaders.USER_AGENT, userAgent);
         requestBuilder.addHeader("Accept-Language", acceptLanguage);
+        // Use the default timeouts from AHC
+        requestBuilder.setConfig(RequestConfig.custom()
+                .setConnectTimeout(5000).setSocketTimeout(60000).build());
     }
 
     private String getKey() {
