@@ -2,6 +2,8 @@ package com.ning.billing.recurly;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -80,6 +82,14 @@ public class KeyAgnosticRecurlyClient {
 
     public RecurlyClient getRecurlyClient() {
         return recurlyClient;
+    }
+
+    public void open() throws KeyManagementException, NoSuchAlgorithmException {
+    	recurlyClient.open();
+    }
+
+    public void close() {
+    	recurlyClient.close();
     }
 
     public Account createAccount(final Account account, String apiKey) {
