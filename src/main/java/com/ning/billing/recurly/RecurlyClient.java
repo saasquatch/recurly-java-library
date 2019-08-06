@@ -43,7 +43,6 @@ import javax.annotation.Nullable;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -2284,9 +2283,7 @@ public class RecurlyClient {
             // names are case insensitive.
             final Map<String, List<String>> headerMap = new TreeMap<String, List<String>>(
                     String.CASE_INSENSITIVE_ORDER);
-            final HeaderIterator headerIterator = response.headerIterator();
-            while (headerIterator.hasNext()) {
-                final Header header = headerIterator.nextHeader();
+            for (Header header : response.getAllHeaders()) {
                 final String key = header.getName();
                 if (!headerMap.containsKey(key)) {
                     headerMap.put(key, new ArrayList<String>());
