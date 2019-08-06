@@ -31,10 +31,10 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -2281,7 +2281,7 @@ public class RecurlyClient {
         try {
             response = client.execute(builder);
             final HeaderIterator headerIterator = response.headerIterator();
-            final Map<String, List<String>> headerMap = new HashMap<String, List<String>>();
+            final Map<String, List<String>> headerMap = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
             while (headerIterator.hasNext()) {
                 final Header header = headerIterator.nextHeader();
                 final String key = header.getName();
@@ -2316,9 +2316,9 @@ public class RecurlyClient {
             final HttpEntity entity = response.getEntity();
             final String payload;
             if (entity == null) {
-            	payload = "";
+                payload = "";
             } else {
-            	payload = MoreObjects.firstNonNull(EntityUtils.toString(entity, "UTF-8"), "");
+                payload = MoreObjects.firstNonNull(EntityUtils.toString(entity, "UTF-8"), "");
             }
             if (debug()) {
                 log.info("Msg from Recurly API :: {}", payload);
