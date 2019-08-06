@@ -91,7 +91,7 @@ public class TestKeyAgnosticClient {
     }
 
     @Test(groups = "integration")
-    public void testCounts() throws Exception {
+    public void testCountsWithApiKey() throws Exception {
         final QueryParams qp = new QueryParams();
         qp.setBeginTime(new DateTime("2017-01-01T00:00:00Z"));
 
