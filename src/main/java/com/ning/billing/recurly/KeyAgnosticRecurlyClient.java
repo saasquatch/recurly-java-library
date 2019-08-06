@@ -92,7 +92,7 @@ public class KeyAgnosticRecurlyClient {
         recurlyClient.close();
     }
 
-    public Account createAccount(final Account account, String apiKey) {
+    public Account createAccount(final Account account, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createAccount(account);
@@ -101,7 +101,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Accounts getAccounts(String apiKey) {
+    public Accounts getAccounts(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccounts();
@@ -110,7 +110,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Accounts getAccounts(final QueryParams params, String apiKey) {
+    public Accounts getAccounts(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccounts(params);
@@ -119,7 +119,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Integer getAccountsCount(final QueryParams params, String apiKey) {
+    public Integer getAccountsCount(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountsCount(params);
@@ -128,7 +128,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Coupons getCoupons(String apiKey) {
+    public Coupons getCoupons(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCoupons();
@@ -137,7 +137,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Coupons getCoupons(final QueryParams params, String apiKey) {
+    public Coupons getCoupons(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCoupons(params);
@@ -146,7 +146,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Integer getCouponsCount(final QueryParams params, String apiKey) {
+    public Integer getCouponsCount(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponsCount(params);
@@ -155,7 +155,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Account getAccount(final String accountCode, String apiKey) {
+    public Account getAccount(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccount(accountCode);
@@ -164,7 +164,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Account updateAccount(final String accountCode, final Account account, String apiKey) {
+    public Account updateAccount(final String accountCode, final Account account, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updateAccount(accountCode, account);
@@ -173,7 +173,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AccountBalance getAccountBalance(final String accountCode, String apiKey) {
+    public AccountBalance getAccountBalance(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountBalance(accountCode);
@@ -182,7 +182,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void closeAccount(final String accountCode, String apiKey) {
+    public void closeAccount(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.closeAccount(accountCode);
@@ -191,7 +191,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Account reopenAccount(final String accountCode, String apiKey) {
+    public Account reopenAccount(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.reopenAccount(accountCode);
@@ -200,7 +200,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Accounts getChildAccounts(final String accountCode, String apiKey) {
+    public Accounts getChildAccounts(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getChildAccounts(accountCode);
@@ -209,7 +209,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Adjustments getAccountAdjustments(final String accountCode, String apiKey) {
+    public Adjustments getAccountAdjustments(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountAdjustments(accountCode);
@@ -218,7 +218,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, String apiKey) {
+    public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountAdjustments(accountCode, type);
@@ -227,7 +227,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, final Adjustments.AdjustmentState state, String apiKey) {
+    public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, final Adjustments.AdjustmentState state, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountAdjustments(accountCode, type, state);
@@ -236,7 +236,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, final Adjustments.AdjustmentState state, final QueryParams params, String apiKey) {
+    public Adjustments getAccountAdjustments(final String accountCode, final Adjustments.AdjustmentType type, final Adjustments.AdjustmentState state, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountAdjustments(accountCode, type, state, params);
@@ -245,7 +245,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Adjustment getAdjustment(final String adjustmentUuid, String apiKey) {
+    public Adjustment getAdjustment(final String adjustmentUuid, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAdjustment(adjustmentUuid);
@@ -254,7 +254,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Adjustment createAccountAdjustment(final String accountCode, final Adjustment adjustment, String apiKey) {
+    public Adjustment createAccountAdjustment(final String accountCode, final Adjustment adjustment, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createAccountAdjustment(accountCode, adjustment);
@@ -263,7 +263,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deleteAccountAdjustment(final String accountCode, String apiKey) {
+    public void deleteAccountAdjustment(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteAccountAdjustment(accountCode);
@@ -272,7 +272,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deleteAdjustment(final String adjustmentUuid, String apiKey) {
+    public void deleteAdjustment(final String adjustmentUuid, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteAdjustment(adjustmentUuid);
@@ -281,7 +281,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription createSubscription(final Subscription subscription, String apiKey) {
+    public Subscription createSubscription(final Subscription subscription, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createSubscription(subscription);
@@ -290,7 +290,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription previewSubscription(final Subscription subscription, String apiKey) {
+    public Subscription previewSubscription(final Subscription subscription, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.previewSubscription(subscription);
@@ -299,7 +299,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription getSubscription(final String uuid, String apiKey) {
+    public Subscription getSubscription(final String uuid, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getSubscription(uuid);
@@ -308,7 +308,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription cancelSubscription(final Subscription subscription, String apiKey) {
+    public Subscription cancelSubscription(final Subscription subscription, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.cancelSubscription(subscription);
@@ -317,7 +317,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription pauseSubscription(final String subscriptionUuid, final int remainingPauseCycles, String apiKey) {
+    public Subscription pauseSubscription(final String subscriptionUuid, final int remainingPauseCycles, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.pauseSubscription(subscriptionUuid, remainingPauseCycles);
@@ -326,7 +326,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription resumeSubscription(final String subscriptionUuid, String apiKey) {
+    public Subscription resumeSubscription(final String subscriptionUuid, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.resumeSubscription(subscriptionUuid);
@@ -335,7 +335,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription postponeSubscription(final Subscription subscription, final DateTime renewaldate, String apiKey) {
+    public Subscription postponeSubscription(final Subscription subscription, final DateTime renewaldate, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.postponeSubscription(subscription, renewaldate);
@@ -344,7 +344,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void terminateSubscription(final Subscription subscription, final RefundOption refund, String apiKey) {
+    public void terminateSubscription(final Subscription subscription, final RefundOption refund, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.terminateSubscription(subscription, refund);
@@ -353,7 +353,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription reactivateSubscription(final Subscription subscription, String apiKey) {
+    public Subscription reactivateSubscription(final Subscription subscription, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.reactivateSubscription(subscription);
@@ -362,7 +362,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription updateSubscription(final String uuid, final SubscriptionUpdate subscriptionUpdate, String apiKey) {
+    public Subscription updateSubscription(final String uuid, final SubscriptionUpdate subscriptionUpdate, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updateSubscription(uuid, subscriptionUpdate);
@@ -371,7 +371,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription updateSubscriptionPreview(final String uuid, final SubscriptionUpdate subscriptionUpdate, String apiKey) {
+    public Subscription updateSubscriptionPreview(final String uuid, final SubscriptionUpdate subscriptionUpdate, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updateSubscriptionPreview(uuid, subscriptionUpdate);
@@ -380,7 +380,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription updateSubscriptionNotes(final String uuid, final SubscriptionNotes subscriptionNotes, String apiKey) {
+    public Subscription updateSubscriptionNotes(final String uuid, final SubscriptionNotes subscriptionNotes, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updateSubscriptionNotes(uuid, subscriptionNotes);
@@ -389,7 +389,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscriptions getAccountSubscriptions(final String accountCode, String apiKey) {
+    public Subscriptions getAccountSubscriptions(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountSubscriptions(accountCode);
@@ -398,7 +398,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscriptions getSubscriptions(String apiKey) {
+    public Subscriptions getSubscriptions(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getSubscriptions();
@@ -407,7 +407,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscriptions getSubscriptions(final SubscriptionState state, final QueryParams params, String apiKey) {
+    public Subscriptions getSubscriptions(final SubscriptionState state, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getSubscriptions(state, params);
@@ -416,7 +416,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Integer getSubscriptionsCount(final QueryParams params, String apiKey) {
+    public Integer getSubscriptionsCount(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getSubscriptionsCount(params);
@@ -425,7 +425,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscriptions getAccountSubscriptions(final String accountCode, final SubscriptionState state, final QueryParams params, String apiKey) {
+    public Subscriptions getAccountSubscriptions(final String accountCode, final SubscriptionState state, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountSubscriptions(accountCode, state, params);
@@ -434,7 +434,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Usage postSubscriptionUsage(final String subscriptionCode, final String addOnCode, final Usage usage, String apiKey) {
+    public Usage postSubscriptionUsage(final String subscriptionCode, final String addOnCode, final Usage usage, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.postSubscriptionUsage(subscriptionCode, addOnCode, usage);
@@ -443,7 +443,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Usages getSubscriptionUsages(final String subscriptionCode, final String addOnCode, final QueryParams params, String apiKey) {
+    public Usages getSubscriptionUsages(final String subscriptionCode, final String addOnCode, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getSubscriptionUsages(subscriptionCode, addOnCode, params);
@@ -453,7 +453,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Subscriptions getAccountSubscriptions(String accountCode, String status, String apiKey) {
+    public Subscriptions getAccountSubscriptions(String accountCode, String status, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountSubscriptions(accountCode, status);
@@ -462,7 +462,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public BillingInfo createOrUpdateBillingInfo(final String accountCode, final BillingInfo billingInfo, String apiKey) {
+    public BillingInfo createOrUpdateBillingInfo(final String accountCode, final BillingInfo billingInfo, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createOrUpdateBillingInfo(accountCode, billingInfo);
@@ -472,7 +472,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public BillingInfo createOrUpdateBillingInfo(final BillingInfo billingInfo, String apiKey) {
+    public BillingInfo createOrUpdateBillingInfo(final BillingInfo billingInfo, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createOrUpdateBillingInfo(billingInfo);
@@ -481,7 +481,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public BillingInfo getBillingInfo(final String accountCode, String apiKey) {
+    public BillingInfo getBillingInfo(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getBillingInfo(accountCode);
@@ -490,7 +490,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void clearBillingInfo(final String accountCode, String apiKey) {
+    public void clearBillingInfo(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.clearBillingInfo(accountCode);
@@ -499,7 +499,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AccountNotes getAccountNotes(final String accountCode, String apiKey) {
+    public AccountNotes getAccountNotes(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountNotes(accountCode);
@@ -508,7 +508,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Transactions getAccountTransactions(final String accountCode, String apiKey) {
+    public Transactions getAccountTransactions(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountTransactions(accountCode);
@@ -517,7 +517,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Transactions getAccountTransactions(final String accountCode, final TransactionState state, final TransactionType type, final QueryParams params, String apiKey) {
+    public Transactions getAccountTransactions(final String accountCode, final TransactionState state, final TransactionType type, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountTransactions(accountCode, state, type, params);
@@ -526,7 +526,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Transactions getTransactions(String apiKey) {
+    public Transactions getTransactions(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getTransactions();
@@ -535,7 +535,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Transactions getTransactions(final TransactionState state, final TransactionType type, final QueryParams params, String apiKey) {
+    public Transactions getTransactions(final TransactionState state, final TransactionType type, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getTransactions(state, type, params);
@@ -544,7 +544,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Integer getTransactionsCount(final QueryParams params, String apiKey) {
+    public Integer getTransactionsCount(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getTransactionsCount(params);
@@ -553,7 +553,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Transaction getTransaction(final String transactionId, String apiKey) {
+    public Transaction getTransaction(final String transactionId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getTransaction(transactionId);
@@ -562,7 +562,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Transaction createTransaction(final Transaction trans, String apiKey) {
+    public Transaction createTransaction(final Transaction trans, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createTransaction(trans);
@@ -571,7 +571,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void refundTransaction(final String transactionId, @Nullable final BigDecimal amount, String apiKey) {
+    public void refundTransaction(final String transactionId, @Nullable final BigDecimal amount, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.refundTransaction(transactionId, amount);
@@ -581,7 +581,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Invoice getInvoice(final Integer invoiceId, String apiKey) {
+    public Invoice getInvoice(final Integer invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getInvoice(invoiceId);
@@ -590,7 +590,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoice getInvoice(final String invoiceId, String apiKey) {
+    public Invoice getInvoice(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getInvoice(invoiceId);
@@ -599,7 +599,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoice updateInvoice(final String invoiceId, final Invoice invoice, String apiKey) {
+    public Invoice updateInvoice(final String invoiceId, final Invoice invoice, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updateInvoice(invoiceId, invoice);
@@ -609,7 +609,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public InputStream getInvoicePdf(final Integer invoiceId, String apiKey) {
+    public InputStream getInvoicePdf(final Integer invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getInvoicePdf(invoiceId);
@@ -618,7 +618,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public InputStream getInvoicePdf(final String invoiceId, String apiKey) {
+    public InputStream getInvoicePdf(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getInvoicePdf(invoiceId);
@@ -627,7 +627,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoices getInvoices(String apiKey) {
+    public Invoices getInvoices(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getInvoices();
@@ -636,7 +636,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoices getInvoices(final QueryParams params, String apiKey) {
+    public Invoices getInvoices(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getInvoices(params);
@@ -645,7 +645,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public int getInvoicesCount(final QueryParams params, String apiKey) {
+    public int getInvoicesCount(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getInvoicesCount(params);
@@ -654,7 +654,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Transactions getInvoiceTransactions(final String invoiceId, String apiKey) {
+    public Transactions getInvoiceTransactions(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getInvoiceTransactions(invoiceId);
@@ -663,7 +663,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoices getAccountInvoices(final String accountCode, String apiKey) {
+    public Invoices getAccountInvoices(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountInvoices(accountCode);
@@ -672,7 +672,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoices getOriginalInvoices(final String invoiceId, String apiKey) {
+    public Invoices getOriginalInvoices(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getOriginalInvoices(invoiceId);
@@ -682,7 +682,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Invoice refundInvoice(final String invoiceId, final Integer amountInCents, final RefundMethod method, String apiKey) {
+    public Invoice refundInvoice(final String invoiceId, final Integer amountInCents, final RefundMethod method, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.refundInvoice(invoiceId, amountInCents, method);
@@ -692,7 +692,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Invoice refundInvoice(final String invoiceId, List<AdjustmentRefund> lineItems, final RefundMethod method, String apiKey) {
+    public Invoice refundInvoice(final String invoiceId, List<AdjustmentRefund> lineItems, final RefundMethod method, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.refundInvoice(invoiceId, lineItems, method);
@@ -701,7 +701,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoice refundInvoice(final String invoiceId, final InvoiceRefund refundOptions, String apiKey) {
+    public Invoice refundInvoice(final String invoiceId, final InvoiceRefund refundOptions, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.refundInvoice(invoiceId, refundOptions);
@@ -710,7 +710,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public ShippingAddresses getAccountShippingAddresses(final String accountCode, String apiKey) {
+    public ShippingAddresses getAccountShippingAddresses(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountShippingAddresses(accountCode);
@@ -719,7 +719,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public ShippingAddress getShippingAddress(final String accountCode, final long shippingAddressId, String apiKey) {
+    public ShippingAddress getShippingAddress(final String accountCode, final long shippingAddressId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getShippingAddress(accountCode, shippingAddressId);
@@ -728,7 +728,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public ShippingAddress createShippingAddress(final String accountCode, final ShippingAddress shippingAddress, String apiKey) {
+    public ShippingAddress createShippingAddress(final String accountCode, final ShippingAddress shippingAddress, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createShippingAddress(accountCode, shippingAddress);
@@ -737,7 +737,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public ShippingAddress updateShippingAddress(final String accountCode, final long shippingAddressId, ShippingAddress shippingAddress, String apiKey) {
+    public ShippingAddress updateShippingAddress(final String accountCode, final long shippingAddressId, ShippingAddress shippingAddress, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updateShippingAddress(accountCode, shippingAddressId, shippingAddress);
@@ -746,7 +746,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deleteShippingAddress(final String accountCode, final long shippingAddressId, String apiKey) {
+    public void deleteShippingAddress(final String accountCode, final long shippingAddressId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteShippingAddress(accountCode, shippingAddressId);
@@ -755,7 +755,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoices getAccountInvoices(final String accountCode, final InvoiceState state, final QueryParams params, String apiKey) {
+    public Invoices getAccountInvoices(final String accountCode, final InvoiceState state, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountInvoices(accountCode, state, params);
@@ -764,7 +764,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public InvoiceCollection postAccountInvoice(final String accountCode, final Invoice invoice, String apiKey) {
+    public InvoiceCollection postAccountInvoice(final String accountCode, final Invoice invoice, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.postAccountInvoice(accountCode, invoice);
@@ -774,7 +774,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Invoice markInvoiceSuccessful(final Integer invoiceId, String apiKey) {
+    public Invoice markInvoiceSuccessful(final Integer invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.markInvoiceSuccessful(invoiceId);
@@ -783,7 +783,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoice markInvoiceSuccessful(final String invoiceId, String apiKey) {
+    public Invoice markInvoiceSuccessful(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.markInvoiceSuccessful(invoiceId);
@@ -793,7 +793,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public InvoiceCollection markInvoiceFailed(final Integer invoiceId, String apiKey) {
+    public InvoiceCollection markInvoiceFailed(final Integer invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.markInvoiceFailed(invoiceId);
@@ -802,7 +802,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public InvoiceCollection markInvoiceFailed(final String invoiceId, String apiKey) {
+    public InvoiceCollection markInvoiceFailed(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.markInvoiceFailed(invoiceId);
@@ -811,7 +811,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoice forceCollectInvoice(final String invoiceId, String apiKey) {
+    public Invoice forceCollectInvoice(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.forceCollectInvoice(invoiceId);
@@ -820,7 +820,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoice voidInvoice(final String invoiceId, String apiKey) {
+    public Invoice voidInvoice(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.voidInvoice(invoiceId);
@@ -830,7 +830,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Transaction enterOfflinePayment(final Integer invoiceId, final Transaction payment, String apiKey) {
+    public Transaction enterOfflinePayment(final Integer invoiceId, final Transaction payment, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.enterOfflinePayment(invoiceId, payment);
@@ -839,7 +839,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Transaction enterOfflinePayment(final String invoiceId, final Transaction payment, String apiKey) {
+    public Transaction enterOfflinePayment(final String invoiceId, final Transaction payment, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.enterOfflinePayment(invoiceId, payment);
@@ -848,7 +848,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Plan createPlan(final Plan plan, String apiKey) {
+    public Plan createPlan(final Plan plan, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createPlan(plan);
@@ -857,7 +857,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Plan updatePlan(final Plan plan, String apiKey) {
+    public Plan updatePlan(final Plan plan, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updatePlan(plan);
@@ -866,7 +866,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Plan getPlan(final String planCode, String apiKey) {
+    public Plan getPlan(final String planCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getPlan(planCode);
@@ -875,7 +875,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Plans getPlans(String apiKey) {
+    public Plans getPlans(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getPlans();
@@ -884,7 +884,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Plans getPlans(final QueryParams params, String apiKey) {
+    public Plans getPlans(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getPlans(params);
@@ -893,7 +893,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Integer getPlansCount(final QueryParams params, String apiKey) {
+    public Integer getPlansCount(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getPlansCount(params);
@@ -902,7 +902,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deletePlan(final String planCode, String apiKey) {
+    public void deletePlan(final String planCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deletePlan(planCode);
@@ -911,7 +911,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AddOn createPlanAddOn(final String planCode, final AddOn addOn, String apiKey) {
+    public AddOn createPlanAddOn(final String planCode, final AddOn addOn, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createPlanAddOn(planCode, addOn);
@@ -920,7 +920,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AddOn getAddOn(final String planCode, final String addOnCode, String apiKey) {
+    public AddOn getAddOn(final String planCode, final String addOnCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAddOn(planCode, addOnCode);
@@ -929,7 +929,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AddOns getAddOns(final String planCode, String apiKey) {
+    public AddOns getAddOns(final String planCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAddOns(planCode);
@@ -938,7 +938,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AddOns getAddOns(final String planCode, final QueryParams params, String apiKey) {
+    public AddOns getAddOns(final String planCode, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAddOns(planCode, params);
@@ -947,7 +947,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deleteAddOn(final String planCode, final String addOnCode, String apiKey) {
+    public void deleteAddOn(final String planCode, final String addOnCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteAddOn(planCode, addOnCode);
@@ -956,7 +956,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AddOn updateAddOn(final String planCode, final String addOnCode, final AddOn addOn, String apiKey) {
+    public AddOn updateAddOn(final String planCode, final String addOnCode, final AddOn addOn, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updateAddOn(planCode, addOnCode, addOn);
@@ -965,7 +965,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Coupon createCoupon(final Coupon coupon, String apiKey) {
+    public Coupon createCoupon(final Coupon coupon, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createCoupon(coupon);
@@ -974,7 +974,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Coupon getCoupon(final String couponCode, String apiKey) {
+    public Coupon getCoupon(final String couponCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCoupon(couponCode);
@@ -983,7 +983,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deleteCoupon(final String couponCode, String apiKey) {
+    public void deleteCoupon(final String couponCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteCoupon(couponCode);
@@ -992,7 +992,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Coupon restoreCoupon(final String couponCode, String apiKey) {
+    public Coupon restoreCoupon(final String couponCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.restoreCoupon(couponCode);
@@ -1001,7 +1001,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Redemption redeemCoupon(final String couponCode, final Redemption redemption, String apiKey) {
+    public Redemption redeemCoupon(final String couponCode, final Redemption redemption, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.redeemCoupon(couponCode, redemption);
@@ -1010,7 +1010,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Redemption getCouponRedemptionByAccount(final String accountCode, String apiKey) {
+    public Redemption getCouponRedemptionByAccount(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionByAccount(accountCode);
@@ -1019,7 +1019,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Redemptions getCouponRedemptionsByAccount(final String accountCode, String apiKey) {
+    public Redemptions getCouponRedemptionsByAccount(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionsByAccount(accountCode);
@@ -1028,7 +1028,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Redemptions getCouponRedemptionsByAccount(final String accountCode, final QueryParams params, String apiKey) {
+    public Redemptions getCouponRedemptionsByAccount(final String accountCode, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionsByAccount(accountCode, params);
@@ -1038,7 +1038,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Redemption getCouponRedemptionByInvoice(final Integer invoiceNumber, String apiKey) {
+    public Redemption getCouponRedemptionByInvoice(final Integer invoiceNumber, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionByInvoice(invoiceNumber);
@@ -1047,7 +1047,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Redemption getCouponRedemptionByInvoice(final String invoiceId, String apiKey) {
+    public Redemption getCouponRedemptionByInvoice(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionByInvoice(invoiceId);
@@ -1057,7 +1057,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Redemptions getCouponRedemptionsByInvoice(final Integer invoiceNumber, String apiKey) {
+    public Redemptions getCouponRedemptionsByInvoice(final Integer invoiceNumber, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionsByInvoice(invoiceNumber);
@@ -1066,7 +1066,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Redemptions getCouponRedemptionsByInvoice(final String invoiceId, String apiKey) {
+    public Redemptions getCouponRedemptionsByInvoice(final String invoiceId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionsByInvoice(invoiceId);
@@ -1076,7 +1076,7 @@ public class KeyAgnosticRecurlyClient {
     }
 
     @Deprecated
-    public Redemptions getCouponRedemptionsByInvoice(final Integer invoiceNumber, final QueryParams params, String apiKey) {
+    public Redemptions getCouponRedemptionsByInvoice(final Integer invoiceNumber, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionsByInvoice(invoiceNumber, params);
@@ -1085,7 +1085,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Redemptions getCouponRedemptionsByInvoice(final String invoiceId, final QueryParams params, String apiKey) {
+    public Redemptions getCouponRedemptionsByInvoice(final String invoiceId, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionsByInvoice(invoiceId, params);
@@ -1094,7 +1094,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Redemptions getCouponRedemptionsBySubscription(final String subscriptionUuid, final QueryParams params, String apiKey) {
+    public Redemptions getCouponRedemptionsBySubscription(final String subscriptionUuid, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCouponRedemptionsBySubscription(subscriptionUuid, params);
@@ -1103,7 +1103,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deleteCouponRedemption(final String accountCode, String apiKey) {
+    public void deleteCouponRedemption(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteCouponRedemption(accountCode);
@@ -1112,7 +1112,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deleteCouponRedemption(final String accountCode, final String redemptionUuid, String apiKey) {
+    public void deleteCouponRedemption(final String accountCode, final String redemptionUuid, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteCouponRedemption(accountCode, redemptionUuid);
@@ -1121,7 +1121,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void generateUniqueCodes(final String couponCode, final Coupon coupon, String apiKey) {
+    public void generateUniqueCodes(final String couponCode, final Coupon coupon, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.generateUniqueCodes(couponCode, coupon);
@@ -1130,7 +1130,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Coupons getUniqueCouponCodes(final String couponCode, final QueryParams params, String apiKey) {
+    public Coupons getUniqueCouponCodes(final String couponCode, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getUniqueCouponCodes(couponCode, params);
@@ -1139,7 +1139,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Subscription fetchSubscription(final String recurlyToken, String apiKey) {
+    public Subscription fetchSubscription(final String recurlyToken, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.fetchSubscription(recurlyToken);
@@ -1148,7 +1148,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public BillingInfo fetchBillingInfo(final String recurlyToken, String apiKey) {
+    public BillingInfo fetchBillingInfo(final String recurlyToken, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.fetchBillingInfo(recurlyToken);
@@ -1157,7 +1157,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Invoice fetchInvoice(final String recurlyToken, String apiKey) {
+    public Invoice fetchInvoice(final String recurlyToken, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.fetchInvoice(recurlyToken);
@@ -1166,7 +1166,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public GiftCards getGiftCards(final QueryParams params, String apiKey) {
+    public GiftCards getGiftCards(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getGiftCards(params);
@@ -1175,7 +1175,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public GiftCards getGiftCards(String apiKey) {
+    public GiftCards getGiftCards(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getGiftCards();
@@ -1184,7 +1184,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public Integer getGiftCardsCount(final QueryParams params, String apiKey) {
+    public Integer getGiftCardsCount(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getGiftCardsCount(params);
@@ -1193,7 +1193,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public GiftCard getGiftCard(final Long giftCardId, String apiKey) {
+    public GiftCard getGiftCard(final Long giftCardId, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getGiftCard(giftCardId);
@@ -1202,7 +1202,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public GiftCard redeemGiftCard(final String redemptionCode, final String accountCode, String apiKey) {
+    public GiftCard redeemGiftCard(final String redemptionCode, final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.redeemGiftCard(redemptionCode, accountCode);
@@ -1211,7 +1211,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public GiftCard purchaseGiftCard(final GiftCard giftCard, String apiKey) {
+    public GiftCard purchaseGiftCard(final GiftCard giftCard, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.purchaseGiftCard(giftCard);
@@ -1220,7 +1220,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public GiftCard previewGiftCard(final GiftCard giftCard, String apiKey) {
+    public GiftCard previewGiftCard(final GiftCard giftCard, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.previewGiftCard(giftCard);
@@ -1229,7 +1229,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public MeasuredUnits getMeasuredUnits(String apiKey) {
+    public MeasuredUnits getMeasuredUnits(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getMeasuredUnits();
@@ -1238,7 +1238,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public MeasuredUnit createMeasuredUnit(final MeasuredUnit measuredUnit, String apiKey) {
+    public MeasuredUnit createMeasuredUnit(final MeasuredUnit measuredUnit, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createMeasuredUnit(measuredUnit);
@@ -1247,7 +1247,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public InvoiceCollection purchase(final Purchase purchase, String apiKey) {
+    public InvoiceCollection purchase(final Purchase purchase, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.purchase(purchase);
@@ -1256,7 +1256,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public InvoiceCollection previewPurchase(final Purchase purchase, String apiKey) {
+    public InvoiceCollection previewPurchase(final Purchase purchase, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.previewPurchase(purchase);
@@ -1265,7 +1265,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public InvoiceCollection authorizePurchase(final Purchase purchase, String apiKey) {
+    public InvoiceCollection authorizePurchase(final Purchase purchase, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.authorizePurchase(purchase);
@@ -1274,7 +1274,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public InvoiceCollection pendingPurchase(final Purchase purchase, String apiKey) {
+    public InvoiceCollection pendingPurchase(final Purchase purchase, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.pendingPurchase(purchase);
@@ -1283,7 +1283,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AccountAcquisition createAccountAcquisition(final String accountCode, final AccountAcquisition acquisition, String apiKey) {
+    public AccountAcquisition createAccountAcquisition(final String accountCode, final AccountAcquisition acquisition, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.createAccountAcquisition(accountCode, acquisition);
@@ -1292,7 +1292,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AccountAcquisition getAccountAcquisition(final String accountCode, String apiKey) {
+    public AccountAcquisition getAccountAcquisition(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getAccountAcquisition(accountCode);
@@ -1301,7 +1301,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public AccountAcquisition updateAccountAcquisition(final String accountCode, final AccountAcquisition acquisition, String apiKey) {
+    public AccountAcquisition updateAccountAcquisition(final String accountCode, final AccountAcquisition acquisition, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.updateAccountAcquisition(accountCode, acquisition);
@@ -1310,7 +1310,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public void deleteAccountAcquisition(final String accountCode, String apiKey) {
+    public void deleteAccountAcquisition(final String accountCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteAccountAcquisition(accountCode);
@@ -1319,7 +1319,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public CreditPayments getCreditPayments(String apiKey) {
+    public CreditPayments getCreditPayments(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCreditPayments();
@@ -1328,7 +1328,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public CreditPayments getCreditPayments(final QueryParams params, String apiKey) {
+    public CreditPayments getCreditPayments(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCreditPayments(params);
@@ -1337,7 +1337,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public CreditPayments getCreditPayments(final String accountCode, final QueryParams params, String apiKey) {
+    public CreditPayments getCreditPayments(final String accountCode, final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getCreditPayments(accountCode, params);
@@ -1346,7 +1346,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public ShippingMethods getShippingMethods(String apiKey) {
+    public ShippingMethods getShippingMethods(final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getShippingMethods();
@@ -1355,7 +1355,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public ShippingMethods getShippingMethods(final QueryParams params, String apiKey) {
+    public ShippingMethods getShippingMethods(final QueryParams params, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getShippingMethods(params);
@@ -1364,7 +1364,7 @@ public class KeyAgnosticRecurlyClient {
         }
     }
 
-    public ShippingMethod getShippingMethod(final String shippingMethodCode, String apiKey) {
+    public ShippingMethod getShippingMethod(final String shippingMethodCode, final String apiKey) {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             return recurlyClient.getShippingMethod(shippingMethodCode);
