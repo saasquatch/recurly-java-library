@@ -22,6 +22,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -40,7 +41,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -68,6 +68,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.BaseEncoding;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -195,7 +196,7 @@ public class RecurlyClient {
     }
 
     public RecurlyClient(final String apiKey, final String scheme, final String host, final int port, final String version) {
-        this.key = DatatypeConverter.printBase64Binary(apiKey.getBytes());
+        this.key = getKeyFromApiKey(apiKey);
         this.baseUrl = String.format("%s://%s:%d/%s", scheme, host, port, version);
         this.xmlMapper = RecurlyObject.newXmlMapper();
         this.userAgent = buildUserAgent();
@@ -2488,19 +2489,31 @@ public class RecurlyClient {
         return matcher.find() ? matcher.group(1) : null;
     }
 
+    private static String getKeyFromApiKey(@Nonnull String apiKey) {
+        try {
+        	/*
+        	 * Use Guava here since we are already using Guava, and DataTypeConverter can
+        	 * potentially cause problems with Java 9.
+        	 */
+            return BaseEncoding.base64().encode(apiKey.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e); // should not happen
+        }
+    }
+
     /**
      * Set the keyOverride ThreadLocal with a key, and resets it on close.
-     * @see RecurlyClient#overrideKey(String)
+     * @see RecurlyClient#overrideApiKey(String)
      */
-    static class RecurlyKeyOverrideCloseable implements Closeable {
+    static class ApiKeyOverrideCloseable implements Closeable {
 
         private final ThreadLocal<String> keyOverride;
         private final String originalOverride;
 
-        private RecurlyKeyOverrideCloseable(@Nonnull ThreadLocal<String> keyOverride, @Nonnull String key) {
+        private ApiKeyOverrideCloseable(@Nonnull ThreadLocal<String> keyOverride, @Nonnull String apiKey) {
             this.keyOverride = Preconditions.checkNotNull(keyOverride);
             this.originalOverride = keyOverride.get();
-            keyOverride.set(Preconditions.checkNotNull(key));
+            keyOverride.set(getKeyFromApiKey(apiKey));
         }
 
         @Override
@@ -2518,15 +2531,15 @@ public class RecurlyClient {
      * Override the {@link #keyOverride} ThreadLocal with the given key, and returns a
      * {@link Closeable} that will revert the original key override on close.<br>
      * Example usage:
-     * <pre> final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+     * <pre> final ApiKeyOverrideCloseable overrideCloseable = overrideApiKey(apiKey);
      * try {
      *     return createAccount(account);
      * } finally {
-     *     keyOverrideCloseable.close();
+     *     apiKeyOverrideCloseable.close();
      * }</pre>
      */
-    RecurlyKeyOverrideCloseable overrideKey(@Nonnull String key) {
-        return new RecurlyKeyOverrideCloseable(keyOverride, key);
+    ApiKeyOverrideCloseable overrideApiKey(@Nonnull String apiKey) {
+        return new ApiKeyOverrideCloseable(keyOverride, apiKey);
     }
 
 }

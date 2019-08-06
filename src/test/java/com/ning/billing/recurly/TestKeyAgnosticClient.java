@@ -8,6 +8,9 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.ning.billing.recurly.model.Coupon;
+import com.ning.billing.recurly.model.Coupons;
+
 public class TestKeyAgnosticClient {
 
     private String apiKey;
@@ -42,9 +45,9 @@ public class TestKeyAgnosticClient {
     public void testUnauthorizedException() throws Exception {
         final String subdomain = System.getProperty(KILLBILL_PAYMENT_RECURLY_SUBDOMAIN);
         // Create a client with a valid api key
-        RecurlyClient recurlyClient = new RecurlyClient(apiKey, subdomain);
+        RecurlyClient keyRecurlyClient = new RecurlyClient(apiKey, subdomain);
         // Create a key agnostic client with a client with a valid api key
-        KeyAgnosticRecurlyClient keyAgnosticClient = new KeyAgnosticRecurlyClient(recurlyClient);
+        KeyAgnosticRecurlyClient keyAgnosticClient = new KeyAgnosticRecurlyClient(keyRecurlyClient);
         keyAgnosticClient.open();
 
         try {
@@ -53,6 +56,36 @@ public class TestKeyAgnosticClient {
             Assert.fail("getAccounts call should not succeed with invalid credentials.");
         } catch (RecurlyAPIException expected) {
             Assert.assertEquals(expected.getRecurlyError().getSymbol(), "unauthorized");
+        }
+    }
+
+    @Test(groups = "integration")
+    public void testCreateCouponWithApiKey() throws Exception {
+        final Coupon couponData = TestUtils.createRandomCoupon();
+
+        try {
+            // Create the coupon
+            Coupon coupon = recurlyClient.createCoupon(couponData, apiKey);
+            Assert.assertNotNull(coupon);
+            Assert.assertEquals(coupon.getName(), couponData.getName());
+            Assert.assertEquals(coupon.getCouponCode(), couponData.getCouponCode());
+            Assert.assertEquals(coupon.getDiscountType(), couponData.getDiscountType());
+            Assert.assertEquals(coupon.getDiscountPercent(), couponData.getDiscountPercent());
+
+            // Get the coupon
+            coupon = recurlyClient.getCoupon(couponData.getCouponCode(), apiKey);
+            Assert.assertNotNull(coupon);
+            Assert.assertEquals(coupon.getName(), couponData.getName());
+            Assert.assertEquals(coupon.getCouponCode(), couponData.getCouponCode());
+            Assert.assertEquals(coupon.getDiscountType(), couponData.getDiscountType());
+            Assert.assertEquals(coupon.getDiscountPercent(), couponData.getDiscountPercent());
+
+            // Also test getting all coupons
+            Coupons coupons = recurlyClient.getCoupons(apiKey);
+            Assert.assertNotNull(coupons);
+
+        } finally {
+            recurlyClient.deleteCoupon(couponData.getCouponCode(), apiKey);
         }
     }
 
