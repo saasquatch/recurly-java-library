@@ -46,6 +46,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -2171,7 +2172,7 @@ public class RecurlyClient {
         validateHost(url);
 
         CloseableHttpResponse response = null;
-        final InputStream pdfInputStream;
+        InputStream pdfInputStream = null;
         try {
             final HttpGet builder = new HttpGet(url);
             clientRequestBuilderCommon(builder);
@@ -2184,8 +2185,11 @@ public class RecurlyClient {
             }
 
             // Buffer the pdf in memory on purpose, because this was the behavior of AsyncHttpClient.
-            final byte[] pdfBytes = EntityUtils.toByteArray(response.getEntity());
-            pdfInputStream = new ByteArrayInputStream(pdfBytes);
+            final HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                final byte[] pdfBytes = EntityUtils.toByteArray(entity);
+                pdfInputStream = new ByteArrayInputStream(pdfBytes);
+            }
         } catch (IOException e) {
             log.error("Error retrieving response body", e);
             return null;
@@ -2307,7 +2311,10 @@ public class RecurlyClient {
         InputStream in = null;
         try {
             response = client.execute(builder);
-            in = response.getEntity().getContent();
+            final HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                in = entity.getContent();
+            }
             final String payload = convertStreamToString(in);
             if (debug()) {
                 log.info("Msg from Recurly API :: {}", payload);
