@@ -2175,8 +2175,8 @@ public class RecurlyClient {
         try {
             final HttpGet builder = new HttpGet(url);
             clientRequestBuilderCommon(builder);
-            builder.setHeader("Accept", "application/pdf");
-            builder.setHeader("Content-Type", "application/pdf");
+            builder.setHeader(HttpHeaders.ACCEPT, "application/pdf");
+            builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/pdf");
             response = client.execute(builder);
             if (response.getStatusLine().getStatusCode() != 200) {
                 final RecurlyAPIError recurlyAPIError = RecurlyAPIError.buildFromResponse(response);
@@ -2268,8 +2268,8 @@ public class RecurlyClient {
 
     private Map<String, List<String>> callRecurlyNoContent(final HttpRequestBase builder) throws IOException {
         clientRequestBuilderCommon(builder);
-        builder.setHeader("Accept", "application/xml");
-        builder.setHeader("Content-Type", "application/xml; charset=utf-8");
+        builder.setHeader(HttpHeaders.ACCEPT, "application/xml");
+        builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/xml; charset=utf-8");
         CloseableHttpResponse response = null;
         try {
             response = client.execute(builder);
@@ -2301,8 +2301,8 @@ public class RecurlyClient {
     private <T> T callRecurlyXmlContent(final HttpRequestBase builder, @Nullable final Class<T> clazz)
             throws IOException {
         clientRequestBuilderCommon(builder);
-        builder.setHeader("Accept", "application/xml");
-        builder.setHeader("Content-Type", "application/xml; charset=utf-8");
+        builder.setHeader(HttpHeaders.ACCEPT, "application/xml");
+        builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/xml; charset=utf-8");
         CloseableHttpResponse response = null;
         InputStream in = null;
         try {
@@ -2385,10 +2385,10 @@ public class RecurlyClient {
     }
 
     private void clientRequestBuilderCommon(HttpRequestBase requestBuilder) {
-        requestBuilder.setHeader("Authorization", "Basic " + getKey());
+        requestBuilder.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + getKey());
         requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
         requestBuilder.setHeader(HttpHeaders.USER_AGENT, userAgent);
-        requestBuilder.setHeader("Accept-Language", acceptLanguage);
+        requestBuilder.setHeader(HttpHeaders.ACCEPT_LANGUAGE, acceptLanguage);
         // Use the default timeouts from AHC
         requestBuilder.setConfig(RequestConfig.custom()
                 .setConnectTimeout(5000).setSocketTimeout(60000).build());
