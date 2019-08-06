@@ -2280,8 +2280,11 @@ public class RecurlyClient {
         CloseableHttpResponse response = null;
         try {
             response = client.execute(builder);
+            // Copy all the headers into a Map. Use case insensitive TreeMap because HTTP header
+            // names are case insensitive.
+            final Map<String, List<String>> headerMap = new TreeMap<String, List<String>>(
+                    String.CASE_INSENSITIVE_ORDER);
             final HeaderIterator headerIterator = response.headerIterator();
-            final Map<String, List<String>> headerMap = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
             while (headerIterator.hasNext()) {
                 final Header header = headerIterator.nextHeader();
                 final String key = header.getName();
