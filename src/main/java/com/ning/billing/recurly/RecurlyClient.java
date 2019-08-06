@@ -30,10 +30,10 @@ import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,6 +67,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.StandardSystemProperty;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -139,7 +140,8 @@ public class RecurlyClient {
 
     public static final String FETCH_RESOURCE = "/recurly_js/result";
 
-    private static final List<String> validHosts = Arrays.asList("recurly.com");
+    // ImmutableSet.contains is faster than ArrayList.contains
+    private static final Set<String> validHosts = ImmutableSet.of("recurly.com");
 
     /**
      * Checks a system property to see if debugging output is
