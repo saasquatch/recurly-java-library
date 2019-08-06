@@ -99,7 +99,7 @@ public class Coupon extends RecurlyObject {
      * @deprecated Please use temporal_unit and temporal_amount
      */
     @Deprecated
-	@XmlElement(name = "applies_for_months")
+    @XmlElement(name = "applies_for_months")
     private Integer appliesForMonths;
 
     /**
@@ -119,7 +119,7 @@ public class Coupon extends RecurlyObject {
      * @deprecated Please use duration
      */
     @Deprecated
-	@XmlElement(name = "single_use")
+    @XmlElement(name = "single_use")
     private Boolean singleUse;
 
     @XmlElement(name = "discount_type")
