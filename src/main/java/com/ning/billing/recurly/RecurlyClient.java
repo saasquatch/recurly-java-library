@@ -17,7 +17,43 @@
 
 package com.ning.billing.recurly;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.ConnectException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
+
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
+import com.google.common.base.StandardSystemProperty;
+import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
+import com.google.common.net.HttpHeaders;
 import com.ning.billing.recurly.model.Account;
+import com.ning.billing.recurly.model.AccountAcquisition;
 import com.ning.billing.recurly.model.AccountBalance;
 import com.ning.billing.recurly.model.AccountNotes;
 import com.ning.billing.recurly.model.Accounts;
@@ -38,6 +74,8 @@ import com.ning.billing.recurly.model.InvoiceCollection;
 import com.ning.billing.recurly.model.InvoiceRefund;
 import com.ning.billing.recurly.model.InvoiceState;
 import com.ning.billing.recurly.model.Invoices;
+import com.ning.billing.recurly.model.MeasuredUnit;
+import com.ning.billing.recurly.model.MeasuredUnits;
 import com.ning.billing.recurly.model.Plan;
 import com.ning.billing.recurly.model.Plans;
 import com.ning.billing.recurly.model.Purchase;
@@ -51,10 +89,12 @@ import com.ning.billing.recurly.model.RefundOption;
 import com.ning.billing.recurly.model.ResponseMetadata;
 import com.ning.billing.recurly.model.ShippingAddress;
 import com.ning.billing.recurly.model.ShippingAddresses;
+import com.ning.billing.recurly.model.ShippingMethod;
+import com.ning.billing.recurly.model.ShippingMethods;
 import com.ning.billing.recurly.model.Subscription;
+import com.ning.billing.recurly.model.SubscriptionNotes;
 import com.ning.billing.recurly.model.SubscriptionState;
 import com.ning.billing.recurly.model.SubscriptionUpdate;
-import com.ning.billing.recurly.model.SubscriptionNotes;
 import com.ning.billing.recurly.model.Subscriptions;
 import com.ning.billing.recurly.model.Transaction;
 import com.ning.billing.recurly.model.TransactionState;
@@ -62,49 +102,11 @@ import com.ning.billing.recurly.model.TransactionType;
 import com.ning.billing.recurly.model.Transactions;
 import com.ning.billing.recurly.model.Usage;
 import com.ning.billing.recurly.model.Usages;
-import com.ning.billing.recurly.model.MeasuredUnit;
-import com.ning.billing.recurly.model.MeasuredUnits;
-import com.ning.billing.recurly.model.AccountAcquisition;
-import com.ning.billing.recurly.model.ShippingMethod;
-import com.ning.billing.recurly.model.ShippingMethods;
-
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.StandardSystemProperty;
-import com.google.common.io.CharSource;
-import com.google.common.io.Resources;
-import com.google.common.net.HttpHeaders;
-
 import com.ning.billing.recurly.util.http.SslUtils;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.FluentCaseInsensitiveStringsMap;
 import com.ning.http.client.Response;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.ConnectException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.List;
-import java.util.Arrays;
 
 public class RecurlyClient {
 
@@ -125,6 +127,8 @@ public class RecurlyClient {
     public static final String FETCH_RESOURCE = "/recurly_js/result";
 
     private static final List<String> validHosts = Arrays.asList("recurly.com");
+
+    private static final ThreadLocal<String> keyOverride = new ThreadLocal<String>();
 
     /**
      * Checks a system property to see if debugging output is
@@ -1101,7 +1105,7 @@ public class RecurlyClient {
         return doGET(Invoices.INVOICES_RESOURCE + "/" + invoiceId + Transactions.TRANSACTIONS_RESOURCE,
                      Transactions.class, new QueryParams());
     }
-    
+
     /**
      * Lookup an account's invoices
      * <p>
@@ -2357,11 +2361,15 @@ public class RecurlyClient {
     }
 
     private AsyncHttpClient.BoundRequestBuilder clientRequestBuilderCommon(AsyncHttpClient.BoundRequestBuilder requestBuilder) {
-        return requestBuilder.addHeader("Authorization", "Basic " + key)
+        return requestBuilder.addHeader("Authorization", "Basic " + getKey())
                 .addHeader("X-Api-Version", RECURLY_API_VERSION)
                 .addHeader(HttpHeaders.USER_AGENT, userAgent)
                 .addHeader("Accept-Language", acceptLanguage)
                 .setBodyEncoding("UTF-8");
+    }
+
+    private String getKey() {
+        return MoreObjects.firstNonNull(keyOverride.get(), key);
     }
 
     private String convertStreamToString(final java.io.InputStream is) {
@@ -2446,4 +2454,41 @@ public class RecurlyClient {
         final Matcher matcher = TAG_FROM_GIT_DESCRIBE_PATTERN.matcher(gitDescribe);
         return matcher.find() ? matcher.group(1) : null;
     }
+
+    /**
+     * Set the keyOverride ThreadLocal with a key, and resets it on close.
+     * @see RecurlyClient#overrideKey(String)
+     */
+    public static class RecurlyKeyOverrideCloseable implements Closeable {
+
+        private String originalOverride;
+
+        private RecurlyKeyOverrideCloseable(String key) {
+            Preconditions.checkNotNull(key);
+            this.originalOverride = keyOverride.get();
+            keyOverride.set(key);
+        }
+
+        @Override
+        public void close() {
+            keyOverride.set(originalOverride);
+        }
+
+    }
+
+    /**
+     * Override the {@link #keyOverride} ThreadLocal with the given key, and returns a
+     * {@link Closeable} that will revert the original key override on close.<br>
+     * Example usage:
+     * <pre> final RecurlyKeyOverrideCloseable keyOverrideCloseable = overrideKey(apiKey);
+     * try {
+     *     return createAccount(account);
+     * } finally {
+     *     overrideKey.close();
+     * }</pre>
+     */
+    public RecurlyKeyOverrideCloseable overrideKey(String key) {
+        return new RecurlyKeyOverrideCloseable(key);
+    }
+
 }
