@@ -22,7 +22,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -2490,15 +2489,11 @@ public class RecurlyClient {
     }
 
     private static String getKeyFromApiKey(@Nonnull String apiKey) {
-        try {
-        	/*
-        	 * Use Guava here since we are already using Guava, and DataTypeConverter can
-        	 * potentially cause problems with Java 9.
-        	 */
-            return BaseEncoding.base64().encode(apiKey.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e); // should not happen
-        }
+        /*
+         * Use Guava here since we are already using Guava, and DataTypeConverter can
+         * potentially cause problems with Java 9.
+         */
+        return BaseEncoding.base64().encode(apiKey.getBytes(Charset.forName("UTF-8")));
     }
 
     /**
