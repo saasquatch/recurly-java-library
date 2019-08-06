@@ -2505,7 +2505,11 @@ public class RecurlyClient {
 
         @Override
         public void close() {
-            keyOverride.set(originalOverride);
+            if (originalOverride == null) {
+                keyOverride.remove();
+            } else {
+                keyOverride.set(originalOverride);
+            }
         }
 
     }
