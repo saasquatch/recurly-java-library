@@ -19,7 +19,7 @@ package com.ning.billing.recurly;
 
 import com.ning.billing.recurly.model.RecurlyAPIError;
 
-public class RecurlyAPIException extends RuntimeException {
+public class RecurlyAPIException extends RecurlyException {
 
     private final RecurlyAPIError recurlyError;
 
