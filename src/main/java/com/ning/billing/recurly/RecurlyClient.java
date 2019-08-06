@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.bind.DatatypeConverter;
 
@@ -128,8 +129,6 @@ public class RecurlyClient {
 
     private static final List<String> validHosts = Arrays.asList("recurly.com");
 
-    private static final ThreadLocal<String> keyOverride = new ThreadLocal<String>();
-
     /**
      * Checks a system property to see if debugging output is
      * required. Used internally by the client to decide whether to
@@ -149,6 +148,8 @@ public class RecurlyClient {
             "PII and should never be used in production environments.");
         }
     }
+
+    private final ThreadLocal<String> keyOverride = new ThreadLocal<String>();
 
     // TODO: should we make it static?
     private final XmlMapper xmlMapper;
@@ -2461,12 +2462,13 @@ public class RecurlyClient {
      */
     public static class RecurlyKeyOverrideCloseable implements Closeable {
 
-        private String originalOverride;
+    	private final ThreadLocal<String> keyOverride;
+        private final String originalOverride;
 
-        private RecurlyKeyOverrideCloseable(String key) {
-            Preconditions.checkNotNull(key);
+        private RecurlyKeyOverrideCloseable(@Nonnull ThreadLocal<String> keyOverride, @Nonnull String key) {
+            this.keyOverride = Preconditions.checkNotNull(keyOverride);
             this.originalOverride = keyOverride.get();
-            keyOverride.set(key);
+            keyOverride.set(Preconditions.checkNotNull(key));
         }
 
         @Override
@@ -2487,8 +2489,8 @@ public class RecurlyClient {
      *     overrideKey.close();
      * }</pre>
      */
-    public RecurlyKeyOverrideCloseable overrideKey(String key) {
-        return new RecurlyKeyOverrideCloseable(key);
+    public RecurlyKeyOverrideCloseable overrideKey(@Nonnull String key) {
+        return new RecurlyKeyOverrideCloseable(keyOverride, key);
     }
 
 }
