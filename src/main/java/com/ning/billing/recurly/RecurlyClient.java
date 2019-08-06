@@ -17,6 +17,7 @@
 
 package com.ning.billing.recurly;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,8 +29,11 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
@@ -55,7 +59,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.HeaderGroup;
+import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,7 +219,7 @@ public class RecurlyClient {
             try {
                 client.close();
             } catch (IOException e) {
-                throw new UndeclaredThrowableException(e);
+                log.warn("Failed to close {}: {}", client.getClass().getSimpleName(), e.getLocalizedMessage());
             }
         }
     }
@@ -282,8 +286,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getAccountsCount(final QueryParams params) {
-        final HeaderGroup map = doHEAD(Accounts.ACCOUNTS_RESOURCE, params);
-        return Integer.parseInt(map.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
+        final Map<String, List<String>> map = doHEAD(Accounts.ACCOUNTS_RESOURCE, params);
+        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
     }
 
     /**
@@ -316,8 +320,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getCouponsCount(final QueryParams params) {
-        final HeaderGroup map = doHEAD(Coupons.COUPONS_RESOURCE, params);
-        return Integer.parseInt(map.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
+        final Map<String, List<String>> map = doHEAD(Coupons.COUPONS_RESOURCE, params);
+        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
     }
 
     /**
@@ -708,8 +712,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getSubscriptionsCount(final QueryParams params) {
-        final HeaderGroup map = doHEAD(Subscription.SUBSCRIPTION_RESOURCE, params);
-        return Integer.parseInt(map.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
+        final Map<String, List<String>> map = doHEAD(Subscription.SUBSCRIPTION_RESOURCE, params);
+        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
     }
 
     /**
@@ -954,8 +958,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getTransactionsCount(final QueryParams params) {
-        final HeaderGroup map = doHEAD(Transactions.TRANSACTIONS_RESOURCE, params);
-        return Integer.parseInt(map.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
+        final Map<String, List<String>> map = doHEAD(Transactions.TRANSACTIONS_RESOURCE, params);
+        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
     }
 
     /**
@@ -1105,8 +1109,8 @@ public class RecurlyClient {
      * @return the count of invoices matching the query
      */
     public int getInvoicesCount(final QueryParams params) {
-        final HeaderGroup map = doHEAD(Invoices.INVOICES_RESOURCE, params);
-        return Integer.parseInt(map.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
+        final Map<String, List<String>> map = doHEAD(Invoices.INVOICES_RESOURCE, params);
+        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
     }
 
     /**
@@ -1444,8 +1448,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getPlansCount(final QueryParams params) {
-        final HeaderGroup map = doHEAD(Plans.PLANS_RESOURCE, params);
-        return Integer.parseInt(map.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
+        final Map<String, List<String>> map = doHEAD(Plans.PLANS_RESOURCE, params);
+        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
     }
 
     /**
@@ -1852,8 +1856,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getGiftCardsCount(final QueryParams params) {
-        final HeaderGroup map = doHEAD(GiftCards.GIFT_CARDS_RESOURCE, params);
-        return Integer.parseInt(map.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
+        final Map<String, List<String>> map = doHEAD(GiftCards.GIFT_CARDS_RESOURCE, params);
+        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
     }
 
     /**
@@ -2153,23 +2157,27 @@ public class RecurlyClient {
     private InputStream callRecurlySafeGetPdf(String url) {
         validateHost(url);
 
-        final CloseableHttpResponse response;
+        CloseableHttpResponse response = null;
         final InputStream pdfInputStream;
         try {
             final HttpGet builder = new HttpGet(url);
             clientRequestBuilderCommon(builder);
-            builder.addHeader("Accept", "application/pdf");
-            builder.addHeader("Content-Type", "application/pdf");
+            builder.setHeader("Accept", "application/pdf");
+            builder.setHeader("Content-Type", "application/pdf");
             response = client.execute(builder);
-            pdfInputStream = response.getEntity().getContent();
+            if (response.getStatusLine().getStatusCode() != 200) {
+                final RecurlyAPIError recurlyAPIError = RecurlyAPIError.buildFromResponse(response);
+                throw new RecurlyAPIException(recurlyAPIError);
+            }
+
+            // Buffer the pdf in memory on purpose, because this was the behavior of AsyncHttpClient.
+            final byte[] pdfBytes = EntityUtils.toByteArray(response.getEntity());
+            pdfInputStream = new ByteArrayInputStream(pdfBytes);
         } catch (IOException e) {
             log.error("Error retrieving response body", e);
             return null;
-        }
-
-        if (response.getStatusLine().getStatusCode() != 200) {
-            final RecurlyAPIError recurlyAPIError = RecurlyAPIError.buildFromResponse(response);
-            throw new RecurlyAPIException(recurlyAPIError);
+        } finally {
+        	closeResponse(response);
         }
 
         return pdfInputStream;
@@ -2220,7 +2228,7 @@ public class RecurlyClient {
         return callRecurlySafeXmlContent(builder, clazz);
     }
 
-    private HeaderGroup doHEAD(final String resource, QueryParams params) {
+    private Map<String, List<String>> doHEAD(final String resource, QueryParams params) {
         if (params == null) {
             params = new QueryParams();
         }
@@ -2245,21 +2253,26 @@ public class RecurlyClient {
         callRecurlySafeXmlContent(new HttpDelete(baseUrl + resource), null);
     }
 
-    private HeaderGroup callRecurlyNoContent(final HttpRequestBase builder) throws IOException {
+    private Map<String, List<String>> callRecurlyNoContent(final HttpRequestBase builder) throws IOException {
         clientRequestBuilderCommon(builder);
-        builder.addHeader("Accept", "application/xml");
-        builder.addHeader("Content-Type", "application/xml; charset=utf-8");
+        builder.setHeader("Accept", "application/xml");
+        builder.setHeader("Content-Type", "application/xml; charset=utf-8");
         CloseableHttpResponse response = null;
         try {
             response = client.execute(builder);
-            final HeaderGroup headerGroup = new HeaderGroup();
             final HeaderIterator headerIterator = response.headerIterator();
+            final Map<String, List<String>> headerMap = new HashMap<String, List<String>>();
             while (headerIterator.hasNext()) {
-                headerGroup.addHeader(headerIterator.nextHeader());
+                final Header header = headerIterator.nextHeader();
+                final String key = header.getName();
+                if (!headerMap.containsKey(key)) {
+                    headerMap.put(key, new ArrayList<String>());
+                }
+                headerMap.get(key).add(header.getValue());
             }
-            return headerGroup;
+            return headerMap;
         } finally {
-            if (response != null) response.close();
+            closeResponse(response);
         }
     }
 
@@ -2275,12 +2288,13 @@ public class RecurlyClient {
     private <T> T callRecurlyXmlContent(final HttpRequestBase builder, @Nullable final Class<T> clazz)
             throws IOException {
         clientRequestBuilderCommon(builder);
-        builder.addHeader("Accept", "application/xml");
-        builder.addHeader("Content-Type", "application/xml; charset=utf-8");
-        final CloseableHttpResponse response = client.execute(builder);
-
-        final InputStream in = response.getEntity().getContent();
+        builder.setHeader("Accept", "application/xml");
+        builder.setHeader("Content-Type", "application/xml; charset=utf-8");
+        CloseableHttpResponse response = null;
+        InputStream in = null;
         try {
+            response = client.execute(builder);
+            in = response.getEntity().getContent();
             final String payload = convertStreamToString(in);
             if (debug()) {
                 log.info("Msg from Recurly API :: {}", payload);
@@ -2353,15 +2367,15 @@ public class RecurlyClient {
             return obj;
         } finally {
             closeStream(in);
-            response.close();
+            closeResponse(response);
         }
     }
 
     private void clientRequestBuilderCommon(HttpRequestBase requestBuilder) {
-        requestBuilder.addHeader("Authorization", "Basic " + getKey());
-        requestBuilder.addHeader("X-Api-Version", RECURLY_API_VERSION);
-        requestBuilder.addHeader(HttpHeaders.USER_AGENT, userAgent);
-        requestBuilder.addHeader("Accept-Language", acceptLanguage);
+        requestBuilder.setHeader("Authorization", "Basic " + getKey());
+        requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
+        requestBuilder.setHeader(HttpHeaders.USER_AGENT, userAgent);
+        requestBuilder.setHeader("Accept-Language", acceptLanguage);
         // Use the default timeouts from AHC
         requestBuilder.setConfig(RequestConfig.custom()
                 .setConnectTimeout(5000).setSocketTimeout(60000).build());
@@ -2385,6 +2399,16 @@ public class RecurlyClient {
                 in.close();
             } catch (IOException e) {
                 log.warn("Failed to close http-client - provided InputStream: {}", e.getLocalizedMessage());
+            }
+        }
+    }
+
+    private void closeResponse(final CloseableHttpResponse response) {
+        if (response != null) {
+            try {
+                response.close();
+            } catch (IOException e) {
+                log.warn("Failed to close {}: {}", response.getClass().getSimpleName(), e.getLocalizedMessage());
             }
         }
     }
@@ -2460,7 +2484,7 @@ public class RecurlyClient {
      */
     public static class RecurlyKeyOverrideCloseable implements Closeable {
 
-    	private final ThreadLocal<String> keyOverride;
+        private final ThreadLocal<String> keyOverride;
         private final String originalOverride;
 
         private RecurlyKeyOverrideCloseable(@Nonnull ThreadLocal<String> keyOverride, @Nonnull String key) {
