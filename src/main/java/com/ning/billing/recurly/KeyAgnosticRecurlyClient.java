@@ -6,10 +6,12 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Preconditions;
 import com.ning.billing.recurly.RecurlyClient.RecurlyKeyOverrideCloseable;
 import com.ning.billing.recurly.model.Account;
 import com.ning.billing.recurly.model.AccountAcquisition;
@@ -66,6 +68,10 @@ public class KeyAgnosticRecurlyClient {
     private static final String FAKE_API_KEY = KeyAgnosticRecurlyClient.class.getName();
 
     private final RecurlyClient recurlyClient;
+
+    public KeyAgnosticRecurlyClient(@Nonnull RecurlyClient recurlyClient) {
+        this.recurlyClient = Preconditions.checkNotNull(recurlyClient);
+    }
 
     public KeyAgnosticRecurlyClient() {
         this.recurlyClient = new RecurlyClient(FAKE_API_KEY);
