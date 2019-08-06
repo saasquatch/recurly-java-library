@@ -51,6 +51,9 @@ public class TestKeyAgnosticClient {
         KeyAgnosticRecurlyClient keyAgnosticClient = new KeyAgnosticRecurlyClient(keyRecurlyClient);
         keyAgnosticClient.open();
 
+        // The following line should not fail
+        keyRecurlyClient.getAccounts();
+
         try {
             // use an invalid api key override
             keyAgnosticClient.getAccounts("invalid-api-key");
