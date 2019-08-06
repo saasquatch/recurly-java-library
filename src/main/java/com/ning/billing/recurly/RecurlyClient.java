@@ -22,7 +22,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
@@ -2261,11 +2260,7 @@ public class RecurlyClient {
 
         validateHost(url);
 
-        try {
-            return callRecurlyNoContent(new HttpHead(url));
-        } catch (IOException e) {
-            throw new UndeclaredThrowableException(e);
-        }
+        return callRecurlyNoContent(new HttpHead(url));
     }
 
     private void doDELETE(final String resource) {
@@ -2274,7 +2269,7 @@ public class RecurlyClient {
         callRecurlySafeXmlContent(new HttpDelete(baseUrl + resource), null);
     }
 
-    private Map<String, List<String>> callRecurlyNoContent(final HttpRequestBase builder) throws IOException {
+    private Map<String, List<String>> callRecurlyNoContent(final HttpRequestBase builder) {
         clientRequestBuilderCommon(builder);
         builder.setHeader(HttpHeaders.ACCEPT, "application/xml");
         builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/xml; charset=utf-8");
@@ -2293,6 +2288,9 @@ public class RecurlyClient {
                 headerMap.get(key).add(header.getValue());
             }
             return headerMap;
+        } catch (IOException e) {
+            log.error("Execution error", e);
+            return null;
         } finally {
             closeResponse(response);
         }
