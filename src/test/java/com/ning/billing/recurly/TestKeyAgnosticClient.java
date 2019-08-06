@@ -3,6 +3,7 @@ package com.ning.billing.recurly;
 import static com.ning.billing.recurly.TestRecurlyClient.KILLBILL_PAYMENT_RECURLY_API_KEY;
 import static com.ning.billing.recurly.TestRecurlyClient.KILLBILL_PAYMENT_RECURLY_SUBDOMAIN;
 
+import org.joda.time.DateTime;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -87,6 +88,23 @@ public class TestKeyAgnosticClient {
         } finally {
             recurlyClient.deleteCoupon(couponData.getCouponCode(), apiKey);
         }
+    }
+
+    @Test(groups = "integration")
+    public void testCounts() throws Exception {
+        final QueryParams qp = new QueryParams();
+        qp.setBeginTime(new DateTime("2017-01-01T00:00:00Z"));
+
+        Integer accountCount = recurlyClient.getAccountsCount(qp, apiKey);
+        Assert.assertNotNull(accountCount);
+        Integer couponsCount = recurlyClient.getCouponsCount(qp, apiKey);
+        Assert.assertNotNull(couponsCount);
+        Integer transactionsCount = recurlyClient.getTransactionsCount(qp, apiKey);
+        Assert.assertNotNull(transactionsCount);
+        Integer plansCount = recurlyClient.getPlansCount(qp, apiKey);
+        Assert.assertNotNull(plansCount);
+        Integer giftCardsCount = recurlyClient.getGiftCardsCount(qp, apiKey);
+        Assert.assertNotNull(giftCardsCount);
     }
 
 }
