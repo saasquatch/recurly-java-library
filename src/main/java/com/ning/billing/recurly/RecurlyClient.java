@@ -34,9 +34,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,7 +105,6 @@ import com.ning.billing.recurly.model.Redemption;
 import com.ning.billing.recurly.model.Redemptions;
 import com.ning.billing.recurly.model.RefundMethod;
 import com.ning.billing.recurly.model.RefundOption;
-import com.ning.billing.recurly.model.ResponseMetadata;
 import com.ning.billing.recurly.model.ShippingAddress;
 import com.ning.billing.recurly.model.ShippingAddresses;
 import com.ning.billing.recurly.model.ShippingMethod;
@@ -2314,14 +2311,15 @@ public class RecurlyClient {
         builder.setHeader(HttpHeaders.ACCEPT, "application/xml");
         builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/xml; charset=utf-8");
         CloseableHttpResponse response = null;
-        InputStream in = null;
         try {
             response = client.execute(builder);
             final HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                in = entity.getContent();
+            final String payload;
+            if (entity == null) {
+            	payload = "";
+            } else {
+            	payload = MoreObjects.firstNonNull(EntityUtils.toString(entity, "UTF-8"), "");
             }
-            final String payload = convertStreamToString(in);
             if (debug()) {
                 log.info("Msg from Recurly API :: {}", payload);
             }
@@ -2364,11 +2362,10 @@ public class RecurlyClient {
             }
 
             final T obj = xmlMapper.readValue(payload, clazz);
-            final ResponseMetadata meta = new ResponseMetadata(response);
             if (obj instanceof RecurlyObject) {
                 ((RecurlyObject) obj).setRecurlyClient(this);
             } else if (obj instanceof RecurlyObjects) {
-                final RecurlyObjects recurlyObjects = (RecurlyObjects) obj;
+                final RecurlyObjects<?> recurlyObjects = (RecurlyObjects<?>) obj;
                 recurlyObjects.setRecurlyClient(this);
 
                 // Set the RecurlyClient on all objects for later use
@@ -2392,7 +2389,6 @@ public class RecurlyClient {
 
             return obj;
         } finally {
-            closeStream(in);
             closeResponse(response);
         }
     }
@@ -2409,25 +2405,6 @@ public class RecurlyClient {
 
     private String getKey() {
         return MoreObjects.firstNonNull(keyOverride.get(), key);
-    }
-
-    private String convertStreamToString(final java.io.InputStream is) {
-        if (is == null) return "";
-        try {
-            return new Scanner(is).useDelimiter("\\A").next();
-        } catch (final NoSuchElementException e) {
-            return "";
-        }
-    }
-
-    private void closeStream(final InputStream in) {
-        if (in != null) {
-            try {
-                in.close();
-            } catch (IOException e) {
-                log.warn("Failed to close http-client - provided InputStream: {}", e.getLocalizedMessage());
-            }
-        }
     }
 
     private void closeResponse(final CloseableHttpResponse response) {
