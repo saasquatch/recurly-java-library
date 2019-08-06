@@ -2430,7 +2430,11 @@ public class RecurlyClient {
         // Don't limit the number of connections per host
         // See https://github.com/ning/async-http-client/issues/issue/28
         final HttpClientBuilder httpClientBuilder = HttpClients.custom()
-                .disableCookieManagement()
+                .disableCookieManagement() // We don't need cookies
+                /*
+                 * The following limits are what the Apache HC Fluent API uses, and in practice
+                 * they should be more than enough.
+                 */
                 .setMaxConnPerRoute(100) // default is 2
                 .setMaxConnTotal(200) // default is 20
                 .setSSLContext(SslUtils.getInstance().getSSLContext());
