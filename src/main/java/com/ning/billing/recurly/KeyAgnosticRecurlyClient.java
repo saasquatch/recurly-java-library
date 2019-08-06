@@ -57,6 +57,9 @@ import com.ning.billing.recurly.model.Transactions;
 import com.ning.billing.recurly.model.Usage;
 import com.ning.billing.recurly.model.Usages;
 
+/**
+ * A wrapper for {@link RecurlyClient} where you can pass in an API key in every method.
+ */
 public class KeyAgnosticRecurlyClient {
 
     // Just a placeholder that will not be used
