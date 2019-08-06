@@ -2216,7 +2216,10 @@ public class RecurlyClient {
         validateHost(baseUrl + resource);
 
         final HttpPost builder = new HttpPost(baseUrl + resource);
-        builder.setEntity(new StringEntity(xmlPayload, ContentType.APPLICATION_XML.withCharset("UTF-8")));
+        if (xmlPayload != null) {
+            builder.setEntity(new StringEntity(xmlPayload,
+                    ContentType.APPLICATION_XML.withCharset("UTF-8")));
+        }
         return callRecurlySafeXmlContent(builder, clazz);
     }
 
@@ -2241,7 +2244,10 @@ public class RecurlyClient {
         validateHost(baseUrl + resource);
 
         final HttpPut builder = new HttpPut(baseUrl + resource);
-        builder.setEntity(new StringEntity(xmlPayload, ContentType.APPLICATION_XML.withCharset("UTF-8")));
+        if (xmlPayload != null) {
+            builder.setEntity(new StringEntity(xmlPayload,
+                    ContentType.APPLICATION_XML.withCharset("UTF-8")));
+        }
         return callRecurlySafeXmlContent(builder, clazz);
     }
 
@@ -2406,6 +2412,7 @@ public class RecurlyClient {
     }
 
     private String convertStreamToString(final java.io.InputStream is) {
+        if (is == null) return "";
         try {
             return new Scanner(is).useDelimiter("\\A").next();
         } catch (final NoSuchElementException e) {
