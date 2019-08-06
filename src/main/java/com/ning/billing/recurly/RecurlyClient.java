@@ -1609,6 +1609,19 @@ public class RecurlyClient {
         doDELETE(Coupon.COUPON_RESOURCE + "/" + couponCode);
     }
 
+    /**
+     * Restore a {@link Coupon}
+     * <p>
+     *
+     * @param couponCode The code for the {@link Coupon}
+     * @return
+     */
+    public Coupon restoreCoupon(final String couponCode) {
+        final Coupon coupon = new Coupon(); // This is required
+        return doPUT(Coupon.COUPON_RESOURCE + "/" + couponCode + Coupon.RESTORE_RESOURCE,
+                coupon, Coupon.class);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     /**
@@ -2177,7 +2190,7 @@ public class RecurlyClient {
             log.error("Error retrieving response body", e);
             return null;
         } finally {
-        	closeResponse(response);
+            closeResponse(response);
         }
 
         return pdfInputStream;

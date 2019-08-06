@@ -85,11 +85,11 @@ public class KeyAgnosticRecurlyClient {
     }
 
     public void open() throws KeyManagementException, NoSuchAlgorithmException {
-    	recurlyClient.open();
+        recurlyClient.open();
     }
 
     public void close() {
-    	recurlyClient.close();
+        recurlyClient.close();
     }
 
     public Account createAccount(final Account account, String apiKey) {
@@ -987,6 +987,15 @@ public class KeyAgnosticRecurlyClient {
         final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
         try {
             recurlyClient.deleteCoupon(couponCode);
+        } finally {
+            keyOverrideCloseable.close();
+        }
+    }
+
+    public Coupon restoreCoupon(final String couponCode, String apiKey) {
+        final RecurlyKeyOverrideCloseable keyOverrideCloseable = recurlyClient.overrideKey(apiKey);
+        try {
+            return recurlyClient.restoreCoupon(couponCode);
         } finally {
             keyOverrideCloseable.close();
         }
