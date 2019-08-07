@@ -2509,7 +2509,7 @@ public class RecurlyClient {
      * Set the keyOverride ThreadLocal with a key, and resets it on close.
      * @see RecurlyClient#overrideApiKey(String)
      */
-    static class ApiKeyOverrideCloseable implements Closeable {
+    public static class ApiKeyOverrideCloseable implements Closeable {
 
         private final ThreadLocal<String> keyOverride;
         private final String originalOverride;
@@ -2542,7 +2542,7 @@ public class RecurlyClient {
      *     apiKeyOverrideCloseable.close();
      * }</pre>
      */
-    ApiKeyOverrideCloseable overrideApiKey(@Nonnull String apiKey) {
+    public ApiKeyOverrideCloseable overrideApiKey(@Nonnull String apiKey) {
         return new ApiKeyOverrideCloseable(keyOverride, apiKey);
     }
 
