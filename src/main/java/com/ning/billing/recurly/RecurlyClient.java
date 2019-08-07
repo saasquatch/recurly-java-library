@@ -25,7 +25,6 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -62,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Charsets;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.StandardSystemProperty;
@@ -2215,7 +2215,7 @@ public class RecurlyClient {
         final HttpPost builder = new HttpPost(baseUrl + resource);
         if (xmlPayload != null) {
             builder.setEntity(new StringEntity(xmlPayload,
-                    ContentType.APPLICATION_XML.withCharset("UTF-8")));
+                    ContentType.APPLICATION_XML.withCharset(Charsets.UTF_8)));
         }
         return callRecurlySafeXmlContent(builder, clazz);
     }
@@ -2243,7 +2243,7 @@ public class RecurlyClient {
         final HttpPut builder = new HttpPut(baseUrl + resource);
         if (xmlPayload != null) {
             builder.setEntity(new StringEntity(xmlPayload,
-                    ContentType.APPLICATION_XML.withCharset("UTF-8")));
+                    ContentType.APPLICATION_XML.withCharset(Charsets.UTF_8)));
         }
         return callRecurlySafeXmlContent(builder, clazz);
     }
@@ -2318,7 +2318,7 @@ public class RecurlyClient {
             if (entity == null) {
                 payload = "";
             } else {
-                payload = MoreObjects.firstNonNull(EntityUtils.toString(entity, "UTF-8"), "");
+                payload = MoreObjects.firstNonNull(EntityUtils.toString(entity, Charsets.UTF_8), "");
             }
             if (debug()) {
                 log.info("Msg from Recurly API :: {}", payload);
@@ -2456,7 +2456,7 @@ public class RecurlyClient {
         try {
             final Properties gitRepositoryState = new Properties();
             final URL resourceURL = Resources.getResource(GIT_PROPERTIES_FILE);
-            final CharSource charSource = Resources.asCharSource(resourceURL, Charset.forName("UTF-8"));
+            final CharSource charSource = Resources.asCharSource(resourceURL, Charsets.UTF_8);
 
             Reader reader = null;
             try {
@@ -2491,7 +2491,7 @@ public class RecurlyClient {
          * Use Guava here since we are already using Guava, and DataTypeConverter can
          * potentially cause problems with Java 9.
          */
-        return BaseEncoding.base64().encode(apiKey.getBytes(Charset.forName("UTF-8")));
+        return BaseEncoding.base64().encode(apiKey.getBytes(Charsets.UTF_8));
     }
 
     /**
