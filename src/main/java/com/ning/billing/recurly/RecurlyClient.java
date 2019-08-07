@@ -2405,6 +2405,8 @@ public class RecurlyClient {
     private void clientRequestBuilderCommon(HttpRequestBase requestBuilder) {
         requestBuilder.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + getKey());
         requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
+        // User-Agent is set in client setup
+//        requestBuilder.setHeader(HttpHeaders.USER_AGENT, userAgent);
         requestBuilder.setHeader(HttpHeaders.ACCEPT_LANGUAGE, acceptLanguage);
         // Use the default timeouts from AHC
         requestBuilder.setConfig(RequestConfig.custom()
