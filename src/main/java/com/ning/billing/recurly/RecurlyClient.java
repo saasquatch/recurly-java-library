@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -41,6 +42,7 @@ import javax.annotation.Nullable;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -49,6 +51,7 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -2300,9 +2303,15 @@ public class RecurlyClient {
         try {
             return callRecurlyXmlContent(builder, clazz);
         } catch (IOException e) {
+            if (e instanceof ConnectException || e instanceof NoHttpResponseException
+                    || e instanceof ConnectTimeoutException) {
+                // See https://github.com/killbilling/recurly-java-library/issues/185
+                throw new ConnectionErrorException(e);
+            }
             log.warn("Error while calling Recurly", e);
             return null;
         }
+        // No need to extract TransactionErrorException since it's already a RuntimeException
     }
 
     private <T> T callRecurlyXmlContent(final HttpRequestBase builder, @Nullable final Class<T> clazz)
