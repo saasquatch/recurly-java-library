@@ -28,12 +28,9 @@ import java.net.URI;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +54,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.HeaderGroup;
 import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -287,8 +285,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getAccountsCount(final QueryParams params) {
-        final Map<String, List<String>> map = doHEAD(Accounts.ACCOUNTS_RESOURCE, params);
-        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
+        final HeaderGroup headerGroup = doHEAD(Accounts.ACCOUNTS_RESOURCE, params);
+        return Integer.parseInt(headerGroup.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
     }
 
     /**
@@ -321,8 +319,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getCouponsCount(final QueryParams params) {
-        final Map<String, List<String>> map = doHEAD(Coupons.COUPONS_RESOURCE, params);
-        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
+        final HeaderGroup headerGroup = doHEAD(Coupons.COUPONS_RESOURCE, params);
+        return Integer.parseInt(headerGroup.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
     }
 
     /**
@@ -713,8 +711,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getSubscriptionsCount(final QueryParams params) {
-        final Map<String, List<String>> map = doHEAD(Subscription.SUBSCRIPTION_RESOURCE, params);
-        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
+        final HeaderGroup headerGroup = doHEAD(Subscription.SUBSCRIPTION_RESOURCE, params);
+        return Integer.parseInt(headerGroup.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
     }
 
     /**
@@ -959,8 +957,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getTransactionsCount(final QueryParams params) {
-        final Map<String, List<String>> map = doHEAD(Transactions.TRANSACTIONS_RESOURCE, params);
-        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
+        final HeaderGroup headerGroup = doHEAD(Transactions.TRANSACTIONS_RESOURCE, params);
+        return Integer.parseInt(headerGroup.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
     }
 
     /**
@@ -1110,8 +1108,8 @@ public class RecurlyClient {
      * @return the count of invoices matching the query
      */
     public int getInvoicesCount(final QueryParams params) {
-        final Map<String, List<String>> map = doHEAD(Invoices.INVOICES_RESOURCE, params);
-        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
+        final HeaderGroup headerGroup = doHEAD(Invoices.INVOICES_RESOURCE, params);
+        return Integer.parseInt(headerGroup.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
     }
 
     /**
@@ -1449,8 +1447,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getPlansCount(final QueryParams params) {
-        final Map<String, List<String>> map = doHEAD(Plans.PLANS_RESOURCE, params);
-        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
+        final HeaderGroup headerGroup = doHEAD(Plans.PLANS_RESOURCE, params);
+        return Integer.parseInt(headerGroup.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
     }
 
     /**
@@ -1870,8 +1868,8 @@ public class RecurlyClient {
      * @return Integer on success, null otherwise
      */
     public Integer getGiftCardsCount(final QueryParams params) {
-        final Map<String, List<String>> map = doHEAD(GiftCards.GIFT_CARDS_RESOURCE, params);
-        return Integer.parseInt(map.get(X_RECORDS_HEADER_NAME).get(0));
+        final HeaderGroup headerGroup = doHEAD(GiftCards.GIFT_CARDS_RESOURCE, params);
+        return Integer.parseInt(headerGroup.getFirstHeader(X_RECORDS_HEADER_NAME).getValue());
     }
 
     /**
@@ -2156,7 +2154,6 @@ public class RecurlyClient {
         if (debug()) {
             log.info("Msg to Recurly API [GET] :: URL : {}", url);
         }
-        validateHost(url);
         return callRecurlySafeXmlContent(new HttpGet(url), clazz);
     }
 
@@ -2169,8 +2166,6 @@ public class RecurlyClient {
     }
 
     private InputStream callRecurlySafeGetPdf(String url) {
-        validateHost(url);
-
         CloseableHttpResponse response = null;
         InputStream pdfInputStream = null;
         try {
@@ -2213,8 +2208,6 @@ public class RecurlyClient {
             return null;
         }
 
-        validateHost(baseUrl + resource);
-
         final HttpPost builder = new HttpPost(baseUrl + resource);
         if (xmlPayload != null) {
             builder.setEntity(new StringEntity(xmlPayload,
@@ -2241,8 +2234,6 @@ public class RecurlyClient {
             return null;
         }
 
-        validateHost(baseUrl + resource);
-
         final HttpPut builder = new HttpPut(baseUrl + resource);
         if (xmlPayload != null) {
             builder.setEntity(new StringEntity(xmlPayload,
@@ -2251,7 +2242,7 @@ public class RecurlyClient {
         return callRecurlySafeXmlContent(builder, clazz);
     }
 
-    private Map<String, List<String>> doHEAD(final String resource, QueryParams params) {
+    private HeaderGroup doHEAD(final String resource, QueryParams params) {
         if (params == null) {
             params = new QueryParams();
         }
@@ -2261,36 +2252,26 @@ public class RecurlyClient {
             log.info("Msg to Recurly API [HEAD]:: URL : {}", url);
         }
 
-        validateHost(url);
-
         return callRecurlyNoContent(new HttpHead(url));
     }
 
     private void doDELETE(final String resource) {
-        validateHost(baseUrl + resource);
-
         callRecurlySafeXmlContent(new HttpDelete(baseUrl + resource), null);
     }
 
-    private Map<String, List<String>> callRecurlyNoContent(final HttpRequestBase builder) {
+    private HeaderGroup callRecurlyNoContent(final HttpRequestBase builder) {
         clientRequestBuilderCommon(builder);
         builder.setHeader(HttpHeaders.ACCEPT, "application/xml");
         builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/xml; charset=utf-8");
         CloseableHttpResponse response = null;
         try {
             response = client.execute(builder);
-            // Copy all the headers into a Map. Use case insensitive TreeMap because HTTP header
-            // names are case insensitive.
-            final Map<String, List<String>> headerMap = new TreeMap<String, List<String>>(
-                    String.CASE_INSENSITIVE_ORDER);
+            // Copy all the headers into a HeaderGroup, which will handle case insensitive headers for us
+            final HeaderGroup headerGroup = new HeaderGroup();
             for (Header header : response.getAllHeaders()) {
-                final String key = header.getName();
-                if (!headerMap.containsKey(key)) {
-                    headerMap.put(key, new ArrayList<String>());
-                }
-                headerMap.get(key).add(header.getValue());
+                headerGroup.addHeader(header);
             }
-            return headerMap;
+            return headerGroup;
         } catch (IOException e) {
             log.error("Execution error", e);
             return null;
@@ -2403,6 +2384,7 @@ public class RecurlyClient {
     }
 
     private void clientRequestBuilderCommon(HttpRequestBase requestBuilder) {
+    	validateHost(requestBuilder.getURI());
         requestBuilder.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + getKey());
         requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
         // User-Agent is set in client setup
@@ -2443,8 +2425,8 @@ public class RecurlyClient {
         return httpClientBuilder.build();
     }
 
-    private void validateHost(String url) {
-        String host = URI.create(url).getHost();
+    private void validateHost(URI uri) {
+        String host = uri.getHost();
 
         // Remove the subdomain from the host
         host = host.substring(host.indexOf(".")+1);
