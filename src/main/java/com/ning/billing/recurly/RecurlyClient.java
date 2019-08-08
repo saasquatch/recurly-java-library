@@ -2384,7 +2384,7 @@ public class RecurlyClient {
     }
 
     private void clientRequestBuilderCommon(HttpRequestBase requestBuilder) {
-    	validateHost(requestBuilder.getURI());
+        validateHost(requestBuilder.getURI());
         requestBuilder.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + getKey());
         requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
         // User-Agent is set in client setup
