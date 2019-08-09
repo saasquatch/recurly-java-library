@@ -60,6 +60,7 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
         if (recurlyClient == null || startUrl == null) {
             return null;
         }
+        // If there is an apiKey override, use it
         final ApiKeyOverrideCloseable overrideCloseable = currentApiKeyOverride == null
                 ? null : recurlyClient.overrideApiKey(currentApiKeyOverride);
         try {
@@ -76,6 +77,7 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
         if (recurlyClient == null || nextUrl == null) {
             return null;
         }
+        // If there is an apiKey override, use it
         final ApiKeyOverrideCloseable overrideCloseable = currentApiKeyOverride == null
                 ? null : recurlyClient.overrideApiKey(currentApiKeyOverride);
         try {
@@ -92,6 +94,9 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
         this.recurlyClient = recurlyClient;
     }
 
+    /**
+     * Set the API key used to retrieve this object
+     */
     @JsonIgnore
     public void setCurrentApiKeyOverride(@Nullable final String currentApiKeyOverride) {
         this.currentApiKeyOverride = currentApiKeyOverride;

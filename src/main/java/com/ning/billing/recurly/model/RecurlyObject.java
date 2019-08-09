@@ -246,6 +246,7 @@ public abstract class RecurlyObject {
         if (object.getHref() == null || recurlyClient == null) {
             return object;
         }
+        // If there is an apiKey override, use it
         final ApiKeyOverrideCloseable overrideCloseable = currentApiKeyOverride == null
                 ? null : recurlyClient.overrideApiKey(currentApiKeyOverride);
         try {
@@ -260,6 +261,9 @@ public abstract class RecurlyObject {
         this.recurlyClient = recurlyClient;
     }
 
+    /**
+     * Set the API key used to retrieve this object
+     */
     @JsonIgnore
     public void setCurrentApiKeyOverride(@Nullable final String currentApiKeyOverride) {
         this.currentApiKeyOverride = currentApiKeyOverride;

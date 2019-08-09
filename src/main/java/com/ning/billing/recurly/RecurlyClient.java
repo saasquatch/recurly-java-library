@@ -2529,7 +2529,11 @@ public class RecurlyClient {
      * try {
      *     return createAccount(account);
      * } finally {
-     *     apiKeyOverrideCloseable.close();
+     *     overrideCloseable.close();
+     * }</pre>
+     * Or for Java 7+:
+     * <pre> try (ApiKeyOverrideCloseable overrideCloseable = overrideApiKey(apiKey)) {
+     *     return createAccount(account);
      * }</pre>
      */
     public ApiKeyOverrideCloseable overrideApiKey(@Nonnull String apiKey) {
