@@ -96,7 +96,7 @@ public class QueryParams {
         }
     }
 
-    private Map<String,String> params;
+    private Map<String, String> params;
 
     public QueryParams() {
         params = new HashMap<String, String>();
@@ -159,7 +159,7 @@ public class QueryParams {
     public String toString() {
         if (params.isEmpty()) return "";
         final List<NameValuePair> pairList = new ArrayList<NameValuePair>(params.size());
-        for (Map.Entry<String,String> entry : params.entrySet()) {
+        for (Map.Entry<String, String> entry : params.entrySet()) {
             pairList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
         return '?' + URLEncodedUtils.format(pairList, Charsets.UTF_8);
