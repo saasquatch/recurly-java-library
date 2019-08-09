@@ -5,12 +5,16 @@ import static com.ning.billing.recurly.TestRecurlyClient.KILLBILL_PAYMENT_RECURL
 
 import org.joda.time.DateTime;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.ning.billing.recurly.RecurlyClient.ApiKeyOverrideCloseable;
 import com.ning.billing.recurly.model.Coupon;
 import com.ning.billing.recurly.model.Coupons;
+import com.ning.billing.recurly.model.Subscription;
+import com.ning.billing.recurly.model.Subscriptions;
 
 public class TestKeyAgnosticClient {
 
@@ -28,7 +32,7 @@ public class TestKeyAgnosticClient {
         }
 
         if (subDomainTemp == null) {
-          subDomainTemp = "api";
+            subDomainTemp = "api";
         }
 
         final String subDomain = subDomainTemp;
@@ -108,6 +112,46 @@ public class TestKeyAgnosticClient {
         Assert.assertNotNull(plansCount);
         Integer giftCardsCount = recurlyClient.getGiftCardsCount(qp, apiKey);
         Assert.assertNotNull(giftCardsCount);
+    }
+
+    @Test(groups = "integration")
+    public void testFetchWorks() throws Exception {
+        // Do a normal test first
+        {
+            final Subscriptions subscriptions = recurlyClient.getSubscriptions(apiKey);
+            if (subscriptions.isEmpty()) {
+                throw new SkipException("No subscriptions found. Unable to test.");
+            }
+            final Subscription subscription = subscriptions.get(0);
+            // The following line should not fail
+            subscription.getAccount();
+        }
+        // Repeat the test with a manual override
+        {
+            final Subscriptions subscriptions = recurlyClient.getSubscriptions(apiKey);
+            if (subscriptions.isEmpty()) {
+                throw new SkipException("No subscriptions found. Unable to test.");
+            }
+            final Subscription subscription = subscriptions.get(0);
+            final ApiKeyOverrideCloseable overrideCloseable = recurlyClient.getRecurlyClient()
+                    .overrideApiKey("invalid-api-key");
+            try {
+                // This should work even if you manually override the apiKey to something else
+                try {
+                    subscription.getAccount();
+                } catch (RecurlyAPIException unexpected) {
+                    Assert.fail(unexpected.getMessage(), unexpected);
+                }
+                try {
+                    recurlyClient.getRecurlyClient().getSubscriptions();
+                    Assert.fail("getSubscriptions should fail with invalid credentials");
+                } catch (RecurlyAPIException expected) {
+                    Assert.assertEquals(expected.getRecurlyError().getSymbol(), "unauthorized");
+                }
+            } finally {
+                overrideCloseable.close();
+            }
+        }
     }
 
 }
