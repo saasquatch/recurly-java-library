@@ -101,7 +101,7 @@ public class QueryParams {
     public QueryParams() {
         params = new HashMap<String, String>();
 
-        Integer pageSize;
+        int pageSize;
 
         try {
             pageSize = Integer.parseInt(System.getProperty(RECURLY_PAGE_SIZE_KEY));
