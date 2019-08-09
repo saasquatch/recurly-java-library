@@ -17,10 +17,21 @@
 
 package com.ning.billing.recurly.model;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.stream.XMLInputFactory;
+
+import org.joda.time.DateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,15 +46,6 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.ning.billing.recurly.RecurlyClient;
 import com.ning.billing.recurly.model.jackson.RecurlyObjectsSerializer;
 import com.ning.billing.recurly.model.jackson.RecurlyXmlSerializerProvider;
-import org.joda.time.DateTime;
-
-import javax.annotation.Nullable;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.stream.XMLInputFactory;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class RecurlyObject {
@@ -112,7 +114,7 @@ public abstract class RecurlyObject {
         // Booleans are represented as objects (e.g. <display_quantity type="boolean">false</display_quantity>), which Jackson
         // will interpret as an Object (Map), not Booleans.
         if (object instanceof Map) {
-            final Map map = (Map) object;
+            final Map<?, ?> map = (Map<?, ?>) object;
             if (map.keySet().size() == 2 && "boolean".equalsIgnoreCase((String) map.get("type"))) {
                 return Boolean.valueOf((String) map.get(""));
             }
@@ -143,10 +145,9 @@ public abstract class RecurlyObject {
             value = value.toUpperCase();
         }
 
-        return (E) Enum.valueOf(enumClass, value);
+        return Enum.valueOf(enumClass, value);
     }
 
-    @SuppressWarnings("unchecked")
     public static <E extends Enum<E>> E enumOrNull(Class<E> enumClass, @Nullable final Object object) {
         return enumOrNull(enumClass, object, false);
     }
@@ -159,7 +160,7 @@ public abstract class RecurlyObject {
         // Integers are represented as objects (e.g. <year type="integer">2015</year>), which Jackson
         // will interpret as an Object (Map), not Integers.
         if (object instanceof Map) {
-            final Map map = (Map) object;
+            final Map<?, ?> map = (Map<?, ?>) object;
             if (map.keySet().size() == 2 && "integer".equalsIgnoreCase((String) map.get("type"))) {
                 return Integer.valueOf((String) map.get(""));
             }
@@ -176,7 +177,7 @@ public abstract class RecurlyObject {
         // Ids are represented as objects (e.g. <id type="integer">1988596967980562362</id>), which Jackson
         // will interpret as an Object (Map), not Longs.
         if (object instanceof Map) {
-            final Map map = (Map) object;
+            final Map<?, ?> map = (Map<?, ?>) object;
             if (map.keySet().size() == 2 && "integer".equalsIgnoreCase((String) map.get("type"))) {
                 return Long.valueOf((String) map.get(""));
             }
@@ -193,7 +194,7 @@ public abstract class RecurlyObject {
         // BigDecimals are represented as objects (e.g. <tax_rate type="float">0.0875</tax_rate>), which Jackson
         // will interpret as an Object (Map), not Longs.
         if (object instanceof Map) {
-            final Map map = (Map) object;
+            final Map<?, ?> map = (Map<?, ?>) object;
             if (map.keySet().size() == 2 && "float".equalsIgnoreCase((String) map.get("type"))) {
                 return new BigDecimal((String) map.get(""));
             }
@@ -210,7 +211,7 @@ public abstract class RecurlyObject {
         // DateTimes are represented as objects (e.g. <created_at type="dateTime">2011-04-19T07:00:00Z</created_at>), which Jackson
         // will interpret as an Object (Map), not DateTimes.
         if (object instanceof Map) {
-            final Map map = (Map) object;
+            final Map<?, ?> map = (Map<?, ?>) object;
             if (map.keySet().size() == 2 && "dateTime".equalsIgnoreCase((String) map.get("type"))) {
                 return new DateTime(map.get(""));
             }
@@ -228,7 +229,7 @@ public abstract class RecurlyObject {
         // an element with a nil attribute (e.g. <city nil="nil"></city> or <username nil="true"></username>) which Jackson will
         // interpret as an Object (Map), not a String.
         if (object instanceof Map) {
-            final Map map = (Map) object;
+            final Map<?, ?> map = (Map<?, ?>) object;
             if (map.keySet().size() >= 1 && map.get(NIL_STR) != null && NIL_VAL.contains(map.get(NIL_STR).toString())) {
                 return true;
             }
