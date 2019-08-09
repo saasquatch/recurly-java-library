@@ -44,6 +44,7 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.ning.billing.recurly.RecurlyClient;
+import com.ning.billing.recurly.RecurlyClient.ApiKeyOverrideCloseable;
 import com.ning.billing.recurly.model.jackson.RecurlyObjectsSerializer;
 import com.ning.billing.recurly.model.jackson.RecurlyXmlSerializerProvider;
 
@@ -52,6 +53,9 @@ public abstract class RecurlyObject {
 
     @XmlTransient
     private RecurlyClient recurlyClient;
+
+    @XmlTransient
+    private String currentApiKeyOverride;
 
     @XmlTransient
     protected String href;
@@ -242,11 +246,23 @@ public abstract class RecurlyObject {
         if (object.getHref() == null || recurlyClient == null) {
             return object;
         }
-        return recurlyClient.doGETWithFullURL(clazz, object.getHref());
+        final ApiKeyOverrideCloseable overrideCloseable = currentApiKeyOverride == null
+                ? null : recurlyClient.overrideApiKey(currentApiKeyOverride);
+        try {
+            return recurlyClient.doGETWithFullURL(clazz, object.getHref());
+        } finally {
+            if (overrideCloseable != null) overrideCloseable.close();
+        }
     }
 
+    @JsonIgnore
     public void setRecurlyClient(final RecurlyClient recurlyClient) {
         this.recurlyClient = recurlyClient;
+    }
+
+    @JsonIgnore
+    public void setCurrentApiKeyOverride(@Nullable final String currentApiKeyOverride) {
+        this.currentApiKeyOverride = currentApiKeyOverride;
     }
 
     @Override

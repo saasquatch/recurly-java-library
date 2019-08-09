@@ -2354,13 +2354,16 @@ public class RecurlyClient {
             final T obj = xmlMapper.readValue(payload, clazz);
             if (obj instanceof RecurlyObject) {
                 ((RecurlyObject) obj).setRecurlyClient(this);
+                ((RecurlyObject) obj).setCurrentApiKeyOverride(apiKeyOverride.get());
             } else if (obj instanceof RecurlyObjects) {
                 final RecurlyObjects<?> recurlyObjects = (RecurlyObjects<?>) obj;
                 recurlyObjects.setRecurlyClient(this);
+                recurlyObjects.setCurrentApiKeyOverride(apiKeyOverride.get());
 
                 // Set the RecurlyClient on all objects for later use
                 for (final Object object : recurlyObjects) {
                     ((RecurlyObject) object).setRecurlyClient(this);
+                    ((RecurlyObject) object).setCurrentApiKeyOverride(apiKeyOverride.get());
                 }
 
                 // Set links for pagination
