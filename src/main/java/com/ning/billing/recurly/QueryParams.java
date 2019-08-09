@@ -16,12 +16,17 @@
  */
 package com.ning.billing.recurly;
 
-import com.ning.billing.recurly.model.Subscription;
-import com.ning.billing.recurly.model.Transaction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.base.Charsets;
 
 /**
  * This class is responsible for handling query parameters to pageable resources in the Recurly API.
@@ -99,7 +104,7 @@ public class QueryParams {
         Integer pageSize;
 
         try {
-            pageSize = new Integer(System.getProperty(RECURLY_PAGE_SIZE_KEY));
+            pageSize = Integer.parseInt(System.getProperty(RECURLY_PAGE_SIZE_KEY));
         } catch (NumberFormatException nfex) {
             pageSize = DEFAULT_PAGE_SIZE;
         }
@@ -152,18 +157,12 @@ public class QueryParams {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
+        if (params.isEmpty()) return "";
+        final List<NameValuePair> pairList = new ArrayList<NameValuePair>(params.size());
         for (Map.Entry<String,String> entry : params.entrySet()) {
-            if (sb.length() > 0) {
-                sb.append("&");
-            } else {
-                sb.append("?");
-            }
-
-            sb.append(String.format("%s=%s", entry.getKey(), entry.getValue()));
+            pairList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
-
-        return sb.toString();
+        return '?' + URLEncodedUtils.format(pairList, Charsets.UTF_8);
     }
+
 }
