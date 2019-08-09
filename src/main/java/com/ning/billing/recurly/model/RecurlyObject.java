@@ -18,7 +18,6 @@
 package com.ning.billing.recurly.model;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +42,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.google.common.collect.ImmutableList;
 import com.ning.billing.recurly.RecurlyClient;
 import com.ning.billing.recurly.RecurlyClient.ApiKeyOverrideCloseable;
 import com.ning.billing.recurly.model.jackson.RecurlyObjectsSerializer;
@@ -61,7 +61,7 @@ public abstract class RecurlyObject {
     protected String href;
 
     public static final String NIL_STR = "nil";
-    public static final List<String> NIL_VAL = Arrays.asList("nil", "true");
+    public static final List<String> NIL_VAL = ImmutableList.of("nil", "true");
 
     // See https://github.com/killbilling/recurly-java-library/issues/4 for why
     // @JsonIgnore is required here and @XmlTransient is not enough
