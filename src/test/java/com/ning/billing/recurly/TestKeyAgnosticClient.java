@@ -142,6 +142,7 @@ public class TestKeyAgnosticClient {
                 } catch (RecurlyAPIException unexpected) {
                     Assert.fail(unexpected.getMessage(), unexpected);
                 }
+                // This should fail because our invalid api key should be restored at this point
                 try {
                     recurlyClient.getRecurlyClient().getSubscriptions();
                     Assert.fail("getSubscriptions should fail with invalid credentials");
