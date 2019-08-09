@@ -163,7 +163,7 @@ public class RecurlyClient {
         }
     }
 
-    private final ThreadLocal<String> keyOverride = new ThreadLocal<String>();
+    private final ThreadLocal<String> apiKeyOverride = new ThreadLocal<String>();
 
     // TODO: should we make it static?
     private final XmlMapper xmlMapper;
@@ -2396,7 +2396,11 @@ public class RecurlyClient {
     }
 
     private String getKey() {
-        return MoreObjects.firstNonNull(keyOverride.get(), key);
+        final String currentApiKeyOverride = apiKeyOverride.get();
+        if (currentApiKeyOverride != null) {
+            return getKeyFromApiKey(currentApiKeyOverride);
+        }
+        return key;
     }
 
     private void closeResponse(final CloseableHttpResponse response) {
@@ -2493,28 +2497,29 @@ public class RecurlyClient {
      */
     public static class ApiKeyOverrideCloseable implements Closeable {
 
-        private final ThreadLocal<String> keyOverride;
+        private final ThreadLocal<String> apiKeyOverride;
         private final String originalOverride;
 
-        private ApiKeyOverrideCloseable(@Nonnull ThreadLocal<String> keyOverride, @Nonnull String apiKey) {
-            this.keyOverride = Preconditions.checkNotNull(keyOverride);
-            this.originalOverride = keyOverride.get();
-            keyOverride.set(getKeyFromApiKey(apiKey));
+        private ApiKeyOverrideCloseable(@Nonnull ThreadLocal<String> apiKeyOverride,
+                @Nonnull String apiKey) {
+            this.apiKeyOverride = Preconditions.checkNotNull(apiKeyOverride);
+            this.originalOverride = apiKeyOverride.get();
+            apiKeyOverride.set(apiKey);
         }
 
         @Override
         public void close() {
             if (originalOverride == null) {
-                keyOverride.remove();
+                apiKeyOverride.remove();
             } else {
-                keyOverride.set(originalOverride);
+                apiKeyOverride.set(originalOverride);
             }
         }
 
     }
 
     /**
-     * Override the {@link #keyOverride} ThreadLocal with the given key, and returns a
+     * Override the {@link #apiKeyOverride} ThreadLocal with the given key, and returns a
      * {@link Closeable} that will revert the original key override on close.<br>
      * Example usage:
      * <pre> final ApiKeyOverrideCloseable overrideCloseable = overrideApiKey(apiKey);
@@ -2525,7 +2530,7 @@ public class RecurlyClient {
      * }</pre>
      */
     public ApiKeyOverrideCloseable overrideApiKey(@Nonnull String apiKey) {
-        return new ApiKeyOverrideCloseable(keyOverride, apiKey);
+        return new ApiKeyOverrideCloseable(apiKeyOverride, apiKey);
     }
 
 }
