@@ -144,6 +144,12 @@ public class Invoice extends RecurlyObject {
     @XmlElement(name = "shipping_address")
     private ShippingAddress shippingAddress;
 
+    @XmlElement(name = "surcharge_in_cents")
+    private Integer surchargeInCents;
+
+    @XmlElement(name = "transaction_type")
+    private String transactionType;
+
     public Account getAccount() {
         if (account != null && account.getCreatedAt() == null) {
             account = fetch(account, Account.class);
@@ -474,6 +480,22 @@ public class Invoice extends RecurlyObject {
         this.shippingAddress = shippingAddress;
     }
 
+    public Integer getSurchargeInCents() {
+        return surchargeInCents;
+    }
+
+    public void setSurchargeInCents(final Object surchargeInCents) {
+        this.surchargeInCents = integerOrNull(surchargeInCents);
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(final Object transactionType) {
+        this.transactionType = stringOrNull(transactionType);
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Invoice{");
@@ -515,6 +537,7 @@ public class Invoice extends RecurlyObject {
         sb.append(", origin=").append(origin);
         sb.append(", address=").append(address);
         sb.append(", shippingAddress=").append(shippingAddress);
+        sb.append(", surchargeInCents=").append(surchargeInCents);
         sb.append('}');
         return sb.toString();
     }
@@ -595,6 +618,9 @@ public class Invoice extends RecurlyObject {
         if (subtotalInCents != null ? !subtotalInCents.equals(invoice.subtotalInCents) : invoice.subtotalInCents != null) {
             return false;
         }
+        if (surchargeInCents != null ? !surchargeInCents.equals(invoice.surchargeInCents) : invoice.surchargeInCents != null) {
+            return false;
+        }
         if (refundableTotalInCents != null ? !refundableTotalInCents.equals(invoice.refundableTotalInCents) : invoice.refundableTotalInCents != null) {
             return false;
         }
@@ -635,6 +661,9 @@ public class Invoice extends RecurlyObject {
             return false;
         }
         if (gatewayCode != null ? !gatewayCode.equals(invoice.gatewayCode) : invoice.gatewayCode != null) {
+            return false;
+        }
+        if (transactionType != null ? !transactionType.equals(invoice.transactionType) : invoice.transactionType != null) {
             return false;
         }
 
@@ -680,7 +709,9 @@ public class Invoice extends RecurlyObject {
                 type,
                 origin,
                 address,
-                shippingAddress
+                shippingAddress,
+                surchargeInCents,
+                transactionType
         );
     }
 
