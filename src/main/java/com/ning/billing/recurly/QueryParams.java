@@ -17,6 +17,7 @@
 package com.ning.billing.recurly;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,6 +155,10 @@ public class QueryParams {
     }
 
     public void put(final String key, final String value) { params.put(key, value); }
+
+    Collection<Map.Entry<String, String>> getParams() {
+        return params.entrySet();
+    }
 
     @Override
     public String toString() {

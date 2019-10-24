@@ -25,10 +25,12 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -48,6 +50,7 @@ import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -332,10 +335,22 @@ public class RecurlyClient {
      * @return account object on success, null otherwise
      */
     public Account getAccount(final String accountCode) {
+        return getAccount(accountCode, null);
+    }
+
+    /**
+     * Get Account
+     * <p>
+     * Returns information about a single account.
+     *
+     * @param accountCode recurly account id
+     * @return account object on success, null otherwise
+     */
+    public Account getAccount(final String accountCode, QueryParams params) {
         if (accountCode == null || accountCode.isEmpty())
             throw new RuntimeException("accountCode cannot be empty!");
 
-        return doGET(Account.ACCOUNT_RESOURCE + "/" + accountCode, Account.class);
+        return doGET(Account.ACCOUNT_RESOURCE + "/" + accountCode, Account.class, params);
     }
 
     /**
@@ -360,7 +375,20 @@ public class RecurlyClient {
      * @return the updated AccountBalance if success, null otherwise
      */
     public AccountBalance getAccountBalance(final String accountCode) {
-        return doGET(Account.ACCOUNT_RESOURCE + "/" + accountCode + AccountBalance.ACCOUNT_BALANCE_RESOURCE, AccountBalance.class);
+        return getAccountBalance(accountCode, null);
+    }
+
+    /**
+     * Get Account Balance
+     * <p>
+     * Retrieves the remaining balance on the account
+     *
+     * @param accountCode recurly account id
+     * @return the updated AccountBalance if success, null otherwise
+     */
+    public AccountBalance getAccountBalance(final String accountCode, QueryParams params) {
+        return doGET(Account.ACCOUNT_RESOURCE + "/" + accountCode + AccountBalance.ACCOUNT_BALANCE_RESOURCE,
+            AccountBalance.class, params);
     }
 
     /**
@@ -459,10 +487,14 @@ public class RecurlyClient {
     }
 
     public Adjustment getAdjustment(final String adjustmentUuid) {
+    return getAdjustment(adjustmentUuid, null);
+    }
+
+    public Adjustment getAdjustment(final String adjustmentUuid, QueryParams params) {
         if (adjustmentUuid == null || adjustmentUuid.isEmpty())
             throw new RuntimeException("adjustmentUuid cannot be empty!");
 
-        return doGET(Adjustments.ADJUSTMENTS_RESOURCE + "/" + adjustmentUuid, Adjustment.class);
+        return doGET(Adjustments.ADJUSTMENTS_RESOURCE + "/" + adjustmentUuid, Adjustment.class, params);
     }
 
     public Adjustment createAccountAdjustment(final String accountCode, final Adjustment adjustment) {
@@ -517,12 +549,24 @@ public class RecurlyClient {
      * @return Subscription
      */
     public Subscription getSubscription(final String uuid) {
+        return getSubscription(uuid, null);
+    }
+
+    /**
+     * Get a particular {@link Subscription} by it's UUID
+     * <p>
+     * Returns information about a single subscription.
+     *
+     * @param uuid UUID of the subscription to lookup
+     * @return Subscription
+     */
+    public Subscription getSubscription(final String uuid, QueryParams params) {
         if (uuid == null || uuid.isEmpty())
             throw new RuntimeException("uuid cannot be empty!");
 
         return doGET(Subscriptions.SUBSCRIPTIONS_RESOURCE
                      + "/" + uuid,
-                     Subscription.class);
+                     Subscription.class, params);
     }
 
     /**
@@ -656,8 +700,8 @@ public class RecurlyClient {
      * @return Subscription the updated subscription
      */
     public Subscription updateSubscriptionNotes(final String uuid, final SubscriptionNotes subscriptionNotes) {
-      return doPUT(SubscriptionNotes.SUBSCRIPTION_RESOURCE + "/" + uuid + "/notes",
-                   subscriptionNotes, Subscription.class);
+    return doPUT(SubscriptionNotes.SUBSCRIPTION_RESOURCE + "/" + uuid + "/notes",
+        subscriptionNotes, Subscription.class);
     }
 
     /**
@@ -855,8 +899,20 @@ public class RecurlyClient {
      * @return the current billing info object associated with this account on success, null otherwise
      */
     public BillingInfo getBillingInfo(final String accountCode) {
+    return getBillingInfo(accountCode, null);
+    }
+
+    /**
+     * Lookup an account's billing info
+     * <p>
+     * Returns only the account's current billing information.
+     *
+     * @param accountCode recurly account id
+     * @return the current billing info object associated with this account on success, null otherwise
+     */
+    public BillingInfo getBillingInfo(final String accountCode, QueryParams params) {
         return doGET(Account.ACCOUNT_RESOURCE + "/" + accountCode + BillingInfo.BILLING_INFO_RESOURCE,
-                     BillingInfo.class);
+            BillingInfo.class, params);
     }
 
     /**
@@ -968,11 +1024,21 @@ public class RecurlyClient {
      * @return the transaction if found, null otherwise
      */
     public Transaction getTransaction(final String transactionId) {
+    return getTransaction(transactionId, null);
+    }
+
+    /**
+     * Lookup a transaction
+     *
+     * @param transactionId recurly transaction id
+     * @return the transaction if found, null otherwise
+     */
+    public Transaction getTransaction(final String transactionId, QueryParams params) {
         if (transactionId == null || transactionId.isEmpty())
             throw new RuntimeException("transactionId cannot be empty!");
 
         return doGET(Transactions.TRANSACTIONS_RESOURCE + "/" + transactionId,
-                     Transaction.class);
+                Transaction.class, params);
     }
 
     /**
@@ -1030,10 +1096,26 @@ public class RecurlyClient {
      * @return the invoice
      */
     public Invoice getInvoice(final String invoiceId) {
+    return getInvoice(invoiceId, null);
+    }
+
+    /**
+     * Lookup an invoice given an invoice id
+     *
+     * <p>
+     * Returns the invoice given a string id.
+     * The invoice may or may not have acountry code prefix (ex: IE1023).
+     * For more information on invoicing and prefixes, see:
+     * https://docs.recurly.com/docs/site-settings#section-invoice-prefixing
+     *
+     * @param invoiceId String Recurly Invoice ID
+     * @return the invoice
+     */
+    public Invoice getInvoice(final String invoiceId, QueryParams params) {
         if (invoiceId == null || invoiceId.isEmpty())
             throw new RuntimeException("invoiceId cannot be empty!");
 
-        return doGET(Invoices.INVOICES_RESOURCE + "/" + invoiceId, Invoice.class);
+        return doGET(Invoices.INVOICES_RESOURCE + "/" + invoiceId, Invoice.class, params);
     }
 
     /**
@@ -1228,8 +1310,20 @@ public class RecurlyClient {
      * @return the newly created shipping address on success
      */
     public ShippingAddress getShippingAddress(final String accountCode, final long shippingAddressId) {
+    return getShippingAddress(accountCode, shippingAddressId, null);
+    }
+
+    /**
+     * Get an existing shipping address
+     * <p>
+     *
+     * @param accountCode recurly account id
+     * @param shippingAddressId the shipping address id to fetch
+     * @return the newly created shipping address on success
+     */
+    public ShippingAddress getShippingAddress(final String accountCode, final long shippingAddressId, QueryParams params) {
         return doGET(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + ShippingAddresses.SHIPPING_ADDRESSES_RESOURCE + "/" + shippingAddressId,
-                ShippingAddress.class);
+                ShippingAddress.class, params);
     }
 
     /**
@@ -1425,10 +1519,21 @@ public class RecurlyClient {
      * @return the plan object as identified by the passed in ID
      */
     public Plan getPlan(final String planCode) {
+    return getPlan(planCode, null);
+    }
+
+    /**
+     * Get a Plan's details
+     * <p>
+     *
+     * @param planCode recurly id of plan
+     * @return the plan object as identified by the passed in ID
+     */
+    public Plan getPlan(final String planCode, QueryParams params) {
         if (planCode == null || planCode.isEmpty())
             throw new RuntimeException("planCode cannot be empty!");
 
-        return doGET(Plan.PLANS_RESOURCE + "/" + planCode, Plan.class);
+        return doGET(Plan.PLANS_RESOURCE + "/" + planCode, Plan.class, params);
     }
 
     /**
@@ -1502,6 +1607,18 @@ public class RecurlyClient {
      * @return the {@link AddOn} object as identified by the passed in plan and add-on IDs
      */
     public AddOn getAddOn(final String planCode, final String addOnCode) {
+        return getAddOn(planCode, addOnCode, null);
+    }
+
+    /**
+     * Get an AddOn's details
+     * <p>
+     *
+     * @param addOnCode recurly id of {@link AddOn}
+     * @param planCode  recurly id of {@link Plan}
+     * @return the {@link AddOn} object as identified by the passed in plan and add-on IDs
+     */
+    public AddOn getAddOn(final String planCode, final String addOnCode, QueryParams params) {
         if (addOnCode == null || addOnCode.isEmpty())
             throw new RuntimeException("addOnCode cannot be empty!");
 
@@ -1510,7 +1627,7 @@ public class RecurlyClient {
                      planCode +
                      AddOn.ADDONS_RESOURCE +
                      "/" +
-                     addOnCode, AddOn.class);
+                     addOnCode, AddOn.class, params);
     }
 
     /**
@@ -1604,10 +1721,21 @@ public class RecurlyClient {
      * @return The {@link Coupon} object as identified by the passed in code
      */
     public Coupon getCoupon(final String couponCode) {
+    return getCoupon(couponCode, null);
+    }
+
+    /**
+     * Get a Coupon
+     * <p>
+     *
+     * @param couponCode The code for the {@link Coupon}
+     * @return The {@link Coupon} object as identified by the passed in code
+     */
+    public Coupon getCoupon(final String couponCode, QueryParams params) {
         if (couponCode == null || couponCode.isEmpty())
             throw new RuntimeException("couponCode cannot be empty!");
 
-        return doGET(Coupon.COUPON_RESOURCE + "/" + couponCode, Coupon.class);
+        return doGET(Coupon.COUPON_RESOURCE + "/" + couponCode, Coupon.class, params);
     }
 
     /**
@@ -1653,8 +1781,18 @@ public class RecurlyClient {
      * @return the coupon redemption for this account on success, null otherwise
      */
     public Redemption getCouponRedemptionByAccount(final String accountCode) {
+    return getCouponRedemptionByAccount(accountCode, null);
+    }
+
+    /**
+     * Lookup the first coupon redemption on an account.
+     *
+     * @param accountCode recurly account id
+     * @return the coupon redemption for this account on success, null otherwise
+     */
+    public Redemption getCouponRedemptionByAccount(final String accountCode, QueryParams params) {
         return doGET(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Redemption.REDEMPTION_RESOURCE,
-                     Redemption.class);
+                     Redemption.class, params);
     }
 
     /**
@@ -1664,8 +1802,7 @@ public class RecurlyClient {
      * @return the coupon redemptions for this account on success, null otherwise
      */
     public Redemptions getCouponRedemptionsByAccount(final String accountCode) {
-        return doGET(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Redemption.REDEMPTIONS_RESOURCE,
-                Redemptions.class, new QueryParams());
+        return getCouponRedemptionsByAccount(accountCode, null);
     }
 
     /**
@@ -1700,10 +1837,19 @@ public class RecurlyClient {
      * @return the coupon redemption for this invoice on success, null otherwise
      */
     public Redemption getCouponRedemptionByInvoice(final String invoiceId) {
-        return doGET(Invoices.INVOICES_RESOURCE + "/" + invoiceId + Redemption.REDEMPTION_RESOURCE,
-                Redemption.class);
+    return getCouponRedemptionByInvoice(invoiceId, null);
     }
 
+    /**
+     * Lookup the first coupon redemption on an invoice.
+     *
+     * @param invoiceId String invoice id
+     * @return the coupon redemption for this invoice on success, null otherwise
+     */
+    public Redemption getCouponRedemptionByInvoice(final String invoiceId, QueryParams params) {
+        return doGET(Invoices.INVOICES_RESOURCE + "/" + invoiceId + Redemption.REDEMPTION_RESOURCE,
+                Redemption.class, params);
+    }
 
     /**
      * Lookup all coupon redemptions on an invoice.
@@ -1823,7 +1969,19 @@ public class RecurlyClient {
      * @return subscription object on success, null otherwise
      */
     public Subscription fetchSubscription(final String recurlyToken) {
-        return fetch(recurlyToken, Subscription.class);
+    return fetchSubscription(recurlyToken, null);
+    }
+
+    /**
+     * Fetch Subscription
+     * <p>
+     * Returns subscription from a recurly.js token.
+     *
+     * @param recurlyToken token given by recurly.js
+     * @return subscription object on success, null otherwise
+     */
+    public Subscription fetchSubscription(final String recurlyToken, QueryParams params) {
+        return fetch(recurlyToken, Subscription.class, params);
     }
 
     /**
@@ -1835,7 +1993,19 @@ public class RecurlyClient {
      * @return billing info object on success, null otherwise
      */
     public BillingInfo fetchBillingInfo(final String recurlyToken) {
-        return fetch(recurlyToken, BillingInfo.class);
+    return fetchBillingInfo(recurlyToken, null);
+    }
+
+    /**
+     * Fetch BillingInfo
+     * <p>
+     * Returns billing info from a recurly.js token.
+     *
+     * @param recurlyToken token given by recurly.js
+     * @return billing info object on success, null otherwise
+     */
+    public BillingInfo fetchBillingInfo(final String recurlyToken, QueryParams params) {
+        return fetch(recurlyToken, BillingInfo.class, params);
     }
 
     /**
@@ -1847,7 +2017,19 @@ public class RecurlyClient {
      * @return invoice object on success, null otherwise
      */
     public Invoice fetchInvoice(final String recurlyToken) {
-        return fetch(recurlyToken, Invoice.class);
+    return fetchInvoice(recurlyToken, null);
+    }
+
+    /**
+     * Fetch Invoice
+     * <p>
+     * Returns invoice from a recurly.js token.
+     *
+     * @param recurlyToken token given by recurly.js
+     * @return invoice object on success, null otherwise
+     */
+    public Invoice fetchInvoice(final String recurlyToken, QueryParams params) {
+        return fetch(recurlyToken, Invoice.class, params);
     }
 
     /**
@@ -1892,7 +2074,18 @@ public class RecurlyClient {
      * @return The {@link GiftCard} object as identified by the passed in id
      */
     public GiftCard getGiftCard(final Long giftCardId) {
-        return doGET(GiftCards.GIFT_CARDS_RESOURCE + "/" + Long.toString(giftCardId), GiftCard.class);
+    return getGiftCard(giftCardId, null);
+    }
+
+    /**
+     * Get a Gift Card
+     * <p>
+     *
+     * @param giftCardId The id for the {@link GiftCard}
+     * @return The {@link GiftCard} object as identified by the passed in id
+     */
+    public GiftCard getGiftCard(final Long giftCardId, QueryParams params) {
+        return doGET(GiftCards.GIFT_CARDS_RESOURCE + "/" + Long.toString(giftCardId), GiftCard.class, params);
     }
 
     /**
@@ -2035,8 +2228,20 @@ public class RecurlyClient {
      * @return The created AccountAcquisition object
      */
     public AccountAcquisition getAccountAcquisition(final String accountCode) {
+        return getAccountAcquisition(accountCode, null);
+    }
+
+    /**
+     * Gets the acquisition details for an account
+     * <p>
+     * https://dev.recurly.com/docs/create-account-acquisition
+     *
+     * @param accountCode The account's account code
+     * @return The created AccountAcquisition object
+     */
+    public AccountAcquisition getAccountAcquisition(final String accountCode, QueryParams params) {
         final String path = Account.ACCOUNT_RESOURCE + "/" + accountCode + AccountAcquisition.ACCOUNT_ACQUISITION_RESOURCE;
-        return doGET(path, AccountAcquisition.class);
+        return doGET(path, AccountAcquisition.class, params);
     }
 
     /**
@@ -2134,14 +2339,27 @@ public class RecurlyClient {
      * @return The {@link ShippingMethod} object as identified by the passed in code
      */
     public ShippingMethod getShippingMethod(final String shippingMethodCode) {
+        return getShippingMethod(shippingMethodCode, null);
+    }
+
+    /**
+     * Look up a shipping method
+     * <p>
+     * https://dev.recurly.com/docs/lookup-shipping-method
+     *
+     * @param shippingMethodCode The code for the {@link ShippingMethod}
+     * @return The {@link ShippingMethod} object as identified by the passed in code
+     */
+    public ShippingMethod getShippingMethod(final String shippingMethodCode, QueryParams params) {
         if (shippingMethodCode == null || shippingMethodCode.isEmpty())
             throw new RuntimeException("shippingMethodCode cannot be empty!");
 
-        return doGET(ShippingMethod.SHIPPING_METHOD_RESOURCE + "/" + shippingMethodCode, ShippingMethod.class);
+        return doGET(ShippingMethod.SHIPPING_METHOD_RESOURCE + "/" + shippingMethodCode,
+            ShippingMethod.class, params);
     }
 
-    private <T> T fetch(final String recurlyToken, final Class<T> clazz) {
-        return doGET(FETCH_RESOURCE + "/" + recurlyToken, clazz);
+    private <T> T fetch(final String recurlyToken, final Class<T> clazz, QueryParams params) {
+        return doGET(FETCH_RESOURCE + "/" + recurlyToken, clazz, params);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -2150,19 +2368,25 @@ public class RecurlyClient {
         return doGETPdfWithFullURL(baseUrl + resource);
     }
 
-    private <T> T doGET(final String resource, final Class<T> clazz) {
-        return doGETWithFullURL(clazz, baseUrl + resource);
-    }
-
     private <T> T doGET(final String resource, final Class<T> clazz, QueryParams params) {
-        return doGETWithFullURL(clazz, constructGetUrl(resource, params));
+        return doGETWithFullURL(clazz, constructGetUrl(resource, params), params);
     }
 
     private String constructGetUrl(final String resource, QueryParams params) {
-        return baseUrl + resource + params.toString();
+        try {
+            final URIBuilder uriBuilder = new URIBuilder(baseUrl + resource);
+            if (params != null) {
+                for (Map.Entry<String, String> param : params.getParams()) {
+                    uriBuilder.addParameter(param.getKey(), param.getValue());
+                }
+            }
+            return uriBuilder.build().toString();
+        } catch (URISyntaxException e) {
+            throw new RecurlyException(e);
+        }
     }
 
-    public <T> T doGETWithFullURL(final Class<T> clazz, final String url) {
+    public <T> T doGETWithFullURL(final Class<T> clazz, final String url, QueryParams params) {
         if (debug()) {
             log.info("Msg to Recurly API [GET] :: URL : {}", url);
         }
