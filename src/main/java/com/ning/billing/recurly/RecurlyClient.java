@@ -487,7 +487,7 @@ public class RecurlyClient {
     }
 
     public Adjustment getAdjustment(final String adjustmentUuid) {
-    return getAdjustment(adjustmentUuid, null);
+        return getAdjustment(adjustmentUuid, null);
     }
 
     public Adjustment getAdjustment(final String adjustmentUuid, QueryParams params) {
@@ -700,8 +700,8 @@ public class RecurlyClient {
      * @return Subscription the updated subscription
      */
     public Subscription updateSubscriptionNotes(final String uuid, final SubscriptionNotes subscriptionNotes) {
-    return doPUT(SubscriptionNotes.SUBSCRIPTION_RESOURCE + "/" + uuid + "/notes",
-        subscriptionNotes, Subscription.class);
+        return doPUT(SubscriptionNotes.SUBSCRIPTION_RESOURCE + "/" + uuid + "/notes",
+                subscriptionNotes, Subscription.class);
     }
 
     /**
@@ -1721,7 +1721,7 @@ public class RecurlyClient {
      * @return The {@link Coupon} object as identified by the passed in code
      */
     public Coupon getCoupon(final String couponCode) {
-    return getCoupon(couponCode, null);
+        return getCoupon(couponCode, null);
     }
 
     /**
@@ -1781,7 +1781,7 @@ public class RecurlyClient {
      * @return the coupon redemption for this account on success, null otherwise
      */
     public Redemption getCouponRedemptionByAccount(final String accountCode) {
-    return getCouponRedemptionByAccount(accountCode, null);
+        return getCouponRedemptionByAccount(accountCode, null);
     }
 
     /**
@@ -1969,7 +1969,7 @@ public class RecurlyClient {
      * @return subscription object on success, null otherwise
      */
     public Subscription fetchSubscription(final String recurlyToken) {
-    return fetchSubscription(recurlyToken, null);
+        return fetchSubscription(recurlyToken, null);
     }
 
     /**
@@ -1993,7 +1993,7 @@ public class RecurlyClient {
      * @return billing info object on success, null otherwise
      */
     public BillingInfo fetchBillingInfo(final String recurlyToken) {
-    return fetchBillingInfo(recurlyToken, null);
+        return fetchBillingInfo(recurlyToken, null);
     }
 
     /**
@@ -2017,7 +2017,7 @@ public class RecurlyClient {
      * @return invoice object on success, null otherwise
      */
     public Invoice fetchInvoice(final String recurlyToken) {
-    return fetchInvoice(recurlyToken, null);
+        return fetchInvoice(recurlyToken, null);
     }
 
     /**
@@ -2074,7 +2074,7 @@ public class RecurlyClient {
      * @return The {@link GiftCard} object as identified by the passed in id
      */
     public GiftCard getGiftCard(final Long giftCardId) {
-    return getGiftCard(giftCardId, null);
+        return getGiftCard(giftCardId, null);
     }
 
     /**
