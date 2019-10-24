@@ -547,9 +547,9 @@ public class RecurlyClient {
      */
     public Adjustments getAccountAdjustments(final String accountCode,
             final Adjustments.AdjustmentType type, final Adjustments.AdjustmentState state,
-            final QueryParams params) {
+            QueryParams params) {
         final String url = Account.ACCOUNT_RESOURCE + "/" + accountCode + Adjustments.ADJUSTMENTS_RESOURCE;
-
+        if (params == null) params = new QueryParams();
         if (type != null) params.put("type", type.getType());
         if (state != null) params.put("state", state.getState());
 
@@ -1026,7 +1026,8 @@ public class RecurlyClient {
      * @param params {@link QueryParams}
      * @return Subscriptions on the site
      */
-    public Subscriptions getSubscriptions(final SubscriptionState state, final QueryParams params) {
+    public Subscriptions getSubscriptions(final SubscriptionState state, QueryParams params) {
+        if (params == null) params = new QueryParams();
         if (state != null) { params.put("state", state.getType()); }
 
         return doGET(Subscriptions.SUBSCRIPTIONS_RESOURCE,
@@ -1054,7 +1055,9 @@ public class RecurlyClient {
      * @param params {@link QueryParams}
      * @return Subscriptions on the account
      */
-    public Subscriptions getAccountSubscriptions(final String accountCode, final SubscriptionState state, final QueryParams params) {
+    public Subscriptions getAccountSubscriptions(final String accountCode, final SubscriptionState state,
+            QueryParams params) {
+        if (params == null) params = new QueryParams();
         if (state != null) params.put("state", state.getType());
 
         return doGET(Account.ACCOUNT_RESOURCE
@@ -1367,7 +1370,9 @@ public class RecurlyClient {
      * @param params {@link QueryParams}
      * @return the transaction history associated with this account on success, null otherwise
      */
-    public Transactions getAccountTransactions(final String accountCode, final TransactionState state, final TransactionType type, final QueryParams params) {
+    public Transactions getAccountTransactions(final String accountCode, final TransactionState state, final TransactionType type,
+            QueryParams params) {
+        if (params == null) params = new QueryParams();
         if (state != null) params.put("state", state.getType());
         if (type != null) params.put("type", type.getType());
 
@@ -1407,7 +1412,9 @@ public class RecurlyClient {
      * @param params {@link QueryParams}
      * @return the transaction history of the site on success, null otherwise
      */
-    public Transactions getTransactions(final TransactionState state, final TransactionType type, final QueryParams params) {
+    public Transactions getTransactions(final TransactionState state, final TransactionType type,
+            QueryParams params) {
+        if (params == null) params = new QueryParams();
         if (state != null) params.put("state", state.getType());
         if (type != null) params.put("type", type.getType());
 
@@ -1932,7 +1939,9 @@ public class RecurlyClient {
      * @param params {@link QueryParams}
      * @return the invoices associated with this account on success, null otherwise
      */
-    public Invoices getAccountInvoices(final String accountCode, final InvoiceState state, final QueryParams params) {
+    public Invoices getAccountInvoices(final String accountCode, final InvoiceState state,
+            QueryParams params) {
+        if (params == null) params = new QueryParams();
         if (state != null) params.put("state", state.getType());
         return doGET(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Invoices.INVOICES_RESOURCE,
                 Invoices.class, params);
@@ -3578,8 +3587,10 @@ public class RecurlyClient {
         // Use the default timeouts from AHC
         requestBuilder.setConfig(RequestConfig.custom()
                 .setConnectTimeout(5000).setSocketTimeout(60000).build());
-        for (Map.Entry<String, String> header : params.getHeaders()) {
-            requestBuilder.setHeader(header.getKey(), header.getValue());
+        if (params != null) {
+            for (Map.Entry<String, String> header : params.getHeaders()) {
+                requestBuilder.setHeader(header.getKey(), header.getValue());
+            }
         }
     }
 
