@@ -702,6 +702,22 @@ public class RecurlyClient {
     }
 
     /**
+     * Cancel a subscription
+     * <p>
+     * Cancel a subscription so it remains active and then expires at the end of the current bill cycle.
+     *
+     * @param subscriptionUuid String uuid of the subscription to cancel
+     * @param timeframe SubscriptionUpdate.TimeFrame the timeframe in which to cancel. Only accepts bill_date or term_end
+     * @return Subscription
+     */
+    public Subscription cancelSubscription(final String subscriptionUuid, final SubscriptionUpdate.Timeframe timeframe) {
+        final QueryParams qp = new QueryParams();
+        if (timeframe != null) qp.put("timeframe", timeframe.toString());
+        return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscriptionUuid + "/cancel",
+                     null, Subscription.class, qp);
+    }
+
+    /**
      * Pause a subscription or cancel a scheduled pause on a subscription.
      * <p>
      * * For an active subscription without a pause scheduled already, this will
@@ -3270,14 +3286,14 @@ public class RecurlyClient {
     ///////////////////////////////////////////////////////////////////////////
 
     private InputStream doGETPdf(final String resource, QueryParams params) {
-        return doGETPdfWithFullURL(constructGetUrl(resource, params), params);
+        return doGETPdfWithFullURL(constructUrl(resource, params), params);
     }
 
     private <T> T doGET(final String resource, final Class<T> clazz, QueryParams params) {
-        return doGETWithFullURL(clazz, constructGetUrl(resource, params), params);
+        return doGETWithFullURL(clazz, constructUrl(resource, params), params);
     }
 
-    private String constructGetUrl(final String resource, QueryParams params) {
+    private String constructUrl(final String resource, QueryParams params) {
         try {
             final URIBuilder uriBuilder = new URIBuilder(baseUrl + resource);
             if (params != null) {
@@ -3342,7 +3358,7 @@ public class RecurlyClient {
         try {
             xmlPayload = xmlMapper.writeValueAsString(payload);
             if (debug()) {
-                log.info("Msg to Recurly API [POST]:: URL : {}", constructGetUrl(resource, params));
+                log.info("Msg to Recurly API [POST]:: URL : {}", constructUrl(resource, params));
                 log.info("Payload for [POST]:: {}", xmlPayload);
             }
         } catch (IOException e) {
@@ -3350,7 +3366,7 @@ public class RecurlyClient {
             return null;
         }
 
-        final HttpPost builder = new HttpPost(constructGetUrl(resource, params));
+        final HttpPost builder = new HttpPost(constructUrl(resource, params));
         if (xmlPayload != null) {
             builder.setEntity(new StringEntity(xmlPayload,
                     ContentType.APPLICATION_XML.withCharset(Charsets.UTF_8)));
@@ -3369,7 +3385,7 @@ public class RecurlyClient {
             }
 
             if (debug()) {
-                log.info("Msg to Recurly API [PUT]:: URL : {}", constructGetUrl(resource, params));
+                log.info("Msg to Recurly API [PUT]:: URL : {}", constructUrl(resource, params));
                 log.info("Payload for [PUT]:: {}", xmlPayload);
             }
         } catch (IOException e) {
@@ -3377,7 +3393,7 @@ public class RecurlyClient {
             return null;
         }
 
-        final HttpPut builder = new HttpPut(constructGetUrl(resource, params));
+        final HttpPut builder = new HttpPut(constructUrl(resource, params));
         if (xmlPayload != null) {
             builder.setEntity(new StringEntity(xmlPayload,
                     ContentType.APPLICATION_XML.withCharset(Charsets.UTF_8)));
@@ -3386,7 +3402,7 @@ public class RecurlyClient {
     }
 
     private HeaderGroup doHEAD(final String resource, QueryParams params) {
-        final String url = constructGetUrl(resource, params);
+        final String url = constructUrl(resource, params);
         if (debug()) {
             log.info("Msg to Recurly API [HEAD]:: URL : {}", url);
         }
@@ -3395,7 +3411,7 @@ public class RecurlyClient {
     }
 
     private void doDELETE(final String resource, QueryParams params) {
-        callRecurlySafeXmlContent(new HttpDelete(constructGetUrl(resource, params)), null, params);
+        callRecurlySafeXmlContent(new HttpDelete(constructUrl(resource, params)), null, params);
     }
 
     private HeaderGroup callRecurlyNoContent(final HttpRequestBase builder, QueryParams params) {
@@ -3461,14 +3477,25 @@ public class RecurlyClient {
                 RecurlyAPIError recurlyError = RecurlyAPIError.buildFromResponse(response);
 
                 if (response.getStatusLine().getStatusCode() == 422) {
+                    // 422 is returned for transaction errors (see https://dev.recurly.com/page/transaction-errors)
+                    // as well as bad input payloads
                     final Errors errors;
                     try {
                         errors = xmlMapper.readValue(payload, Errors.class);
                     } catch (Exception e) {
-                        // 422 is returned for transaction errors (see https://recurly.readme.io/v2.0/page/transaction-errors)
-                        // as well as bad input payloads
                         log.warn("Unable to extract error", e);
                         return null;
+                    }
+
+                    // Sometimes a single `Error` response is returned rather than `Errors`.
+                    // In this case, all fields will be null.
+                    if (errors == null || (
+                        errors.getRecurlyErrors() == null &&
+                        errors.getTransaction() == null &&
+                        errors.getTransactionError() == null
+                    )) {
+                        recurlyError = RecurlyAPIError.buildFromXml(xmlMapper, payload, response);
+                        throw new RecurlyAPIException(recurlyError);
                     }
                     throw new TransactionErrorException(errors);
                 } else if (response.getStatusLine().getStatusCode() == 401) {
