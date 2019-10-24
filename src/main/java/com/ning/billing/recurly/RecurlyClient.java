@@ -710,11 +710,26 @@ public class RecurlyClient {
      * @param timeframe SubscriptionUpdate.TimeFrame the timeframe in which to cancel. Only accepts bill_date or term_end
      * @return Subscription
      */
-    public Subscription cancelSubscription(final String subscriptionUuid, final SubscriptionUpdate.Timeframe timeframe) {
-        final QueryParams qp = new QueryParams();
-        if (timeframe != null) qp.put("timeframe", timeframe.toString());
+    public Subscription cancelSubscription(final String subscriptionUuid,
+            final SubscriptionUpdate.Timeframe timeframe) {
+        return cancelSubscription(subscriptionUuid, timeframe, null);
+    }
+
+    /**
+     * Cancel a subscription
+     * <p>
+     * Cancel a subscription so it remains active and then expires at the end of the current bill cycle.
+     *
+     * @param subscriptionUuid String uuid of the subscription to cancel
+     * @param timeframe SubscriptionUpdate.TimeFrame the timeframe in which to cancel. Only accepts bill_date or term_end
+     * @return Subscription
+     */
+    public Subscription cancelSubscription(final String subscriptionUuid,
+            final SubscriptionUpdate.Timeframe timeframe, QueryParams params) {
+        if (params == null) params = new QueryParams();
+        if (timeframe != null) params.put("timeframe", timeframe.toString());
         return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscriptionUuid + "/cancel",
-                     null, Subscription.class, qp);
+                     null, Subscription.class, params);
     }
 
     /**
