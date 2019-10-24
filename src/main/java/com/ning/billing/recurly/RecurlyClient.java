@@ -18,7 +18,6 @@
 package com.ning.billing.recurly;
 
 import java.io.ByteArrayInputStream;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -67,7 +66,6 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
@@ -166,8 +164,6 @@ public class RecurlyClient {
         }
     }
 
-    private final ThreadLocal<String> apiKeyOverride = new ThreadLocal<String>();
-
     // TODO: should we make it static?
     private final XmlMapper xmlMapper;
     private final String userAgent;
@@ -255,7 +251,19 @@ public class RecurlyClient {
      * @return the newly created account object on success, null otherwise
      */
     public Account createAccount(final Account account) {
-        return doPOST(Account.ACCOUNT_RESOURCE, account, Account.class);
+    	return createAccount(account, null);
+    }
+
+    /**
+     * Create Account
+     * <p>
+     * Creates a new account. You may optionally include billing information.
+     *
+     * @param account account object
+     * @return the newly created account object on success, null otherwise
+     */
+    public Account createAccount(final Account account, QueryParams params) {
+        return doPOST(Account.ACCOUNT_RESOURCE, account, Account.class, params);
     }
 
     /**
@@ -363,7 +371,20 @@ public class RecurlyClient {
      * @return the updated account object on success, null otherwise
      */
     public Account updateAccount(final String accountCode, final Account account) {
-        return doPUT(Account.ACCOUNT_RESOURCE + "/" + accountCode, account, Account.class);
+    	return updateAccount(accountCode, account, null);
+    }
+
+    /**
+     * Update Account
+     * <p>
+     * Updates an existing account.
+     *
+     * @param accountCode recurly account id
+     * @param account     account object
+     * @return the updated account object on success, null otherwise
+     */
+    public Account updateAccount(final String accountCode, final Account account, QueryParams params) {
+        return doPUT(Account.ACCOUNT_RESOURCE + "/" + accountCode, account, Account.class, params);
     }
 
     /**
@@ -400,7 +421,19 @@ public class RecurlyClient {
      * @param accountCode recurly account id
      */
     public void closeAccount(final String accountCode) {
-        doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode);
+    	closeAccount(accountCode, null);
+    }
+
+    /**
+     * Close Account
+     * <p>
+     * Marks an account as closed and cancels any active subscriptions. Any saved billing information will also be
+     * permanently removed from the account.
+     *
+     * @param accountCode recurly account id
+     */
+    public void closeAccount(final String accountCode, QueryParams params) {
+        doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode, params);
     }
 
     /**
@@ -411,10 +444,20 @@ public class RecurlyClient {
      * @param accountCode recurly account id
      */
     public Account reopenAccount(final String accountCode) {
-        return doPUT(Account.ACCOUNT_RESOURCE + "/" + accountCode + "/reopen",
-                     null, Account.class);
+    	return reopenAccount(accountCode, null);
     }
 
+    /**
+     * Reopen Account
+     * <p>
+     * Transitions a closed account back to active.
+     *
+     * @param accountCode recurly account id
+     */
+    public Account reopenAccount(final String accountCode, QueryParams params) {
+        return doPUT(Account.ACCOUNT_RESOURCE + "/" + accountCode + "/reopen",
+        		null, Account.class, params);
+    }
 
     /**
      * Get Child Accounts
@@ -498,17 +541,30 @@ public class RecurlyClient {
     }
 
     public Adjustment createAccountAdjustment(final String accountCode, final Adjustment adjustment) {
+    	return createAccountAdjustment(accountCode, adjustment, null);
+    }
+
+    public Adjustment createAccountAdjustment(final String accountCode, final Adjustment adjustment,
+    		QueryParams params) {
         return doPOST(Account.ACCOUNT_RESOURCE + "/" + accountCode + Adjustments.ADJUSTMENTS_RESOURCE,
                       adjustment,
-                      Adjustment.class);
+                      Adjustment.class, params);
     }
 
     public void deleteAccountAdjustment(final String accountCode) {
-        doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode + Adjustments.ADJUSTMENTS_RESOURCE);
+    	deleteAccountAdjustment(accountCode, null);
+    }
+
+    public void deleteAccountAdjustment(final String accountCode, QueryParams params) {
+        doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode + Adjustments.ADJUSTMENTS_RESOURCE, params);
     }
 
     public void deleteAdjustment(final String adjustmentUuid) {
-        doDELETE(Adjustments.ADJUSTMENTS_RESOURCE + "/" + adjustmentUuid);
+    	deleteAdjustment(adjustmentUuid, null);
+    }
+
+    public void deleteAdjustment(final String adjustmentUuid, QueryParams params) {
+        doDELETE(Adjustments.ADJUSTMENTS_RESOURCE + "/" + adjustmentUuid, params);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -522,8 +578,20 @@ public class RecurlyClient {
      * @return the newly created Subscription object on success, null otherwise
      */
     public Subscription createSubscription(final Subscription subscription) {
+        return createSubscription(subscription, null);
+    }
+
+    /**
+     * Create a subscription
+     * <p>
+     * Creates a subscription for an account.
+     *
+     * @param subscription Subscription object
+     * @return the newly created Subscription object on success, null otherwise
+     */
+    public Subscription createSubscription(final Subscription subscription, QueryParams params) {
         return doPOST(Subscription.SUBSCRIPTION_RESOURCE,
-                      subscription, Subscription.class);
+                      subscription, Subscription.class, params);
     }
 
     /**
@@ -535,9 +603,21 @@ public class RecurlyClient {
      * @return the newly created Subscription object on success, null otherwise
      */
     public Subscription previewSubscription(final Subscription subscription) {
+        return previewSubscription(subscription, null);
+    }
+
+    /**
+     * Preview a subscription
+     * <p>
+     * Previews a subscription for an account.
+     *
+     * @param subscription Subscription object
+     * @return the newly created Subscription object on success, null otherwise
+     */
+    public Subscription previewSubscription(final Subscription subscription, QueryParams params) {
         return doPOST(Subscription.SUBSCRIPTION_RESOURCE
                       + "/preview",
-                      subscription, Subscription.class);
+                      subscription, Subscription.class, params);
     }
 
     /**
@@ -578,8 +658,20 @@ public class RecurlyClient {
      * @return Subscription
      */
     public Subscription cancelSubscription(final Subscription subscription) {
+    	return cancelSubscription(subscription, null);
+    }
+
+    /**
+     * Cancel a subscription
+     * <p>
+     * Cancel a subscription so it remains active and then expires at the end of the current bill cycle.
+     *
+     * @param subscription Subscription object
+     * @return Subscription
+     */
+    public Subscription cancelSubscription(final Subscription subscription, QueryParams params) {
         return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscription.getUuid() + "/cancel",
-                     subscription, Subscription.class);
+                     subscription, Subscription.class, params);
     }
 
     /**
@@ -600,10 +692,33 @@ public class RecurlyClient {
      * @return Subscription
      */
     public Subscription pauseSubscription(final String subscriptionUuid, final int remainingPauseCycles) {
+        return pauseSubscription(subscriptionUuid, remainingPauseCycles, null);
+    }
+
+    /**
+     * Pause a subscription or cancel a scheduled pause on a subscription.
+     * <p>
+     * * For an active subscription without a pause scheduled already, this will
+     *   schedule a pause period to begin at the next renewal date for the specified
+     *   number of billing cycles (remaining_pause_cycles).
+     * * When a scheduled pause already exists, this will update the remaining pause
+     *   cycles with the new value sent. When zero (0) remaining_pause_cycles is sent
+     *   for a subscription with a scheduled pause, the pause will be canceled.
+     * * For a paused subscription, the remaining_pause_cycles will adjust the
+     *   length of the current pause period. Sending zero (0) in the remaining_pause_cycles
+     *   field will cause the subscription to be resumed at the next renewal date.
+     *
+     * @param subscriptionUuid The uuid for the subscription you wish to pause.
+     * @param remainingPauseCycles The number of billing cycles that the subscription will be paused.
+     * @param params
+     * @return Subscription
+     */
+    public Subscription pauseSubscription(final String subscriptionUuid, final int remainingPauseCycles,
+    		QueryParams params) {
         Subscription request = new Subscription();
         request.setRemainingPauseCycles(remainingPauseCycles);
         return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscriptionUuid + "/pause",
-                     request, Subscription.class);
+                     request, Subscription.class, params);
     }
 
     /**
@@ -618,8 +733,23 @@ public class RecurlyClient {
      * @return Subscription
      */
     public Subscription resumeSubscription(final String subscriptionUuid) {
+        return resumeSubscription(subscriptionUuid, null);
+    }
+
+    /**
+     * Immediately resumes a currently paused subscription.
+     * <p>
+     * For a paused subscription, this will immediately resume the subscription
+     * from the pause, produce an invoice, and return the newly resumed subscription.
+     * Any at-renewal subscription changes will be immediately applied when
+     * the subscription resumes.
+     *
+     * @param subscriptionUuid The uuid for the subscription you wish to pause.
+     * @return Subscription
+     */
+    public Subscription resumeSubscription(final String subscriptionUuid, QueryParams params) {
         return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscriptionUuid + "/resume",
-                null, Subscription.class);
+                null, Subscription.class, params);
     }
 
     /**
@@ -631,8 +761,21 @@ public class RecurlyClient {
      * @return Subscription
      */
     public Subscription postponeSubscription(final Subscription subscription, final DateTime renewaldate) {
+        return postponeSubscription(subscription, renewaldate, null);
+    }
+
+    /**
+     * Postpone a subscription
+     * <p>
+     * postpone a subscription, setting a new renewal date.
+     *
+     * @param subscription Subscription object
+     * @return Subscription
+     */
+    public Subscription postponeSubscription(final Subscription subscription, final DateTime renewaldate,
+    		QueryParams params) {
         return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscription.getUuid() + "/postpone?next_renewal_date=" + renewaldate,
-                     subscription, Subscription.class);
+                     subscription, Subscription.class, params);
     }
 
     /**
@@ -641,8 +784,19 @@ public class RecurlyClient {
      * @param subscription Subscription to terminate
      */
     public void terminateSubscription(final Subscription subscription, final RefundOption refund) {
+        terminateSubscription(subscription, refund, null);
+    }
+
+    /**
+     * Terminate a particular {@link Subscription} by it's UUID
+     *
+     * @param subscription Subscription to terminate
+     * @param params
+     */
+    public void terminateSubscription(final Subscription subscription, final RefundOption refund,
+    		QueryParams params) {
         doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscription.getUuid() + "/terminate?refund=" + refund,
-              subscription, Subscription.class);
+              subscription, Subscription.class, params);
     }
 
     /**
@@ -654,8 +808,20 @@ public class RecurlyClient {
      * @return Subscription
      */
     public Subscription reactivateSubscription(final Subscription subscription) {
+        return reactivateSubscription(subscription, null);
+    }
+
+    /**
+     * Reactivating a canceled subscription
+     * <p>
+     * Reactivate a canceled subscription so it renews at the end of the current bill cycle.
+     *
+     * @param subscription Subscription object
+     * @return Subscription
+     */
+    public Subscription reactivateSubscription(final Subscription subscription, QueryParams params) {
         return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscription.getUuid() + "/reactivate",
-                     subscription, Subscription.class);
+                     subscription, Subscription.class, params);
     }
 
     /**
@@ -668,10 +834,23 @@ public class RecurlyClient {
      * @return Subscription the updated subscription
      */
     public Subscription updateSubscription(final String uuid, final SubscriptionUpdate subscriptionUpdate) {
+        return updateSubscription(uuid, subscriptionUpdate, null);
+    }
+
+    /**
+     * Update a particular {@link Subscription} by it's UUID
+     * <p>
+     * Returns information about a single subscription.
+     *
+     * @param uuid               UUID of the subscription to update
+     * @param subscriptionUpdate subscriptionUpdate object
+     * @return Subscription the updated subscription
+     */
+    public Subscription updateSubscription(final String uuid, final SubscriptionUpdate subscriptionUpdate, QueryParams params) {
         return doPUT(Subscriptions.SUBSCRIPTIONS_RESOURCE
                      + "/" + uuid,
                      subscriptionUpdate,
-                     Subscription.class);
+                     Subscription.class, params);
     }
 
     /**
@@ -683,12 +862,24 @@ public class RecurlyClient {
      * @return Subscription the updated subscription preview
      */
     public Subscription updateSubscriptionPreview(final String uuid, final SubscriptionUpdate subscriptionUpdate) {
+        return updateSubscriptionPreview(uuid, subscriptionUpdate, null);
+    }
+
+    /**
+     * Preview an update to a particular {@link Subscription} by it's UUID
+     * <p>
+     * Returns information about a single subscription.
+     *
+     * @param uuid UUID of the subscription to preview an update for
+     * @return Subscription the updated subscription preview
+     */
+    public Subscription updateSubscriptionPreview(final String uuid, final SubscriptionUpdate subscriptionUpdate,
+    		QueryParams params) {
         return doPOST(Subscriptions.SUBSCRIPTIONS_RESOURCE
                       + "/" + uuid + "/preview",
                       subscriptionUpdate,
-                      Subscription.class);
+                      Subscription.class, params);
     }
-
 
     /**
      * Update to a particular {@link Subscription}'s notes by it's UUID
@@ -700,8 +891,22 @@ public class RecurlyClient {
      * @return Subscription the updated subscription
      */
     public Subscription updateSubscriptionNotes(final String uuid, final SubscriptionNotes subscriptionNotes) {
+        return updateSubscriptionNotes(uuid, subscriptionNotes, null);
+    }
+
+    /**
+     * Update to a particular {@link Subscription}'s notes by it's UUID
+     * <p>
+     * Returns information about a single subscription.
+     *
+     * @param uuid UUID of the subscription to preview an update for
+     * @param subscriptionNotes SubscriptionNotes object
+     * @return Subscription the updated subscription
+     */
+    public Subscription updateSubscriptionNotes(final String uuid, final SubscriptionNotes subscriptionNotes,
+    		QueryParams params) {
         return doPUT(SubscriptionNotes.SUBSCRIPTION_RESOURCE + "/" + uuid + "/notes",
-                subscriptionNotes, Subscription.class);
+                subscriptionNotes, Subscription.class, params);
     }
 
     /**
@@ -789,6 +994,21 @@ public class RecurlyClient {
      * @return the {@link Usage} object as identified by the passed in object
      */
     public Usage postSubscriptionUsage(final String subscriptionCode, final String addOnCode, final Usage usage) {
+        return postSubscriptionUsage(subscriptionCode, addOnCode, usage, null);
+    }
+
+    /**
+     * Post usage to subscription
+     * <p>
+     *
+     * @param subscriptionCode The recurly id of the {@link Subscription }
+     * @param addOnCode recurly id of {@link AddOn}
+     * @param usage the usage to post on recurly
+     * @param params
+     * @return the {@link Usage} object as identified by the passed in object
+     */
+    public Usage postSubscriptionUsage(final String subscriptionCode, final String addOnCode,
+    		final Usage usage, QueryParams params) {
         return doPOST(Subscription.SUBSCRIPTION_RESOURCE +
                         "/" +
                         subscriptionCode +
@@ -796,7 +1016,7 @@ public class RecurlyClient {
                         "/" +
                         addOnCode +
                         Usage.USAGE_RESOURCE,
-                usage, Usage.class);
+                usage, Usage.class, params);
     }
 
     /**
@@ -859,8 +1079,30 @@ public class RecurlyClient {
      * @return the newly created or update billing info object on success, null otherwise
      */
     public BillingInfo createOrUpdateBillingInfo(final String accountCode, final BillingInfo billingInfo) {
+        return createOrUpdateBillingInfo(accountCode, billingInfo, null);
+    }
+
+    /**
+     * Update an account's billing info
+     * <p>
+     * When new or updated credit card information is updated, the billing information is only saved if the credit card
+     * is valid. If the account has a past due invoice, the outstanding balance will be collected to validate the
+     * billing information.
+     * <p>
+     * If the account does not exist before the API request, the account will be created if the billing information
+     * is valid.
+     * <p>
+     * Please note: this API end-point may be used to import billing information without security codes (CVV).
+     * Recurly recommends requiring CVV from your customers when collecting new or updated billing information.
+     *
+     * @param accountCode recurly account id
+     * @param billingInfo billing info object to create or update
+     * @return the newly created or update billing info object on success, null otherwise
+     */
+    public BillingInfo createOrUpdateBillingInfo(final String accountCode, final BillingInfo billingInfo,
+    		QueryParams params) {
         return doPUT(Account.ACCOUNT_RESOURCE + "/" + accountCode + BillingInfo.BILLING_INFO_RESOURCE,
-                     billingInfo, BillingInfo.class);
+                     billingInfo, BillingInfo.class, params);
     }
 
     /**
@@ -883,11 +1125,34 @@ public class RecurlyClient {
      */
     @Deprecated
     public BillingInfo createOrUpdateBillingInfo(final BillingInfo billingInfo) {
+        return createOrUpdateBillingInfo(billingInfo, null);
+    }
+
+    /**
+     * Update an account's billing info
+     * <p>
+     * When new or updated credit card information is updated, the billing information is only saved if the credit card
+     * is valid. If the account has a past due invoice, the outstanding balance will be collected to validate the
+     * billing information.
+     * <p>
+     * If the account does not exist before the API request, the account will be created if the billing information
+     * is valid.
+     * <p>
+     * Please note: this API end-point may be used to import billing information without security codes (CVV).
+     * Recurly recommends requiring CVV from your customers when collecting new or updated billing information.
+     *
+     * @deprecated Replaced by {@link #createOrUpdateBillingInfo(String, BillingInfo)} Please pass in the account code rather than setting the account on the BillingInfo object
+     *
+     * @param billingInfo billing info object to create or update
+     * @return the newly created or update billing info object on success, null otherwise
+     */
+    @Deprecated
+    public BillingInfo createOrUpdateBillingInfo(final BillingInfo billingInfo, QueryParams params) {
         final String accountCode = billingInfo.getAccount().getAccountCode();
         // Unset it to avoid confusing Recurly
         billingInfo.setAccount(null);
         return doPUT(Account.ACCOUNT_RESOURCE + "/" + accountCode + BillingInfo.BILLING_INFO_RESOURCE,
-                     billingInfo, BillingInfo.class);
+                     billingInfo, BillingInfo.class, params);
     }
 
     /**
@@ -924,7 +1189,20 @@ public class RecurlyClient {
      * @param accountCode recurly account id
      */
     public void clearBillingInfo(final String accountCode) {
-        doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode + BillingInfo.BILLING_INFO_RESOURCE);
+    	clearBillingInfo(accountCode, null);
+    }
+
+    /**
+     * Clear an account's billing info
+     * <p>
+     * You may remove any stored billing information for an account. If the account has a subscription, the renewal will
+     * go into past due unless you update the billing info before the renewal occurs
+     *
+     * @param accountCode recurly account id
+     * @param params
+     */
+    public void clearBillingInfo(final String accountCode, QueryParams params) {
+        doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode + BillingInfo.BILLING_INFO_RESOURCE, params);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1048,7 +1326,17 @@ public class RecurlyClient {
      * @return The created {@link Transaction} object
      */
     public Transaction createTransaction(final Transaction trans) {
-        return doPOST(Transactions.TRANSACTIONS_RESOURCE, trans, Transaction.class);
+        return createTransaction(trans, null);
+    }
+
+    /**
+     * Creates a {@link Transaction} through the Recurly API.
+     *
+     * @param trans The {@link Transaction} to create
+     * @return The created {@link Transaction} object
+     */
+    public Transaction createTransaction(final Transaction trans, QueryParams params) {
+        return doPOST(Transactions.TRANSACTIONS_RESOURCE, trans, Transaction.class, params);
     }
 
     /**
@@ -1058,11 +1346,22 @@ public class RecurlyClient {
      * @param amount        amount to refund, null for full refund
      */
     public void refundTransaction(final String transactionId, @Nullable final BigDecimal amount) {
+        refundTransaction(transactionId, amount, null);
+    }
+
+    /**
+     * Refund a transaction
+     *
+     * @param transactionId recurly transaction id
+     * @param amount        amount to refund, null for full refund
+     */
+    public void refundTransaction(final String transactionId, @Nullable final BigDecimal amount,
+    		QueryParams params) {
         String url = Transactions.TRANSACTIONS_RESOURCE + "/" + transactionId;
         if (amount != null) {
             url = url + "?amount_in_cents=" + (amount.intValue() * 100);
         }
-        doDELETE(url);
+        doDELETE(url, params);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1127,7 +1426,19 @@ public class RecurlyClient {
      * @return the updated invoice object on success, null otherwise
      */
     public Invoice updateInvoice(final String invoiceId, final Invoice invoice) {
-        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId, invoice, Invoice.class);
+    	return updateInvoice(invoiceId, invoice, null);
+    }
+
+    /**
+     * Update an invoice
+     * <p>
+     * Updates an existing invoice.
+     *
+     * @param invoiceId String Recurly Invoice ID
+     * @return the updated invoice object on success, null otherwise
+     */
+    public Invoice updateInvoice(final String invoiceId, final Invoice invoice, QueryParams params) {
+        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId, invoice, Invoice.class, params);
     }
 
     /**
@@ -1154,10 +1465,22 @@ public class RecurlyClient {
      * @return the invoice pdf as an inputStream
      */
     public InputStream getInvoicePdf(final String invoiceId) {
+        return getInvoicePdf(invoiceId, null);
+    }
+
+    /**
+     * Fetch invoice pdf
+     * <p>
+     * Returns the invoice pdf as an inputStream
+     *
+     * @param invoiceId String Recurly Invoice ID
+     * @return the invoice pdf as an inputStream
+     */
+    public InputStream getInvoicePdf(final String invoiceId, QueryParams params) {
         if (invoiceId == null || invoiceId.isEmpty())
             throw new RuntimeException("invoiceId cannot be empty!");
 
-        return doGETPdf(Invoices.INVOICES_RESOURCE + "/" + invoiceId);
+        return doGETPdf(Invoices.INVOICES_RESOURCE + "/" + invoiceId, params);
     }
 
     /**
@@ -1285,7 +1608,22 @@ public class RecurlyClient {
      * @return the refunded invoice
      */
     public Invoice refundInvoice(final String invoiceId, final InvoiceRefund refundOptions) {
-        return doPOST(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/refund", refundOptions, Invoice.class);
+        return refundInvoice(invoiceId, refundOptions, null);
+    }
+
+    /**
+     * Refund an invoice given some options
+     * <p/>
+     * Returns the refunded invoice
+     *
+     * @param invoiceId The id of the invoice to refund
+     * @param refundOptions The options for the refund
+     * @return the refunded invoice
+     */
+    public Invoice refundInvoice(final String invoiceId, final InvoiceRefund refundOptions,
+    		QueryParams params) {
+        return doPOST(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/refund", refundOptions,
+        		Invoice.class, params);
     }
 
     /**
@@ -1335,8 +1673,21 @@ public class RecurlyClient {
      * @return the newly created shipping address on success
      */
     public ShippingAddress createShippingAddress(final String accountCode, final ShippingAddress shippingAddress) {
+        return createShippingAddress(accountCode, shippingAddress, null);
+    }
+
+    /**
+     * Create a shipping address on an existing account
+     * <p>
+     *
+     * @param accountCode recurly account id
+     * @param shippingAddress the shipping address request data
+     * @return the newly created shipping address on success
+     */
+    public ShippingAddress createShippingAddress(final String accountCode,
+    		final ShippingAddress shippingAddress, QueryParams params) {
         return doPOST(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + ShippingAddresses.SHIPPING_ADDRESSES_RESOURCE, shippingAddress,
-                ShippingAddress.class);
+                ShippingAddress.class, params);
     }
 
     /**
@@ -1348,9 +1699,24 @@ public class RecurlyClient {
      * @param shippingAddress the shipping address request data
      * @return the updated shipping address on success
      */
-    public ShippingAddress updateShippingAddress(final String accountCode, final long shippingAddressId, ShippingAddress shippingAddress) {
+    public ShippingAddress updateShippingAddress(final String accountCode, final long shippingAddressId,
+    		ShippingAddress shippingAddress) {
+        return updateShippingAddress(accountCode, shippingAddressId, shippingAddress, null);
+    }
+
+    /**
+     * Update an existing shipping address
+     * <p>
+     *
+     * @param accountCode recurly account id
+     * @param shippingAddressId the shipping address id to update
+     * @param shippingAddress the shipping address request data
+     * @return the updated shipping address on success
+     */
+    public ShippingAddress updateShippingAddress(final String accountCode, final long shippingAddressId,
+    		ShippingAddress shippingAddress, QueryParams params) {
         return doPUT(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + ShippingAddresses.SHIPPING_ADDRESSES_RESOURCE + "/" + shippingAddressId, shippingAddress,
-                ShippingAddress.class);
+                ShippingAddress.class, params);
     }
 
     /**
@@ -1361,7 +1727,21 @@ public class RecurlyClient {
      * @param shippingAddressId the shipping address id to delete
      */
     public void deleteShippingAddress(final String accountCode, final long shippingAddressId) {
-        doDELETE(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + ShippingAddresses.SHIPPING_ADDRESSES_RESOURCE + "/" + shippingAddressId);
+    	deleteShippingAddress(accountCode, shippingAddressId, null);
+    }
+
+    /**
+     * Delete an existing shipping address
+     * <p>
+     *
+     * @param accountCode recurly account id
+     * @param shippingAddressId the shipping address id to delete
+     * @param params
+     */
+    public void deleteShippingAddress(final String accountCode, final long shippingAddressId,
+    		QueryParams params) {
+        doDELETE(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + ShippingAddresses.SHIPPING_ADDRESSES_RESOURCE + "/" + shippingAddressId,
+        		params);
     }
 
     /**
@@ -1389,7 +1769,21 @@ public class RecurlyClient {
      * @return the invoice collection that was generated on success, null otherwise
      */
     public InvoiceCollection postAccountInvoice(final String accountCode, final Invoice invoice) {
-        return doPOST(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Invoices.INVOICES_RESOURCE, invoice, InvoiceCollection.class);
+    	return postAccountInvoice(accountCode, invoice, null);
+    }
+
+    /**
+     * Post an invoice: invoice pending charges on an account
+     * <p>
+     * Returns an invoice collection
+     *
+     * @param accountCode
+     * @return the invoice collection that was generated on success, null otherwise
+     */
+    public InvoiceCollection postAccountInvoice(final String accountCode, final Invoice invoice,
+    		QueryParams params) {
+        return doPOST(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Invoices.INVOICES_RESOURCE,
+        		invoice, InvoiceCollection.class, params);
     }
 
     /**
@@ -1410,7 +1804,17 @@ public class RecurlyClient {
      * @param invoiceId String Recurly Invoice ID
      */
     public Invoice markInvoiceSuccessful(final String invoiceId) {
-        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/mark_successful", null, Invoice.class);
+        return markInvoiceSuccessful(invoiceId, null);
+    }
+
+    /**
+     * Mark an invoice as paid successfully - Recurly Enterprise Feature
+     *
+     * @param invoiceId String Recurly Invoice ID
+     */
+    public Invoice markInvoiceSuccessful(final String invoiceId, QueryParams params) {
+        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/mark_successful", null,
+        		Invoice.class, params);
     }
 
     /**
@@ -1431,7 +1835,17 @@ public class RecurlyClient {
      * @param invoiceId String Recurly Invoice ID
      */
     public InvoiceCollection markInvoiceFailed(final String invoiceId) {
-        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/mark_failed", null, InvoiceCollection.class);
+    	return markInvoiceFailed(invoiceId, null);
+    }
+
+    /**
+     * Mark an invoice as failed collection
+     *
+     * @param invoiceId String Recurly Invoice ID
+     */
+    public InvoiceCollection markInvoiceFailed(final String invoiceId, QueryParams param) {
+        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/mark_failed", null,
+        		InvoiceCollection.class, param);
     }
 
     /**
@@ -1440,7 +1854,17 @@ public class RecurlyClient {
      * @param invoiceId String Recurly Invoice ID
      */
     public Invoice forceCollectInvoice(final String invoiceId) {
-        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/collect", null, Invoice.class);
+        return forceCollectInvoice(invoiceId, (QueryParams) null);
+    }
+
+    /**
+     * Force collect an invoice
+     *
+     * @param invoiceId String Recurly Invoice ID
+     */
+    public Invoice forceCollectInvoice(final String invoiceId, QueryParams params) {
+        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/collect", null, Invoice.class,
+        		params);
     }
 
     /**
@@ -1448,11 +1872,25 @@ public class RecurlyClient {
      *
      * @param transactionType String The gateway transaction type. Currency accepts value "moto".
      * @param invoiceId String Recurly Invoice ID
+     * @param params
      */
     public Invoice forceCollectInvoice(final String invoiceId, final String transactionType) {
+        return forceCollectInvoice(invoiceId, transactionType, null);
+    }
+
+    /**
+     * Force collect an invoice
+     *
+     * @param transactionType String The gateway transaction type. Currency accepts value "moto".
+     * @param invoiceId String Recurly Invoice ID
+     * @param params
+     */
+    public Invoice forceCollectInvoice(final String invoiceId, final String transactionType,
+    		QueryParams params) {
         Invoice request = new Invoice();
         request.setTransactionType(transactionType);
-        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/collect", request, Invoice.class);
+        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/collect", request, Invoice.class,
+        		params);
     }
 
     /**
@@ -1461,7 +1899,16 @@ public class RecurlyClient {
      * @param invoiceId String Recurly Invoice ID
      */
     public Invoice voidInvoice(final String invoiceId) {
-        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/void", null, Invoice.class);
+    	return voidInvoice(invoiceId, null);
+    }
+
+    /**
+     * Void Invoice
+     *
+     * @param invoiceId String Recurly Invoice ID
+     */
+    public Invoice voidInvoice(final String invoiceId, QueryParams params) {
+        return doPUT(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/void", null, Invoice.class, params);
     }
 
     /**
@@ -1484,7 +1931,19 @@ public class RecurlyClient {
      * @param payment   The external payment
      */
     public Transaction enterOfflinePayment(final String invoiceId, final Transaction payment) {
-        return doPOST(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/transactions", payment, Transaction.class);
+    	return enterOfflinePayment(invoiceId, payment, null);
+    }
+
+    /**
+     * Enter an offline payment for a manual invoice (beta) - Recurly Enterprise Feature
+     *
+     * @param invoiceId String Recurly Invoice ID
+     * @param payment   The external payment
+     */
+    public Transaction enterOfflinePayment(final String invoiceId, final Transaction payment,
+    		QueryParams params) {
+        return doPOST(Invoices.INVOICES_RESOURCE + "/" + invoiceId + "/transactions", payment,
+        		Transaction.class, params);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1497,7 +1956,18 @@ public class RecurlyClient {
      * @return the plan object as identified by the passed in ID
      */
     public Plan createPlan(final Plan plan) {
-        return doPOST(Plan.PLANS_RESOURCE, plan, Plan.class);
+    	return createPlan(plan, null);
+    }
+
+    /**
+     * Create a Plan's info
+     * <p>
+     *
+     * @param plan The plan to create on recurly
+     * @return the plan object as identified by the passed in ID
+     */
+    public Plan createPlan(final Plan plan, QueryParams params) {
+        return doPOST(Plan.PLANS_RESOURCE, plan, Plan.class, params);
     }
 
     /**
@@ -1508,7 +1978,18 @@ public class RecurlyClient {
      * @return the updated plan object
      */
     public Plan updatePlan(final Plan plan) {
-        return doPUT(Plan.PLANS_RESOURCE + "/" + plan.getPlanCode(), plan, Plan.class);
+    	return updatePlan(plan, null);
+    }
+
+    /**
+     * Update a Plan's info
+     * <p>
+     *
+     * @param plan The plan to update on recurly
+     * @return the updated plan object
+     */
+    public Plan updatePlan(final Plan plan, QueryParams params) {
+        return doPUT(Plan.PLANS_RESOURCE + "/" + plan.getPlanCode(), plan, Plan.class, params);
     }
 
     /**
@@ -1575,9 +2056,19 @@ public class RecurlyClient {
      * @param planCode The {@link Plan} object to delete.
      */
     public void deletePlan(final String planCode) {
+        deletePlan(planCode, null);
+    }
+
+    /**
+     * Deletes a {@link Plan}
+     * <p>
+     *
+     * @param planCode The {@link Plan} object to delete.
+     */
+    public void deletePlan(final String planCode, QueryParams params) {
         doDELETE(Plan.PLANS_RESOURCE +
                  "/" +
-                 planCode);
+                 planCode, params);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1591,11 +2082,23 @@ public class RecurlyClient {
      * @return the {@link AddOn} object as identified by the passed in object
      */
     public AddOn createPlanAddOn(final String planCode, final AddOn addOn) {
+        return createPlanAddOn(planCode, addOn, null);
+    }
+
+    /**
+     * Create an AddOn to a Plan
+     * <p>
+     *
+     * @param planCode The planCode of the {@link Plan } to create within recurly
+     * @param addOn    The {@link AddOn} to create within recurly
+     * @return the {@link AddOn} object as identified by the passed in object
+     */
+    public AddOn createPlanAddOn(final String planCode, final AddOn addOn, QueryParams params) {
         return doPOST(Plan.PLANS_RESOURCE +
                       "/" +
                       planCode +
                       AddOn.ADDONS_RESOURCE,
-                      addOn, AddOn.class);
+                      addOn, AddOn.class, params);
     }
 
     /**
@@ -1671,12 +2174,23 @@ public class RecurlyClient {
      * @param addOnCode The {@link AddOn} object to delete.
      */
     public void deleteAddOn(final String planCode, final String addOnCode) {
+        deleteAddOn(planCode, addOnCode, null);
+    }
+
+    /**
+     * Deletes an {@link AddOn} for a Plan
+     * <p>
+     *
+     * @param planCode  The {@link Plan} object.
+     * @param addOnCode The {@link AddOn} object to delete.
+     */
+    public void deleteAddOn(final String planCode, final String addOnCode, QueryParams params) {
         doDELETE(Plan.PLANS_RESOURCE +
                  "/" +
                  planCode +
                  AddOn.ADDONS_RESOURCE +
                  "/" +
-                 addOnCode);
+                 addOnCode, params);
     }
 
     /**
@@ -1686,10 +2200,27 @@ public class RecurlyClient {
      * @param planCode  The {@link Plan} object.
      * @param addOnCode The {@link AddOn} object to update.
      * @param addOn The updated {@link AddOn} data.
+     * @param params
      *
      * @return the updated {@link AddOn} object.
      */
     public AddOn updateAddOn(final String planCode, final String addOnCode, final AddOn addOn) {
+        return updateAddOn(planCode, addOnCode, addOn, null);
+    }
+
+    /**
+     * Updates an {@link AddOn} for a Plan
+     * <p>
+     *
+     * @param planCode  The {@link Plan} object.
+     * @param addOnCode The {@link AddOn} object to update.
+     * @param addOn The updated {@link AddOn} data.
+     * @param params
+     *
+     * @return the updated {@link AddOn} object.
+     */
+    public AddOn updateAddOn(final String planCode, final String addOnCode, final AddOn addOn,
+    		QueryParams params) {
         return doPUT(Plan.PLANS_RESOURCE +
                 "/" +
                 planCode +
@@ -1697,7 +2228,7 @@ public class RecurlyClient {
                 "/" +
                 addOnCode,
                 addOn,
-                AddOn.class);
+                AddOn.class, params);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1710,7 +2241,18 @@ public class RecurlyClient {
      * @return the {@link Coupon} object
      */
     public Coupon createCoupon(final Coupon coupon) {
-        return doPOST(Coupon.COUPON_RESOURCE, coupon, Coupon.class);
+    	return createCoupon(coupon, null);
+    }
+
+    /**
+     * Create a {@link Coupon}
+     * <p>
+     *
+     * @param coupon The coupon to create on recurly
+     * @return the {@link Coupon} object
+     */
+    public Coupon createCoupon(final Coupon coupon, QueryParams params) {
+        return doPOST(Coupon.COUPON_RESOURCE, coupon, Coupon.class, params);
     }
 
     /**
@@ -1745,7 +2287,17 @@ public class RecurlyClient {
      * @param couponCode The code for the {@link Coupon}
      */
     public void deleteCoupon(final String couponCode) {
-        doDELETE(Coupon.COUPON_RESOURCE + "/" + couponCode);
+    	deleteCoupon(couponCode, null);
+    }
+
+    /**
+     * Delete a {@link Coupon}
+     * <p>
+     *
+     * @param couponCode The code for the {@link Coupon}
+     */
+    public void deleteCoupon(final String couponCode, QueryParams params) {
+        doDELETE(Coupon.COUPON_RESOURCE + "/" + couponCode, params);
     }
 
     /**
@@ -1756,9 +2308,20 @@ public class RecurlyClient {
      * @return
      */
     public Coupon restoreCoupon(final String couponCode) {
+    	return restoreCoupon(couponCode, null);
+    }
+
+    /**
+     * Restore a {@link Coupon}
+     * <p>
+     *
+     * @param couponCode The code for the {@link Coupon}
+     * @return
+     */
+    public Coupon restoreCoupon(final String couponCode, QueryParams params) {
         final Coupon coupon = new Coupon(); // This is required
         return doPUT(Coupon.COUPON_RESOURCE + "/" + couponCode + Coupon.RESTORE_RESOURCE,
-                coupon, Coupon.class);
+                coupon, Coupon.class, params);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1770,8 +2333,21 @@ public class RecurlyClient {
      * @return the {@link Coupon} object
      */
     public Redemption redeemCoupon(final String couponCode, final Redemption redemption) {
+    	return redeemCoupon(couponCode, redemption, null);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Redeem a {@link Coupon} on an account.
+     *
+     * @param couponCode redeemed coupon id
+     * @return the {@link Coupon} object
+     */
+    public Redemption redeemCoupon(final String couponCode, final Redemption redemption,
+    		QueryParams params) {
         return doPOST(Coupon.COUPON_RESOURCE + "/" + couponCode + Redemption.REDEEM_RESOURCE,
-                      redemption, Redemption.class);
+        		redemption, Redemption.class, params);
     }
 
     /**
@@ -1918,7 +2494,16 @@ public class RecurlyClient {
      * @param accountCode recurly account id
      */
     public void deleteCouponRedemption(final String accountCode) {
-        doDELETE(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Redemption.REDEMPTION_RESOURCE);
+    	deleteCouponRedemption(accountCode, (QueryParams) null);
+    }
+
+    /**
+     * Deletes a coupon redemption from an account.
+     *
+     * @param accountCode recurly account id
+     */
+    public void deleteCouponRedemption(final String accountCode, QueryParams params) {
+        doDELETE(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Redemption.REDEMPTION_RESOURCE, params);
     }
 
     /**
@@ -1928,7 +2513,19 @@ public class RecurlyClient {
      * @param redemptionUuid recurly coupon redemption uuid
      */
     public void deleteCouponRedemption(final String accountCode, final String redemptionUuid) {
-        doDELETE(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Redemption.REDEMPTIONS_RESOURCE + "/" + redemptionUuid);
+    	deleteCouponRedemption(accountCode, redemptionUuid, null);
+    }
+
+    /**
+     * Deletes a specific redemption.
+     *
+     * @param accountCode recurly account id
+     * @param redemptionUuid recurly coupon redemption uuid
+     */
+    public void deleteCouponRedemption(final String accountCode, final String redemptionUuid,
+    		QueryParams params) {
+        doDELETE(Accounts.ACCOUNTS_RESOURCE + "/" + accountCode + Redemption.REDEMPTIONS_RESOURCE + "/" + redemptionUuid,
+        		params);
     }
 
     /**
@@ -1938,8 +2535,18 @@ public class RecurlyClient {
      * @param coupon A coupon with number of unique codes set
      */
     public void generateUniqueCodes(final String couponCode, final Coupon coupon) {
+    	generateUniqueCodes(couponCode, coupon, null);
+    }
+
+    /**
+     * Generates unique codes for a bulk coupon.
+     *
+     * @param couponCode recurly coupon code (must have been created as type: bulk)
+     * @param coupon A coupon with number of unique codes set
+     */
+    public void generateUniqueCodes(final String couponCode, final Coupon coupon, QueryParams params) {
         doPOST(Coupon.COUPON_RESOURCE + "/" + couponCode + Coupon.GENERATE_RESOURCE,
-                      coupon, null);
+        		coupon, null, params);
     }
 
     /**
@@ -2097,10 +2704,23 @@ public class RecurlyClient {
      * @return The updated {@link GiftCard} object as identified by the passed in id
      */
     public GiftCard redeemGiftCard(final String redemptionCode, final String accountCode) {
+    	return redeemGiftCard(redemptionCode, accountCode, null);
+    }
+
+    /**
+     * Redeem a Gift Card
+     * <p>
+     *
+     * @param redemptionCode The redemption code the {@link GiftCard}
+     * @param accountCode The account code for the {@link Account}
+     * @return The updated {@link GiftCard} object as identified by the passed in id
+     */
+    public GiftCard redeemGiftCard(final String redemptionCode, final String accountCode,
+    		QueryParams params) {
         final GiftCard.Redemption redemptionData = GiftCard.createRedemption(accountCode);
         final String url = GiftCards.GIFT_CARDS_RESOURCE + "/" + redemptionCode + "/redeem";
 
-        return doPOST(url, redemptionData, GiftCard.class);
+        return doPOST(url, redemptionData, GiftCard.class, params);
     }
 
     /**
@@ -2111,7 +2731,18 @@ public class RecurlyClient {
      * @return the giftCard object
      */
     public GiftCard purchaseGiftCard(final GiftCard giftCard) {
-        return doPOST(GiftCards.GIFT_CARDS_RESOURCE, giftCard, GiftCard.class);
+    	return purchaseGiftCard(giftCard, null);
+    }
+
+    /**
+     * Purchase a GiftCard
+     * <p>
+     *
+     * @param giftCard The giftCard data
+     * @return the giftCard object
+     */
+    public GiftCard purchaseGiftCard(final GiftCard giftCard, QueryParams params) {
+        return doPOST(GiftCards.GIFT_CARDS_RESOURCE, giftCard, GiftCard.class, params);
     }
 
     /**
@@ -2122,7 +2753,18 @@ public class RecurlyClient {
      * @return the giftCard object
      */
     public GiftCard previewGiftCard(final GiftCard giftCard) {
-        return doPOST(GiftCards.GIFT_CARDS_RESOURCE + "/preview", giftCard, GiftCard.class);
+    	return previewGiftCard(giftCard, null);
+    }
+
+    /**
+     * Preview a GiftCard
+     * <p>
+     *
+     * @param giftCard The giftCard data
+     * @return the giftCard object
+     */
+    public GiftCard previewGiftCard(final GiftCard giftCard, QueryParams params) {
+        return doPOST(GiftCards.GIFT_CARDS_RESOURCE + "/preview", giftCard, GiftCard.class, params);
     }
 
     /**
@@ -2143,7 +2785,18 @@ public class RecurlyClient {
      * @return the measuredUnit object as identified by the passed in ID
      */
     public MeasuredUnit createMeasuredUnit(final MeasuredUnit measuredUnit) {
-        return doPOST(MeasuredUnit.MEASURED_UNITS_RESOURCE, measuredUnit, MeasuredUnit.class);
+    	return createMeasuredUnit(measuredUnit, null);
+    }
+
+    /**
+     * Create a MeasuredUnit's info
+     * <p>
+     *
+     * @param measuredUnit The measuredUnit to create on recurly
+     * @return the measuredUnit object as identified by the passed in ID
+     */
+    public MeasuredUnit createMeasuredUnit(final MeasuredUnit measuredUnit, QueryParams params) {
+        return doPOST(MeasuredUnit.MEASURED_UNITS_RESOURCE, measuredUnit, MeasuredUnit.class, params);
     }
 
     /**
@@ -2155,7 +2808,19 @@ public class RecurlyClient {
      * @return The created invoice collection
      */
     public InvoiceCollection purchase(final Purchase purchase) {
-        return doPOST(Purchase.PURCHASES_ENDPOINT, purchase, InvoiceCollection.class);
+    	return purchase(purchase, null);
+    }
+
+    /**
+     * Purchases endpoint
+     * <p>
+     * https://dev.recurly.com/docs/create-purchase
+     *
+     * @param purchase The purchase data
+     * @return The created invoice collection
+     */
+    public InvoiceCollection purchase(final Purchase purchase, QueryParams params) {
+        return doPOST(Purchase.PURCHASES_ENDPOINT, purchase, InvoiceCollection.class, params);
     }
 
     /**
@@ -2167,7 +2832,19 @@ public class RecurlyClient {
      * @return The preview invoice collection
      */
     public InvoiceCollection previewPurchase(final Purchase purchase) {
-        return doPOST(Purchase.PURCHASES_ENDPOINT + "/preview", purchase, InvoiceCollection.class);
+    	return previewPurchase(purchase, null);
+    }
+
+    /**
+     * Purchases preview endpoint
+     * <p>
+     * https://dev.recurly.com/docs/preview-purchase
+     *
+     * @param purchase The purchase data
+     * @return The preview invoice collection
+     */
+    public InvoiceCollection previewPurchase(final Purchase purchase, QueryParams params) {
+        return doPOST(Purchase.PURCHASES_ENDPOINT + "/preview", purchase, InvoiceCollection.class, params);
     }
 
     /**
@@ -2186,7 +2863,26 @@ public class RecurlyClient {
      * @return The authorized invoice collection
      */
     public InvoiceCollection authorizePurchase(final Purchase purchase) {
-        return doPOST(Purchase.PURCHASES_ENDPOINT + "/authorize", purchase, InvoiceCollection.class);
+    	return authorizePurchase(purchase, null);
+    }
+
+    /**
+     * Purchases authorize endpoint.
+     *
+     * Generate an authorized invoice for the purchase. Runs validations
+     + but does not run any transactions. This endpoint will create a
+     + pending purchase that can be activated at a later time once payment
+     + has been completed on an external source (e.g. Adyen's Hosted
+     + Payment Pages).
+     *
+     * <p>
+     * https://dev.recurly.com/docs/authorize-purchase
+     *
+     * @param purchase The purchase data
+     * @return The authorized invoice collection
+     */
+    public InvoiceCollection authorizePurchase(final Purchase purchase, QueryParams params) {
+        return doPOST(Purchase.PURCHASES_ENDPOINT + "/authorize", purchase, InvoiceCollection.class, params);
     }
 
     /**
@@ -2202,7 +2898,23 @@ public class RecurlyClient {
      * @return The authorized invoice collection
      */
     public InvoiceCollection pendingPurchase(final Purchase purchase) {
-        return doPOST(Purchase.PURCHASES_ENDPOINT + "/pending", purchase, InvoiceCollection.class);
+    	return pendingPurchase(purchase, null);
+    }
+
+    /**
+     * Purchases pending endpoint.
+     *
+     * Use for Adyen HPP transaction requests. Runs validations
+     + but does not run any transactions.
+     *
+     * <p>
+     * https://dev.recurly.com/docs/pending-purchase
+     *
+     * @param purchase The purchase data
+     * @return The authorized invoice collection
+     */
+    public InvoiceCollection pendingPurchase(final Purchase purchase, QueryParams params) {
+        return doPOST(Purchase.PURCHASES_ENDPOINT + "/pending", purchase, InvoiceCollection.class, params);
     }
 
     /**
@@ -2214,9 +2926,24 @@ public class RecurlyClient {
      * @param acquisition The AccountAcquisition data
      * @return The created AccountAcquisition object
      */
-    public AccountAcquisition createAccountAcquisition(final String accountCode, final AccountAcquisition acquisition) {
+    public AccountAcquisition createAccountAcquisition(final String accountCode,
+    		final AccountAcquisition acquisition) {
+    	return createAccountAcquisition(accountCode, acquisition, null);
+    }
+
+    /**
+     * Sets the acquisition details for an account
+     * <p>
+     * https://dev.recurly.com/docs/create-account-acquisition
+     *
+     * @param accountCode The account's account code
+     * @param acquisition The AccountAcquisition data
+     * @return The created AccountAcquisition object
+     */
+    public AccountAcquisition createAccountAcquisition(final String accountCode,
+    		final AccountAcquisition acquisition, QueryParams params) {
         final String path = Account.ACCOUNT_RESOURCE + "/" + accountCode + AccountAcquisition.ACCOUNT_ACQUISITION_RESOURCE;
-        return doPOST(path, acquisition, AccountAcquisition.class);
+        return doPOST(path, acquisition, AccountAcquisition.class, params);
     }
 
     /**
@@ -2254,8 +2981,22 @@ public class RecurlyClient {
      * @return The created AccountAcquisition object
      */
     public AccountAcquisition updateAccountAcquisition(final String accountCode, final AccountAcquisition acquisition) {
+    	return updateAccountAcquisition(accountCode, acquisition, null);
+    }
+
+    /**
+     * Updates the acquisition details for an account
+     * <p>
+     * https://dev.recurly.com/docs/update-account-acquisition
+     *
+     * @param accountCode The account's account code
+     * @param acquisition The AccountAcquisition data
+     * @return The created AccountAcquisition object
+     */
+    public AccountAcquisition updateAccountAcquisition(final String accountCode,
+    		final AccountAcquisition acquisition, QueryParams params) {
         final String path = Account.ACCOUNT_RESOURCE + "/" + accountCode + AccountAcquisition.ACCOUNT_ACQUISITION_RESOURCE;
-        return doPUT(path, acquisition, AccountAcquisition.class);
+        return doPUT(path, acquisition, AccountAcquisition.class, params);
     }
 
     /**
@@ -2266,7 +3007,19 @@ public class RecurlyClient {
      * @param accountCode The account's account code
      */
     public void deleteAccountAcquisition(final String accountCode) {
-        doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode + AccountAcquisition.ACCOUNT_ACQUISITION_RESOURCE);
+    	deleteAccountAcquisition(accountCode, null);
+    }
+
+    /**
+     * Clear the acquisition details for an account
+     * <p>
+     * https://dev.recurly.com/docs/clear-account-acquisition
+     *
+     * @param accountCode The account's account code
+     */
+    public void deleteAccountAcquisition(final String accountCode, QueryParams params) {
+        doDELETE(Account.ACCOUNT_RESOURCE + "/" + accountCode + AccountAcquisition.ACCOUNT_ACQUISITION_RESOURCE,
+        		params);
     }
 
 
@@ -2364,8 +3117,8 @@ public class RecurlyClient {
 
     ///////////////////////////////////////////////////////////////////////////
 
-    private InputStream doGETPdf(final String resource) {
-        return doGETPdfWithFullURL(baseUrl + resource);
+    private InputStream doGETPdf(final String resource, QueryParams params) {
+        return doGETPdfWithFullURL(baseUrl + resource, params);
     }
 
     private <T> T doGET(final String resource, final Class<T> clazz, QueryParams params) {
@@ -2390,23 +3143,23 @@ public class RecurlyClient {
         if (debug()) {
             log.info("Msg to Recurly API [GET] :: URL : {}", url);
         }
-        return callRecurlySafeXmlContent(new HttpGet(url), clazz);
+        return callRecurlySafeXmlContent(new HttpGet(url), clazz, params);
     }
 
-    private InputStream doGETPdfWithFullURL(final String url) {
+    private InputStream doGETPdfWithFullURL(final String url, QueryParams params) {
         if (debug()) {
             log.info("Msg to Recurly API [GET] :: URL : {}", url);
         }
 
-        return callRecurlySafeGetPdf(url);
+        return callRecurlySafeGetPdf(url, params);
     }
 
-    private InputStream callRecurlySafeGetPdf(String url) {
+    private InputStream callRecurlySafeGetPdf(String url, QueryParams params) {
         CloseableHttpResponse response = null;
         InputStream pdfInputStream = null;
         try {
             final HttpGet builder = new HttpGet(url);
-            clientRequestBuilderCommon(builder);
+            clientRequestBuilderCommon(builder, params);
             builder.setHeader(HttpHeaders.ACCEPT, "application/pdf");
             builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/pdf");
             response = client.execute(builder);
@@ -2431,7 +3184,8 @@ public class RecurlyClient {
         return pdfInputStream;
     }
 
-    private <T> T doPOST(final String resource, final RecurlyObject payload, final Class<T> clazz) {
+    private <T> T doPOST(final String resource, final RecurlyObject payload, final Class<T> clazz,
+    		QueryParams params) {
         final String xmlPayload;
         try {
             xmlPayload = xmlMapper.writeValueAsString(payload);
@@ -2449,10 +3203,11 @@ public class RecurlyClient {
             builder.setEntity(new StringEntity(xmlPayload,
                     ContentType.APPLICATION_XML.withCharset(Charsets.UTF_8)));
         }
-        return callRecurlySafeXmlContent(builder, clazz);
+        return callRecurlySafeXmlContent(builder, clazz, params);
     }
 
-    private <T> T doPUT(final String resource, final RecurlyObject payload, final Class<T> clazz) {
+    private <T> T doPUT(final String resource, final RecurlyObject payload, final Class<T> clazz,
+    		QueryParams params) {
         final String xmlPayload;
         try {
             if (payload != null) {
@@ -2475,28 +3230,24 @@ public class RecurlyClient {
             builder.setEntity(new StringEntity(xmlPayload,
                     ContentType.APPLICATION_XML.withCharset(Charsets.UTF_8)));
         }
-        return callRecurlySafeXmlContent(builder, clazz);
+        return callRecurlySafeXmlContent(builder, clazz, params);
     }
 
     private HeaderGroup doHEAD(final String resource, QueryParams params) {
-        if (params == null) {
-            params = new QueryParams();
-        }
-
         final String url = constructGetUrl(resource, params);
         if (debug()) {
             log.info("Msg to Recurly API [HEAD]:: URL : {}", url);
         }
 
-        return callRecurlyNoContent(new HttpHead(url));
+        return callRecurlyNoContent(new HttpHead(url), params);
     }
 
-    private void doDELETE(final String resource) {
-        callRecurlySafeXmlContent(new HttpDelete(baseUrl + resource), null);
+    private void doDELETE(final String resource, QueryParams params) {
+        callRecurlySafeXmlContent(new HttpDelete(baseUrl + resource), null, params);
     }
 
-    private HeaderGroup callRecurlyNoContent(final HttpRequestBase builder) {
-        clientRequestBuilderCommon(builder);
+    private HeaderGroup callRecurlyNoContent(final HttpRequestBase builder, QueryParams params) {
+        clientRequestBuilderCommon(builder, params);
         builder.setHeader(HttpHeaders.ACCEPT, "application/xml");
         builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/xml; charset=utf-8");
         CloseableHttpResponse response = null;
@@ -2516,9 +3267,10 @@ public class RecurlyClient {
         }
     }
 
-    private <T> T callRecurlySafeXmlContent(final HttpRequestBase builder, @Nullable final Class<T> clazz) {
+    private <T> T callRecurlySafeXmlContent(final HttpRequestBase builder,
+    		@Nullable final Class<T> clazz, QueryParams params) {
         try {
-            return callRecurlyXmlContent(builder, clazz);
+            return callRecurlyXmlContent(builder, clazz, params);
         } catch (IOException e) {
             if (e instanceof ConnectException || e instanceof NoHttpResponseException
                     || e instanceof ConnectTimeoutException) {
@@ -2531,9 +3283,9 @@ public class RecurlyClient {
         // No need to extract TransactionErrorException since it's already a RuntimeException
     }
 
-    private <T> T callRecurlyXmlContent(final HttpRequestBase builder, @Nullable final Class<T> clazz)
-            throws IOException {
-        clientRequestBuilderCommon(builder);
+    private <T> T callRecurlyXmlContent(final HttpRequestBase builder, @Nullable final Class<T> clazz,
+    		QueryParams params) throws IOException {
+        clientRequestBuilderCommon(builder, params);
         builder.setHeader(HttpHeaders.ACCEPT, "application/xml");
         builder.setHeader(HttpHeaders.CONTENT_TYPE, "application/xml; charset=utf-8");
         CloseableHttpResponse response = null;
@@ -2590,16 +3342,16 @@ public class RecurlyClient {
             final T obj = xmlMapper.readValue(payload, clazz);
             if (obj instanceof RecurlyObject) {
                 ((RecurlyObject) obj).setRecurlyClient(this);
-                ((RecurlyObject) obj).setCurrentApiKeyOverride(apiKeyOverride.get());
+                ((RecurlyObject) obj).setCurrentQueryParams(params);
             } else if (obj instanceof RecurlyObjects) {
                 final RecurlyObjects<?> recurlyObjects = (RecurlyObjects<?>) obj;
                 recurlyObjects.setRecurlyClient(this);
-                recurlyObjects.setCurrentApiKeyOverride(apiKeyOverride.get());
+                recurlyObjects.setCurrentQueryParams(params);
 
                 // Set the RecurlyClient on all objects for later use
                 for (final Object object : recurlyObjects) {
                     ((RecurlyObject) object).setRecurlyClient(this);
-                    ((RecurlyObject) object).setCurrentApiKeyOverride(apiKeyOverride.get());
+                    ((RecurlyObject) object).setCurrentQueryParams(params);
                 }
 
                 // Set links for pagination
@@ -2622,7 +3374,7 @@ public class RecurlyClient {
         }
     }
 
-    private void clientRequestBuilderCommon(HttpRequestBase requestBuilder) {
+    private void clientRequestBuilderCommon(HttpRequestBase requestBuilder, QueryParams params) {
         validateHost(requestBuilder.getURI());
         requestBuilder.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + getKey());
         requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
@@ -2635,10 +3387,6 @@ public class RecurlyClient {
     }
 
     private String getKey() {
-        final String currentApiKeyOverride = apiKeyOverride.get();
-        if (currentApiKeyOverride != null) {
-            return getKeyFromApiKey(currentApiKeyOverride);
-        }
         return key;
     }
 
@@ -2728,52 +3476,6 @@ public class RecurlyClient {
          * potentially cause problems with Java 9.
          */
         return BaseEncoding.base64().encode(apiKey.getBytes(Charsets.UTF_8));
-    }
-
-    /**
-     * Set the keyOverride ThreadLocal with a key, and resets it on close.
-     * @see RecurlyClient#overrideApiKey(String)
-     */
-    public static class ApiKeyOverrideCloseable implements Closeable {
-
-        private final ThreadLocal<String> apiKeyOverride;
-        private final String originalOverride;
-
-        private ApiKeyOverrideCloseable(@Nonnull ThreadLocal<String> apiKeyOverride,
-                @Nonnull String apiKey) {
-            this.apiKeyOverride = Preconditions.checkNotNull(apiKeyOverride);
-            this.originalOverride = apiKeyOverride.get();
-            apiKeyOverride.set(apiKey);
-        }
-
-        @Override
-        public void close() {
-            if (originalOverride == null) {
-                apiKeyOverride.remove();
-            } else {
-                apiKeyOverride.set(originalOverride);
-            }
-        }
-
-    }
-
-    /**
-     * Override the {@link #apiKeyOverride} ThreadLocal with the given key, and returns a
-     * {@link Closeable} that will revert the original key override on close.<br>
-     * Example usage:
-     * <pre> final ApiKeyOverrideCloseable overrideCloseable = overrideApiKey(apiKey);
-     * try {
-     *     return createAccount(account);
-     * } finally {
-     *     overrideCloseable.close();
-     * }</pre>
-     * Or for Java 7+:
-     * <pre> try (ApiKeyOverrideCloseable overrideCloseable = overrideApiKey(apiKey)) {
-     *     return createAccount(account);
-     * }</pre>
-     */
-    public ApiKeyOverrideCloseable overrideApiKey(@Nonnull String apiKey) {
-        return new ApiKeyOverrideCloseable(apiKeyOverride, apiKey);
     }
 
 }

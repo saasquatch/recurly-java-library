@@ -43,8 +43,8 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.google.common.collect.ImmutableList;
+import com.ning.billing.recurly.QueryParams;
 import com.ning.billing.recurly.RecurlyClient;
-import com.ning.billing.recurly.RecurlyClient.ApiKeyOverrideCloseable;
 import com.ning.billing.recurly.model.jackson.RecurlyObjectsSerializer;
 import com.ning.billing.recurly.model.jackson.RecurlyXmlSerializerProvider;
 
@@ -55,7 +55,7 @@ public abstract class RecurlyObject {
     private RecurlyClient recurlyClient;
 
     @XmlTransient
-    private String currentApiKeyOverride;
+    private QueryParams queryParams;
 
     @XmlTransient
     protected String href;
@@ -246,14 +246,8 @@ public abstract class RecurlyObject {
         if (object.getHref() == null || recurlyClient == null) {
             return object;
         }
-        // If there is an apiKey override, use it
-        final ApiKeyOverrideCloseable overrideCloseable = currentApiKeyOverride == null
-                ? null : recurlyClient.overrideApiKey(currentApiKeyOverride);
-        try {
-            return recurlyClient.doGETWithFullURL(clazz, object.getHref());
-        } finally {
-            if (overrideCloseable != null) overrideCloseable.close();
-        }
+        // TODO do not pass along everything
+        return recurlyClient.doGETWithFullURL(clazz, object.getHref(), queryParams);
     }
 
     @JsonIgnore
@@ -261,12 +255,9 @@ public abstract class RecurlyObject {
         this.recurlyClient = recurlyClient;
     }
 
-    /**
-     * Set the API key used to retrieve this object
-     */
     @JsonIgnore
-    public void setCurrentApiKeyOverride(@Nullable final String currentApiKeyOverride) {
-        this.currentApiKeyOverride = currentApiKeyOverride;
+    public void setCurrentQueryParams(@Nullable QueryParams queryParams) {
+    	this.queryParams = queryParams;
     }
 
     @Override
