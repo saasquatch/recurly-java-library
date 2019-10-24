@@ -24,6 +24,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import com.ning.billing.recurly.model.Account;
 import com.ning.billing.recurly.model.AccountAcquisition;
 import com.ning.billing.recurly.model.AccountBalance;
@@ -65,16 +75,6 @@ import com.ning.billing.recurly.model.Subscriptions;
 import com.ning.billing.recurly.model.Transaction;
 import com.ning.billing.recurly.model.Transactions;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 public class TestRecurlyClient {
 
     public static final String RECURLY_PAGE_SIZE = "recurly.page.size";
@@ -97,11 +97,11 @@ public class TestRecurlyClient {
             Assert.fail("You need to set your Recurly api key to run integration tests:" +
                         " -Dkillbill.payment.recurly.apiKey=...");
         }
-        
+
         if (subDomainTemp == null) {
           subDomainTemp = "api";
         }
-        
+
         final String subDomain = subDomainTemp;
 
         recurlyClient = new RecurlyClient(apiKey, subDomain);
@@ -124,6 +124,15 @@ public class TestRecurlyClient {
             Assert.fail("getAccounts call should not succeed with invalid credentials.");
         } catch (RecurlyAPIException expected) {
             Assert.assertEquals(expected.getRecurlyError().getSymbol(), "unauthorized");
+        }
+
+        {
+            // Try overriding the API key with a valid one
+            final String apiKey = System.getProperty(KILLBILL_PAYMENT_RECURLY_API_KEY);
+            final QueryParams params = new QueryParams();
+            params.setApiKey(apiKey);
+            // The following line should not faikl
+            unauthorizedRecurlyClient.getAccounts(params);
         }
     }
 
@@ -266,13 +275,13 @@ public class TestRecurlyClient {
             // Fetch the corresponding invoice
             final Invoice subInvoice = subscriptionWithAddons.getInvoice();
             Assert.assertNotNull(subInvoice);
-            
+
             // Refetch the invoice using the getInvoice method
             final String invoiceID = subInvoice.getId();
             final Invoice gotInvoice = recurlyClient.getInvoice(invoiceID);
 
             Assert.assertEquals(subInvoice.hashCode(), gotInvoice.hashCode());
-            
+
             // Remove all addons
             final SubscriptionUpdate subscriptionUpdate = new SubscriptionUpdate();
             subscriptionUpdate.setAddOns(new SubscriptionAddOns());
@@ -1835,7 +1844,7 @@ public class TestRecurlyClient {
 
         billingInfoData.setAccount(null); // null out random account fixture
         accountData.setBillingInfo(billingInfoData); // add the billing info to account data
- 
+
         try {
             final Plan plan = recurlyClient.createPlan(planData);
             final GiftCard purchasedGiftCard = recurlyClient.purchaseGiftCard(giftCardData);
