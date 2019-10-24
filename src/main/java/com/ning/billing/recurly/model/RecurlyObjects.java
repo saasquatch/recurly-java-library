@@ -53,14 +53,18 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
     @XmlTransient
     private String nextUrl;
 
-
     @JsonIgnore
     <U extends RecurlyObjects> U getStart(final Class<U> clazz) {
         if (recurlyClient == null || startUrl == null) {
             return null;
         }
-        // TODO do not pass along everything
-        return recurlyClient.doGETWithFullURL(clazz, startUrl, queryParams);
+        QueryParams queryParamsToUse = null;
+        if (queryParams != null) {
+            // Only pass along headers
+            queryParamsToUse = queryParams.clone();
+            queryParamsToUse.clearParams();
+        }
+        return recurlyClient.doGETWithFullURL(clazz, startUrl, queryParamsToUse);
     }
 
     public abstract RecurlyObjects<T> getStart();
@@ -70,8 +74,13 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
         if (recurlyClient == null || nextUrl == null) {
             return null;
         }
-        // TODO do not pass along everything
-        return recurlyClient.doGETWithFullURL(clazz, nextUrl, queryParams);
+        QueryParams queryParamsToUse = null;
+        if (queryParams != null) {
+            // Only pass along headers
+            queryParamsToUse = queryParams.clone();
+            queryParamsToUse.clearParams();
+        }
+        return recurlyClient.doGETWithFullURL(clazz, nextUrl, queryParamsToUse);
     }
 
     public abstract RecurlyObjects<T> getNext();
@@ -83,8 +92,8 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
 
     @JsonIgnore
     public void setCurrentQueryParams(QueryParams queryParams) {
-		this.queryParams = queryParams;
-	}
+        this.queryParams = queryParams;
+    }
 
     @JsonIgnore
     public String getStartUrl() {

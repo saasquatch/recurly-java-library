@@ -246,8 +246,13 @@ public abstract class RecurlyObject {
         if (object.getHref() == null || recurlyClient == null) {
             return object;
         }
-        // TODO do not pass along everything
-        return recurlyClient.doGETWithFullURL(clazz, object.getHref(), queryParams);
+        QueryParams queryParamsToUse = null;
+        if (queryParams != null) {
+            // Only pass along headers
+            queryParamsToUse = queryParams.clone();
+            queryParamsToUse.clearParams();
+        }
+        return recurlyClient.doGETWithFullURL(clazz, object.getHref(), queryParamsToUse);
     }
 
     @JsonIgnore
@@ -257,7 +262,7 @@ public abstract class RecurlyObject {
 
     @JsonIgnore
     public void setCurrentQueryParams(@Nullable QueryParams queryParams) {
-    	this.queryParams = queryParams;
+        this.queryParams = queryParams;
     }
 
     @Override

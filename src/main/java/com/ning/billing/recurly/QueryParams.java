@@ -28,13 +28,14 @@ import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Charsets;
+import com.google.common.net.HttpHeaders;
 
 /**
  * This class is responsible for handling query parameters to pageable resources in the Recurly API.
  * See the pagination docs (https://dev.recurly.com/docs/pagination) for the parameters available on
  * every endpoint.
  */
-public class QueryParams {
+public class QueryParams implements Cloneable {
     private static final String RECURLY_PAGE_SIZE_KEY = "recurly.page.size";
     private static final Integer DEFAULT_PAGE_SIZE = 20;
 
@@ -97,10 +98,12 @@ public class QueryParams {
         }
     }
 
-    private Map<String, String> params;
+    private final Map<String, String> params;
+    private final Map<String, String> headers;
 
     public QueryParams() {
-        params = new HashMap<String, String>();
+        this.params = new HashMap<String, String>();
+        this.headers = new HashMap<String, String>();
 
         int pageSize;
 
@@ -154,10 +157,44 @@ public class QueryParams {
         params.put("biiling_status", billingStatus.getType());
     }
 
-    public void put(final String key, final String value) { params.put(key, value); }
+    public void setApiKey(String apiKey) {
+        if (apiKey == null) {
+            headers.remove(HttpHeaders.AUTHORIZATION);
+        } else {
+            headers.put(HttpHeaders.AUTHORIZATION, "Basic " + RecurlyClient.getKeyFromApiKey(apiKey));
+        }
+    }
+
+    public void put(final String key, final String value) {
+        params.put(key, value);
+    }
+
+    public void putHeader(String key, String value) {
+        headers.put(key, value);
+    }
+
+    public void clearParams() {
+        params.clear();
+    }
+
+    public void clearHeaders() {
+        headers.clear();
+    }
 
     Collection<Map.Entry<String, String>> getParams() {
         return params.entrySet();
+    }
+
+    Collection<Map.Entry<String, String>> getHeaders() {
+        return headers.entrySet();
+    }
+
+    @Override
+    public QueryParams clone() {
+        final QueryParams clone = new QueryParams();
+        clone.params.putAll(this.params);
+        clone.headers.putAll(this.headers);
+        return clone;
     }
 
     @Override
