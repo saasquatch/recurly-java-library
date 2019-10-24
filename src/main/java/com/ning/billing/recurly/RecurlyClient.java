@@ -527,19 +527,6 @@ public class RecurlyClient {
      *
      * @param accountCode recurly account id
      * @param type {@link com.ning.billing.recurly.model.Adjustments.AdjustmentType}
-     * @return the adjustments on the account
-     */
-    public Adjustments getAccountAdjustments(final String accountCode,
-            final Adjustments.AdjustmentType type, QueryParams params) {
-        return getAccountAdjustments(accountCode, type, null, params);
-    }
-
-    /**
-     * Get Account Adjustments
-     * <p>
-     *
-     * @param accountCode recurly account id
-     * @param type {@link com.ning.billing.recurly.model.Adjustments.AdjustmentType}
      * @param state {@link com.ning.billing.recurly.model.Adjustments.AdjustmentState}
      * @return the adjustments on the account
      */
