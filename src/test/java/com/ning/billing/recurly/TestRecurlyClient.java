@@ -131,7 +131,7 @@ public class TestRecurlyClient {
             final String apiKey = System.getProperty(KILLBILL_PAYMENT_RECURLY_API_KEY);
             final QueryParams params = new QueryParams();
             params.setApiKey(apiKey);
-            // The following line should not faikl
+            // The following line should not fail
             unauthorizedRecurlyClient.getAccounts(params);
         }
     }
