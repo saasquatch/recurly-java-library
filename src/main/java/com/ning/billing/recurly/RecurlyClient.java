@@ -2266,7 +2266,7 @@ public class RecurlyClient {
             return null;
         }
 
-        final HttpPut builder = new HttpPut(baseUrl + resource);
+        final HttpPut builder = new HttpPut(constructUrl(resource, params));
         if (xmlPayload != null) {
             builder.setEntity(new StringEntity(xmlPayload,
                     ContentType.APPLICATION_XML.withCharset(Charsets.UTF_8)));
