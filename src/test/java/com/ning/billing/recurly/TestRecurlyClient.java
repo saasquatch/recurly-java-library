@@ -17,6 +17,13 @@
 
 package com.ning.billing.recurly;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.ning.billing.recurly.model.Account;
 import com.ning.billing.recurly.model.AccountAcquisition;
 import com.ning.billing.recurly.model.AccountBalance;
@@ -30,6 +37,7 @@ import com.ning.billing.recurly.model.AdjustmentRefund;
 import com.ning.billing.recurly.model.Adjustments;
 import com.ning.billing.recurly.model.BillingInfo;
 import com.ning.billing.recurly.model.Coupon;
+import com.ning.billing.recurly.model.Coupon.RedemptionResource;
 import com.ning.billing.recurly.model.Coupons;
 import com.ning.billing.recurly.model.CustomField;
 import com.ning.billing.recurly.model.CustomFields;
@@ -56,7 +64,6 @@ import com.ning.billing.recurly.model.SubscriptionUpdate;
 import com.ning.billing.recurly.model.Subscriptions;
 import com.ning.billing.recurly.model.Transaction;
 import com.ning.billing.recurly.model.Transactions;
-import com.ning.billing.recurly.model.Coupon.RedemptionResource;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -67,13 +74,6 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class TestRecurlyClient {
 
@@ -176,6 +176,38 @@ public class TestRecurlyClient {
             // Close the account
             recurlyClient.closeAccount(accountData.getAccountCode());
         }
+    }
+
+    @Test(groups = "integration")
+    public void testInvalidTokenError() throws Exception {
+        final Account accountData = TestUtils.createRandomAccount();
+        RecurlyAPIException error = null;
+
+        try {
+            // Create account with invalid billing token
+            final BillingInfo billingInfo = new BillingInfo();
+            billingInfo.setTokenId("invalid token");
+            accountData.setBillingInfo(billingInfo);
+
+            final Subscription subscription = new Subscription();
+            subscription.setPlanCode("anything");
+            final Subscriptions subscriptions = new Subscriptions();
+            subscriptions.setRecurlyObject(subscription);
+
+            final Purchase purchase = new Purchase();
+            purchase.setCurrency(CURRENCY);
+            purchase.setAccount(accountData);
+            purchase.setSubscriptions(subscriptions);
+            recurlyClient.previewPurchase(purchase);
+        } catch (RecurlyAPIException expected) {
+            error = expected;
+        }
+
+        // Despite being a 422 error, this case returns a single Error
+        // object rather than Errors. Check that we're deserializing it
+        // properly.
+        Assert.assertEquals(error.getRecurlyError().getHttpStatusCode(), 422);
+        Assert.assertEquals(error.getRecurlyError().getSymbol(), "token_invalid");
     }
 
     @Test(groups = "integration")
@@ -1803,11 +1835,7 @@ public class TestRecurlyClient {
 
         billingInfoData.setAccount(null); // null out random account fixture
         accountData.setBillingInfo(billingInfoData); // add the billing info to account data
-
-        // add a shipping address
-        addresses.add(shippingAddress);
-        accountData.setShippingAddresses(addresses);
-
+ 
         try {
             final Plan plan = recurlyClient.createPlan(planData);
             final GiftCard purchasedGiftCard = recurlyClient.purchaseGiftCard(giftCardData);
@@ -1825,6 +1853,7 @@ public class TestRecurlyClient {
             purchaseData.setCollectionMethod("automatic");
             purchaseData.setAdjustments(adjustmentsData);
             purchaseData.setCurrency("USD");
+            purchaseData.setShippingAddress(shippingAddress);
             purchaseData.setSubscriptions(subscriptions);
             purchaseData.setGiftCard(redemptionData);
             purchaseData.setCouponCodes(couponCodes);
@@ -1869,10 +1898,6 @@ public class TestRecurlyClient {
         billingInfoData.setExternalHppType("adyen"); // set the external hpp collection to adyen
         accountData.setEmail("benjamin.dumonde@example.com");
 
-        // add a shipping address
-        addresses.add(shippingAddress);
-        accountData.setShippingAddresses(addresses);
-
         try {
             final Plan plan = recurlyClient.createPlan(planData);
             final GiftCard purchasedGiftCard = recurlyClient.purchaseGiftCard(giftCardData);
@@ -1890,6 +1915,7 @@ public class TestRecurlyClient {
             purchaseData.setCollectionMethod("automatic");
             purchaseData.setAdjustments(adjustmentsData);
             purchaseData.setCurrency("USD");
+            purchaseData.setShippingAddress(shippingAddress);
             purchaseData.setSubscriptions(subscriptions);
             purchaseData.setGiftCard(redemptionData);
             purchaseData.setCouponCodes(couponCodes);

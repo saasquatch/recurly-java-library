@@ -539,6 +539,22 @@ public class RecurlyClient {
     }
 
     /**
+     * Cancel a subscription
+     * <p>
+     * Cancel a subscription so it remains active and then expires at the end of the current bill cycle.
+     *
+     * @param subscriptionUuid String uuid of the subscription to cancel
+     * @param timeframe SubscriptionUpdate.TimeFrame the timeframe in which to cancel. Only accepts bill_date or term_end
+     * @return Subscription
+     */
+    public Subscription cancelSubscription(final String subscriptionUuid, final SubscriptionUpdate.Timeframe timeframe) {
+        final QueryParams qp = new QueryParams();
+        if (timeframe != null) qp.put("timeframe", timeframe.toString());
+        return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + subscriptionUuid + "/cancel",
+                     null, Subscription.class, qp);
+    }
+
+    /**
      * Pause a subscription or cancel a scheduled pause on a subscription.
      * <p>
      * * For an active subscription without a pause scheduled already, this will
@@ -2155,10 +2171,10 @@ public class RecurlyClient {
     }
 
     private <T> T doGET(final String resource, final Class<T> clazz, QueryParams params) {
-        return doGETWithFullURL(clazz, constructGetUrl(resource, params));
+        return doGETWithFullURL(clazz, constructUrl(resource, params));
     }
 
-    private String constructGetUrl(final String resource, QueryParams params) {
+    private String constructUrl(final String resource, QueryParams params) {
         return baseUrl + resource + params.toString();
     }
 
@@ -2229,6 +2245,10 @@ public class RecurlyClient {
     }
 
     private <T> T doPUT(final String resource, final RecurlyObject payload, final Class<T> clazz) {
+        return doPUT(resource, payload, clazz, new QueryParams());
+    }
+
+    private <T> T doPUT(final String resource, final RecurlyObject payload, final Class<T> clazz, final QueryParams params) {
         final String xmlPayload;
         try {
             if (payload != null) {
@@ -2259,7 +2279,7 @@ public class RecurlyClient {
             params = new QueryParams();
         }
 
-        final String url = constructGetUrl(resource, params);
+        final String url = constructUrl(resource, params);
         if (debug()) {
             log.info("Msg to Recurly API [HEAD]:: URL : {}", url);
         }
@@ -2333,14 +2353,25 @@ public class RecurlyClient {
                 RecurlyAPIError recurlyError = RecurlyAPIError.buildFromResponse(response);
 
                 if (response.getStatusLine().getStatusCode() == 422) {
+                    // 422 is returned for transaction errors (see https://dev.recurly.com/page/transaction-errors)
+                    // as well as bad input payloads
                     final Errors errors;
                     try {
                         errors = xmlMapper.readValue(payload, Errors.class);
                     } catch (Exception e) {
-                        // 422 is returned for transaction errors (see https://recurly.readme.io/v2.0/page/transaction-errors)
-                        // as well as bad input payloads
                         log.warn("Unable to extract error", e);
                         return null;
+                    }
+
+                    // Sometimes a single `Error` response is returned rather than `Errors`.
+                    // In this case, all fields will be null.
+                    if (errors == null || (
+                        errors.getRecurlyErrors() == null &&
+                        errors.getTransaction() == null &&
+                        errors.getTransactionError() == null
+                    )) {
+                        recurlyError = RecurlyAPIError.buildFromXml(xmlMapper, payload, response);
+                        throw new RecurlyAPIException(recurlyError);
                     }
                     throw new TransactionErrorException(errors);
                 } else if (response.getStatusLine().getStatusCode() == 401) {
