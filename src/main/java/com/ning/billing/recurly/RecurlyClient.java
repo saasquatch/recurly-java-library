@@ -2516,7 +2516,9 @@ public class RecurlyClient {
                 final RecurlyObjects<?> recurlyObjects = new Coupons();
                 recurlyObjects.setRecurlyClient(this);
                 recurlyObjects.setStartUrl(location);
-                return (T) recurlyObjects;
+                @SuppressWarnings("unchecked")
+				final T castResult = (T) recurlyObjects;
+                return castResult;
             }
 
             final T obj = xmlMapper.readValue(payload, clazz);
