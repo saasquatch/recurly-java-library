@@ -46,6 +46,7 @@ import com.ning.billing.recurly.model.Invoice;
 import com.ning.billing.recurly.model.InvoiceCollection;
 import com.ning.billing.recurly.model.InvoiceRefund;
 import com.ning.billing.recurly.model.Invoices;
+import com.ning.billing.recurly.model.Item;
 import com.ning.billing.recurly.model.Plan;
 import com.ning.billing.recurly.model.PlanCode;
 import com.ning.billing.recurly.model.PlanCodes;
@@ -625,6 +626,86 @@ public class TestRecurlyClient {
         }
     }
 
+    @Test(groups = "integration")
+    public void testCreateItem() throws Exception {
+        final Item itemData = TestUtils.createRandomItem();
+        
+        try {
+            // Create an item
+            final Item item = recurlyClient.createItem(itemData);
+            Assert.assertNotNull(item);
+            Assert.assertTrue(recurlyClient.getItems().size() > 0);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            // Delete the item
+            recurlyClient.deleteItem(itemData.getItemCode());
+        }
+    }
+
+    @Test(groups = "integration")
+    public void testUpdateItem() throws Exception {
+        final Item itemData = TestUtils.createRandomItem();
+
+        try {
+            // Create an item
+            final Item item = recurlyClient.createItem(itemData);
+            final Item itemChanges = new Item(); // Start with a fresh item object for changes
+            Assert.assertNotNull(item);
+
+            // Set the itemcode to identify which item to change
+            itemChanges.setItemCode(itemData.getItemCode());
+
+            // Change some attributes
+            itemChanges.setName("A new name");
+            itemChanges.setDescription("A new description");
+            // **custom fields must be configured through ui**
+            // final CustomFields customFields = new CustomFields();
+            // final CustomField field = new CustomField();
+            // field.setName("size");
+            // field.setValue("small");
+            // customFields.add(field);
+            // itemChanges.setCustomFields(customFields);
+
+            // Send off the changes and get the updated object
+            final Item updatedItem = recurlyClient.updateItem(itemChanges.getItemCode(), itemChanges);
+
+            Assert.assertNotNull(updatedItem);
+            Assert.assertEquals(updatedItem.getName(), "A new name");
+            Assert.assertEquals(updatedItem.getDescription(), "A new description");
+            // Assert.assertEquals(updatedItem.getCustomFields(), itemChanges.getCustomFields());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            // Delete the item
+            recurlyClient.deleteItem(itemData.getItemCode());
+        }
+    }
+
+    @Test(groups = "integration")
+    public void testReactivateItem() throws Exception {
+        final Item itemData = TestUtils.createRandomItem();
+
+        try {
+            // Create an item
+            final Item item = recurlyClient.createItem(itemData);
+            Assert.assertNotNull(item);
+            Assert.assertTrue(recurlyClient.getItems().size() > 0);
+            // Delete the item
+            recurlyClient.deleteItem(item.getItemCode());
+            final Item deletedItem = recurlyClient.getItem(item.getItemCode());
+            Assert.assertEquals(deletedItem.getState(), "inactive");
+            // Reactivate the item
+            recurlyClient.reactivateItem(item.getItemCode());
+            final Item reactivatedItem = recurlyClient.getItem(item.getItemCode());
+            Assert.assertEquals(reactivatedItem.getState(), "active");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            // Delete the item
+            recurlyClient.deleteItem(itemData.getItemCode());
+        }
+    }
 
     @Test(groups = "integration")
     public void testCreatePlan() throws Exception {
@@ -820,6 +901,55 @@ public class TestRecurlyClient {
             recurlyClient.terminateSubscription(subscription, RefundOption.full);
             final Subscription expiredSubscription = recurlyClient.getSubscription(subscription.getUuid());
             Assert.assertEquals(expiredSubscription.getState(), "expired");
+        } finally {
+            // Close the account
+            recurlyClient.closeAccount(accountData.getAccountCode());
+            // Delete the Plan
+            recurlyClient.deletePlan(planData.getPlanCode());
+        }
+    }
+
+    @Test(groups = "integration")
+    public void getInvoiceSubscriptions() throws Exception {
+        final Account accountData = TestUtils.createRandomAccount();
+        final BillingInfo billingInfoData = TestUtils.createRandomBillingInfo();
+        final Plan planData = TestUtils.createRandomPlan();
+
+        try {
+            // Create a user
+            final Account account = recurlyClient.createAccount(accountData);
+            account.setAccountCode(accountData.getAccountCode());
+
+            // Create BillingInfo
+            billingInfoData.setAccount(account);
+            final BillingInfo billingInfo = recurlyClient.createOrUpdateBillingInfo(billingInfoData);
+            Assert.assertNotNull(billingInfo);
+            final BillingInfo retrievedBillingInfo = recurlyClient.getBillingInfo(account.getAccountCode());
+            Assert.assertNotNull(retrievedBillingInfo);
+
+            // Create a plan
+            final Plan plan = recurlyClient.createPlan(planData);
+            
+            // Set up a subscription to invoice
+            final Subscription invoiceSubscription = new Subscription();
+            invoiceSubscription.setPlanCode(plan.getPlanCode());
+
+            final Subscriptions subscriptions = new Subscriptions();
+            subscriptions.add(invoiceSubscription);
+
+            // Set account and subscriptions to purchase
+            final Purchase purchaseData = new Purchase();
+            purchaseData.setAccount(accountData);
+            purchaseData.setSubscriptions(subscriptions);
+            purchaseData.setCollectionMethod("automatic");
+            purchaseData.setCurrency("USD");
+
+            // // Create invoice collection
+            final InvoiceCollection collection = recurlyClient.purchase(purchaseData);
+            final Invoice invoiceData = collection.getChargeInvoice();
+            // Do a lookup for subs for given invoice
+            final Subscriptions isubs = recurlyClient.getInvoiceSubscriptions(invoiceData.getId());
+            Assert.assertNotNull(isubs);
         } finally {
             // Close the account
             recurlyClient.closeAccount(accountData.getAccountCode());
@@ -1115,7 +1245,14 @@ public class TestRecurlyClient {
             subscriptionData.setAccount(accountData);
             subscriptionData.setUnitAmountInCents(150);
             subscriptionData.setCurrency(CURRENCY);
-            recurlyClient.createSubscription(subscriptionData);
+            final Subscription sub = recurlyClient.createSubscription(subscriptionData);
+
+            // Create transaction from subscription
+            final Transaction subTransaction = sub.getInvoice().getTransactions().get(0);
+            // Fetch subscriptions from created transaction
+            final Subscription fetchedSub = recurlyClient.getTransactionSubscriptions(subTransaction.getUuid()).get(0);
+            // Test that the original subscription equals the fetched subscription
+            Assert.assertEquals(sub.getUuid(), fetchedSub.getUuid());
 
             // Create a transaction
             final Transaction t = new Transaction();
@@ -1264,15 +1401,12 @@ public class TestRecurlyClient {
         Coupon coupon = recurlyClient.createCoupon(couponData);
 
         Coupon genCouponData = new Coupon();
-        genCouponData.setNumberOfUniqueCodes(50);
 
-        recurlyClient.generateUniqueCodes(coupon.getCouponCode(), genCouponData);
-
-        QueryParams qp = new QueryParams();
-        qp.setPerPage(50);
-        Coupons coupons = recurlyClient.getUniqueCouponCodes(couponData.getCouponCode(), qp);
-
-        Assert.assertEquals(coupons.size(), 50);
+        genCouponData.setNumberOfUniqueCodes(3);
+        Coupons coupons = recurlyClient.generateUniqueCodes(coupon.getCouponCode(), genCouponData);
+        Coupon c = coupons.get(0);
+        System.out.println("Coupon c " + c.toString());
+        Assert.assertEquals(coupons.size(), 3);
     }
 
     @Test(groups = "integration")

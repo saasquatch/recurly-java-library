@@ -25,7 +25,7 @@
     <groupId>com.ning.billing</groupId>
     <artifactId>recurly-java-library</artifactId>
     <packaging>jar</packaging>
-    <version>0.30.1-SNAPSHOT</version>
+    <version>0.33.1-SNAPSHOT</version>
     <name>Recurly Java library</name>
     <description>Java library for Recurly</description>
     <url>http://github.com/killbilling/recurly-java-library</url>
@@ -233,6 +233,7 @@
                                 <!-- For some reason, useIdeaDefaultExcludes
                                     doesn't pick up .idea directory -->
                                 <exclude>.github/**</exclude>
+                                <exclude>.vscode/**</exclude>
                                 <exclude>.idea/**</exclude>
                                 <exclude>**/.project</exclude>
                                 <exclude>.git/**</exclude>
