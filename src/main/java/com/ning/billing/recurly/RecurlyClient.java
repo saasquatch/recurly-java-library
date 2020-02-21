@@ -2495,7 +2495,7 @@ public class RecurlyClient {
             final Header locationHeader = response.getFirstHeader("Location");
             String location = locationHeader == null ? null : locationHeader.getValue();
             if (clazz == Coupons.class && location != null && !location.isEmpty()) {
-                final RecurlyObjects<?> recurlyObjects = new Coupons();
+                final RecurlyObjects recurlyObjects = new Coupons();
                 recurlyObjects.setRecurlyClient(this);
                 recurlyObjects.setStartUrl(location);
                 @SuppressWarnings("unchecked")
@@ -2507,7 +2507,7 @@ public class RecurlyClient {
             if (obj instanceof RecurlyObject) {
                 ((RecurlyObject) obj).setRecurlyClient(this);
             } else if (obj instanceof RecurlyObjects) {
-                final RecurlyObjects<?> recurlyObjects = (RecurlyObjects<?>) obj;
+                final RecurlyObjects recurlyObjects = (RecurlyObjects) obj;
                 recurlyObjects.setRecurlyClient(this);
 
                 // Set the RecurlyClient on all objects for later use
