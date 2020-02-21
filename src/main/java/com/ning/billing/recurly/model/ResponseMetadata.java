@@ -16,6 +16,7 @@
  */
 package com.ning.billing.recurly.model;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
 public class ResponseMetadata {
@@ -39,10 +40,10 @@ public class ResponseMetadata {
     private int statusCode;
 
     public ResponseMetadata(HttpResponse response) {
-        this.requestId = response.getFirstHeader("X-Request-Id") == null ? null
-                : response.getFirstHeader("X-Request-Id").getValue();
-        this.cfRay = response.getFirstHeader("CF-RAY") == null ? null
-                : response.getFirstHeader("CF-RAY").getValue();
+        final Header requestIdHeader = response.getFirstHeader("X-Request-Id");
+        this.requestId = requestIdHeader == null ? null : requestIdHeader.getValue();
+        final Header cfRayHeader = response.getFirstHeader("CF-RAY");
+        this.cfRay = cfRayHeader == null ? null : cfRayHeader.getValue();
         this.statusCode = response.getStatusLine().getStatusCode();
     }
 
