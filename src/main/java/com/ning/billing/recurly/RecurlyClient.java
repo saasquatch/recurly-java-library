@@ -192,16 +192,11 @@ public class RecurlyClient {
     }
 
     public RecurlyClient(final String apiKey, final String scheme, final String host, final int port, final String version) {
-        this(apiKey, scheme, host, port, version, null);
-    }
-
-    public RecurlyClient(final String apiKey, final String scheme, final String host, final int port, final String version, CloseableHttpClient httpClient) {
         this.key = BaseEncoding.base64().encode(apiKey.getBytes(Charsets.UTF_8));
         this.baseUrl = String.format("%s://%s:%d/%s", scheme, host, port, version);
         this.xmlMapper = RecurlyObject.newXmlMapper();
         this.userAgent = buildUserAgent();
         this.rateLimitRemaining = -1;
-        this.client = httpClient;
         loggerWarning();
     }
 
@@ -211,6 +206,14 @@ public class RecurlyClient {
      */
     public synchronized void open() throws NoSuchAlgorithmException, KeyManagementException {
         client = createHttpClient();
+    }
+
+    /**
+     * Set the underlying http client with your custom client.
+     * If {@link #open()} had already been called, do not call this method.
+     */
+    public synchronized void open(CloseableHttpClient client) {
+        this.client = client;
     }
 
     /**
