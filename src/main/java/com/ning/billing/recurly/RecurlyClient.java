@@ -207,6 +207,7 @@ public class RecurlyClient {
 
     /**
      * Open the underlying http client
+     * If you are supplying your own http client, do not call this method.
      */
     public synchronized void open() throws NoSuchAlgorithmException, KeyManagementException {
         client = createHttpClient();
@@ -214,6 +215,7 @@ public class RecurlyClient {
 
     /**
      * Close the underlying http client
+     * If you are supplying your own http client, do not call this method.
      */
     public synchronized void close() {
         if (client != null) {
