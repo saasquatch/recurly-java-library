@@ -1,6 +1,5 @@
 /*
- * Copyright 2010-2014 Ning, Inc.
- * Copyright 2014-2015 The Billing Project, LLC
+ * Copyright 2019 ReferralSaaSquatch.com Inc.
  *
  * The Billing Project licenses this file to you under the Apache License, version 2.0
  * (the "License"); you may not use this file except in compliance with the
@@ -17,19 +16,25 @@
 
 package com.ning.billing.recurly;
 
-import com.ning.billing.recurly.model.Errors;
+/**
+ * Base class for Recurly exceptions
+ */
+public class RecurlyException extends RuntimeException {
 
-// TODO RuntimeException for now as it's unclear which API calls can return such errors
-public class TransactionErrorException extends RecurlyException {
-
-    private final Errors errors;
-
-    public TransactionErrorException(final Errors errors) {
-        super(errors.toString());
-        this.errors = errors;
+    public RecurlyException() {
+        super();
     }
 
-    public Errors getErrors() {
-        return errors;
+    public RecurlyException(String message) {
+        super(message);
     }
+
+    public RecurlyException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public RecurlyException(Throwable cause) {
+        super(cause);
+    }
+
 }
