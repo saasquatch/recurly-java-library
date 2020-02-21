@@ -2583,7 +2583,7 @@ public class RecurlyClient {
                 .setSSLContext(SslUtils.getInstance().getSSLContext());
         return httpClientBuilder.build();
     }
-    
+
     private void closeResponse(final CloseableHttpResponse response) {
         if (response != null) {
             try {
