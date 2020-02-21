@@ -2539,8 +2539,7 @@ public class RecurlyClient {
         validateHost(requestBuilder.getURI());
         requestBuilder.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + key);
         requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
-        // User-Agent is set in client setup
-//        requestBuilder.setHeader(HttpHeaders.USER_AGENT, userAgent);
+        requestBuilder.setHeader(HttpHeaders.USER_AGENT, userAgent);
         requestBuilder.setHeader(HttpHeaders.ACCEPT_LANGUAGE, acceptLanguage);
         // Use the default timeouts from AHC
         requestBuilder.setConfig(RequestConfig.custom()
@@ -2552,7 +2551,6 @@ public class RecurlyClient {
         // See https://github.com/ning/async-http-client/issues/issue/28
         final HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .disableCookieManagement() // We don't need cookies
-                .setUserAgent(userAgent) // Set user agent here
                 /*
                  * The following limits are what the Apache HC Fluent API uses, and in practice
                  * they should be more than enough.
