@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.joda.time.DateTime;
-
 import com.google.common.base.Objects;
 
 /**
@@ -98,7 +97,6 @@ public class Coupon extends RecurlyObject {
      * Number of months after redemption that the coupon is valid, defaults to no date
      * @deprecated Please use temporal_unit and temporal_amount
      */
-    @Deprecated
     @XmlElement(name = "applies_for_months")
     private Integer appliesForMonths;
 
@@ -118,7 +116,6 @@ public class Coupon extends RecurlyObject {
      * If true, the coupon applies to the first invoice only
      * @deprecated Please use duration
      */
-    @Deprecated
     @XmlElement(name = "single_use")
     private Boolean singleUse;
 
@@ -216,7 +213,7 @@ public class Coupon extends RecurlyObject {
 
     /**
      * The template for generating unique codes.
-     *
+     * 
      * @see <a href=
      *      "https://dev.recurly.com/docs/create-coupon">https://dev.recurly.com/docs/create-coupon</a>
      */

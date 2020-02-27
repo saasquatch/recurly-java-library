@@ -17,8 +17,6 @@
 
 package com.ning.billing.recurly.model;
 
-import java.io.IOException;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -27,6 +25,8 @@ import org.apache.http.HttpResponse;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Objects;
+
+import java.io.IOException;
 
 @XmlRootElement(name = "error")
 public class RecurlyAPIError extends RecurlyObject {

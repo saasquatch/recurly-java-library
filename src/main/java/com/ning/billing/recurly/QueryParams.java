@@ -16,17 +16,17 @@
  */
 package com.ning.billing.recurly;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Charsets;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 
-import com.google.common.base.Charsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is responsible for handling query parameters to pageable resources in the Recurly API.
@@ -96,15 +96,15 @@ public class QueryParams {
         }
     }
 
-    private Map<String, String> params;
+    private Map<String,String> params;
 
     public QueryParams() {
         params = new HashMap<String, String>();
 
-        int pageSize;
+        Integer pageSize;
 
         try {
-            pageSize = Integer.parseInt(System.getProperty(RECURLY_PAGE_SIZE_KEY));
+            pageSize = new Integer(System.getProperty(RECURLY_PAGE_SIZE_KEY));
         } catch (NumberFormatException nfex) {
             pageSize = DEFAULT_PAGE_SIZE;
         }
@@ -164,5 +164,4 @@ public class QueryParams {
         }
         return '?' + URLEncodedUtils.format(pairList, Charsets.UTF_8);
     }
-
 }

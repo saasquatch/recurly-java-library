@@ -19,15 +19,14 @@ package com.ning.billing.recurly.model;
 
 import java.util.ArrayList;
 
-import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.ning.billing.recurly.RecurlyClient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.ning.billing.recurly.RecurlyClient;
-import com.ning.billing.recurly.RecurlyClient.ApiKeyOverrideCloseable;
 
 /**
  * Container for a collection of objects (e.g. accounts, coupons, plans, ...)
@@ -46,9 +45,6 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
     private RecurlyClient recurlyClient;
 
     @XmlTransient
-    private String currentApiKeyOverride;
-
-    @XmlTransient
     private String startUrl;
 
     @XmlTransient
@@ -60,14 +56,7 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
         if (recurlyClient == null || startUrl == null) {
             return null;
         }
-        // If there is an apiKey override, use it
-        final ApiKeyOverrideCloseable overrideCloseable = currentApiKeyOverride == null
-                ? null : recurlyClient.overrideApiKey(currentApiKeyOverride);
-        try {
-            return recurlyClient.doGETWithFullURL(clazz, startUrl);
-        } finally {
-            if (overrideCloseable != null) overrideCloseable.close();
-        }
+        return recurlyClient.doGETWithFullURL(clazz, startUrl);
     }
 
     public abstract RecurlyObjects<T> getStart();
@@ -77,14 +66,7 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
         if (recurlyClient == null || nextUrl == null) {
             return null;
         }
-        // If there is an apiKey override, use it
-        final ApiKeyOverrideCloseable overrideCloseable = currentApiKeyOverride == null
-                ? null : recurlyClient.overrideApiKey(currentApiKeyOverride);
-        try {
-            return recurlyClient.doGETWithFullURL(clazz, nextUrl);
-        } finally {
-            if (overrideCloseable != null) overrideCloseable.close();
-        }
+        return recurlyClient.doGETWithFullURL(clazz, nextUrl);
     }
 
     public abstract RecurlyObjects<T> getNext();
@@ -92,14 +74,6 @@ public abstract class RecurlyObjects<T extends RecurlyObject> extends ArrayList<
     @JsonIgnore
     public void setRecurlyClient(final RecurlyClient recurlyClient) {
         this.recurlyClient = recurlyClient;
-    }
-
-    /**
-     * Set the API key used to retrieve this object
-     */
-    @JsonIgnore
-    public void setCurrentApiKeyOverride(@Nullable final String currentApiKeyOverride) {
-        this.currentApiKeyOverride = currentApiKeyOverride;
     }
 
     @JsonIgnore
