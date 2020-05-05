@@ -2694,13 +2694,13 @@ public class RecurlyClient {
     }
 
     /**
-     * RFC 3986 URL encoding. The vanilla {@link URLEncoder} does not work since
+     * (Not quite) RFC 3986 URL encoding. The vanilla {@link URLEncoder} does not work since
      * Recurly does not decode '+' back to ' '.
      */
     private static String urlEncode(String s) {
         try {
             return URLEncoder.encode(s, Charsets.UTF_8.name())
-                    .replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
+                    .replace("+", "%20").replace("*", "%2A");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e); // should not happen
         }
