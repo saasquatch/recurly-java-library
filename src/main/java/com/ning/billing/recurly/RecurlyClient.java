@@ -2625,11 +2625,11 @@ public class RecurlyClient {
         final HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .disableCookieManagement() // We don't need cookies
                 /*
-                 * The following limits are what the Apache HC Fluent API uses, and in practice
-                 * they should be more than enough.
+                 * The following limits are not quite truly unlimited, but in practice they
+                 * should be more than enough.
                  */
-                .setMaxConnPerRoute(100) // default is 2
-                .setMaxConnTotal(200) // default is 20
+                .setMaxConnPerRoute(256) // default is 2
+                .setMaxConnTotal(512) // default is 20
                 // Use the default timeouts from AHC
                 .setDefaultRequestConfig(RequestConfig.custom()
                         .setConnectTimeout(5000).setSocketTimeout(60000).build())
