@@ -57,8 +57,6 @@ import com.ning.billing.recurly.model.SubscriptionState;
 import com.ning.billing.recurly.model.SubscriptionUpdate;
 import com.ning.billing.recurly.model.SubscriptionNotes;
 import com.ning.billing.recurly.model.Subscriptions;
-import com.ning.billing.recurly.model.Tier;
-import com.ning.billing.recurly.model.Tiers;
 import com.ning.billing.recurly.model.Transaction;
 import com.ning.billing.recurly.model.TransactionState;
 import com.ning.billing.recurly.model.TransactionType;
@@ -84,6 +82,7 @@ import com.ning.billing.recurly.util.http.SslUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.NoHttpResponseException;
+import org.apache.http.ParseException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -621,9 +620,9 @@ public class RecurlyClient {
             request = new Subscription();
             Account account = new Account();
             BillingInfo billingInfo = new BillingInfo();
-            billingInfo.setThreeDSecureActionResultTokenId(ThreeDSecureActionResultTokenId); 
+            billingInfo.setThreeDSecureActionResultTokenId(ThreeDSecureActionResultTokenId);
             account.setBillingInfo(billingInfo);
-            request.setAccount(account);   
+            request.setAccount(account);
         }
         return doPUT(Subscription.SUBSCRIPTION_RESOURCE + "/" + urlEncode(subscriptionUuid) + "/convert_trial",
             request, Subscription.class);
@@ -821,9 +820,9 @@ public class RecurlyClient {
      */
     public Subscriptions getInvoiceSubscriptions(final String invoiceId, final QueryParams params) {
         return doGET(Invoices.INVOICES_RESOURCE
-                        + "/" + urlEncode(invoiceId) 
+                        + "/" + urlEncode(invoiceId)
                         + Subscriptions.SUBSCRIPTIONS_RESOURCE,
-                Subscriptions.class, 
+                Subscriptions.class,
                 params);
     }
 
@@ -1232,7 +1231,7 @@ public class RecurlyClient {
         return doGET(Invoices.INVOICES_RESOURCE + "/" + urlEncode(invoiceId) + Transactions.TRANSACTIONS_RESOURCE,
                      Transactions.class, new QueryParams());
     }
-    
+
     /**
      * Lookup an account's invoices
      * <p>
@@ -2500,13 +2499,7 @@ public class RecurlyClient {
         CloseableHttpResponse response = null;
         try {
             response = client.execute(builder);
-            final HttpEntity entity = response.getEntity();
-            final String payload;
-            if (entity == null) {
-                payload = "";
-            } else {
-                payload = MoreObjects.firstNonNull(EntityUtils.toString(entity, Charsets.UTF_8), "");
-            }
+            final String payload = convertEntityToString(response.getEntity());
             if (debug()) {
                 log.info("Msg from Recurly API :: {}", payload);
             }
@@ -2608,6 +2601,21 @@ public class RecurlyClient {
         requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
         requestBuilder.setHeader(HttpHeaders.USER_AGENT, userAgent);
         requestBuilder.setHeader(HttpHeaders.ACCEPT_LANGUAGE, acceptLanguage);
+    }
+
+    private String convertEntityToString(HttpEntity entity) {
+        if (entity == null) {
+            return "";
+        }
+        final String entityString;
+        try {
+            entityString = EntityUtils.toString(entity, Charsets.UTF_8);
+        } catch (ParseException e) {
+            return "";
+        } catch (IOException e) {
+            return "";
+        }
+        return entityString == null ? "" : entityString;
     }
 
     protected CloseableHttpClient createHttpClient() throws KeyManagementException, NoSuchAlgorithmException {
