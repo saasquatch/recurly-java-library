@@ -209,7 +209,8 @@ public class RecurlyClient {
     }
 
     /**
-     * Set the underlying http client with your custom client.
+     * Set the underlying http client with your custom client. This allows the creation of
+     * "lightweight" {@link RecurlyClient}s where each can have its own apiKey, etc.
      * If {@link #open()} had already been called, do not call this method.
      */
     public synchronized void open(CloseableHttpClient client) {
