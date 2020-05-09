@@ -58,8 +58,6 @@ import com.ning.billing.recurly.model.SubscriptionState;
 import com.ning.billing.recurly.model.SubscriptionUpdate;
 import com.ning.billing.recurly.model.SubscriptionNotes;
 import com.ning.billing.recurly.model.Subscriptions;
-import com.ning.billing.recurly.model.Tier;
-import com.ning.billing.recurly.model.Tiers;
 import com.ning.billing.recurly.model.Transaction;
 import com.ning.billing.recurly.model.TransactionState;
 import com.ning.billing.recurly.model.TransactionType;
@@ -76,6 +74,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.StandardSystemProperty;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -106,11 +105,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.List;
-import java.util.Arrays;
 
 public class RecurlyClient {
 
@@ -130,7 +129,7 @@ public class RecurlyClient {
 
     public static final String FETCH_RESOURCE = "/recurly_js/result";
 
-    private static final List<String> validHosts = Arrays.asList("recurly.com");
+    private static final Set<String> validHosts = ImmutableSet.of("recurly.com");
 
     /**
      * Checks a system property to see if debugging output is
