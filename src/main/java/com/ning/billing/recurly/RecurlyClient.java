@@ -2371,7 +2371,7 @@ public class RecurlyClient {
                 throw new RecurlyAPIException(recurlyAPIError);
             }
 
-            // Buffer the pdf in memory on purpose, because this was the behavior of AsyncHttpClient.
+            // Buffer the pdf in memory on purpose, because this was actually the behavior of AsyncHttpClient.
             final HttpEntity entity = response.getEntity();
             if (entity != null) {
                 final byte[] pdfBytes = EntityUtils.toByteArray(entity);
