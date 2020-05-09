@@ -163,7 +163,6 @@ public class RecurlyClient {
         }
     }
 
-    // TODO: should we make it static?
     private static final XmlMapper xmlMapper = RecurlyObject.newXmlMapper();
     private final String userAgent;
 
