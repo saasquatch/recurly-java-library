@@ -2649,7 +2649,7 @@ public class RecurlyClient {
         return userAgent;
     }
 
-    private String buildUserAgent() {
+    protected String buildUserAgent() {
         final String defaultVersion = "0.0.0";
         final String defaultJavaVersion = "0.0.0";
 
