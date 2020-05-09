@@ -1803,14 +1803,14 @@ public class RecurlyClient {
     }
 
     /**
-     * Restore a {@link Coupon}
+     * Restore a {@link Coupon} by the coupon code and potentially update its editable fields
      * <p>
      *
-     * @param couponCode The code for the {@link Coupon}
+     * @param couponCode The coupon code to restore
+     * @param coupon A {@link Coupon} containing fields to update
      * @return
      */
-    public Coupon restoreCoupon(final String couponCode) {
-        final Coupon coupon = new Coupon(); // This is required
+    public Coupon restoreCoupon(final String couponCode, final Coupon coupon) {
         return doPUT(Coupon.COUPON_RESOURCE + "/" + urlEncode(couponCode) + Coupon.RESTORE_RESOURCE,
                 coupon, Coupon.class);
     }
