@@ -152,8 +152,7 @@ public class RecurlyClient {
         }
     }
 
-    // TODO: should we make it static?
-    private final XmlMapper xmlMapper;
+    private static final XmlMapper xmlMapper = RecurlyObject.newXmlMapper();
     private final String userAgent;
 
     private final String key;
@@ -184,7 +183,6 @@ public class RecurlyClient {
     public RecurlyClient(final String apiKey, final String scheme, final String host, final int port, final String version) {
         this.key = DatatypeConverter.printBase64Binary(apiKey.getBytes());
         this.baseUrl = String.format("%s://%s:%d/%s", scheme, host, port, version);
-        this.xmlMapper = RecurlyObject.newXmlMapper();
         this.userAgent = buildUserAgent();
         this.rateLimitRemaining = -1;
         loggerWarning();
