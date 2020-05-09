@@ -78,12 +78,11 @@ import com.google.common.base.StandardSystemProperty;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
-
+import com.google.common.net.HttpHeaders;
 import com.ning.billing.recurly.util.http.SslUtils;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
