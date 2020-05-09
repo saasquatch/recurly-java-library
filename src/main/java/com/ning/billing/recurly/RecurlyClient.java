@@ -2608,9 +2608,6 @@ public class RecurlyClient {
         requestBuilder.setHeader("X-Api-Version", RECURLY_API_VERSION);
         requestBuilder.setHeader(HttpHeaders.USER_AGENT, userAgent);
         requestBuilder.setHeader(HttpHeaders.ACCEPT_LANGUAGE, acceptLanguage);
-        // Use the default timeouts from AHC
-        requestBuilder.setConfig(RequestConfig.custom()
-                .setConnectTimeout(5000).setSocketTimeout(60000).build());
     }
 
     protected CloseableHttpClient createHttpClient() throws KeyManagementException, NoSuchAlgorithmException {
@@ -2624,6 +2621,9 @@ public class RecurlyClient {
                  */
                 .setMaxConnPerRoute(100) // default is 2
                 .setMaxConnTotal(200) // default is 20
+                // Use the default timeouts from AHC
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setConnectTimeout(5000).setSocketTimeout(60000).build())
                 .setSSLContext(SslUtils.getInstance().getSSLContext());
         return httpClientBuilder.build();
     }
